@@ -23,6 +23,7 @@
 		0AA0DD161930DFAD00FDD29F /* KVNProgressTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD151930DFAD00FDD29F /* KVNProgressTests.m */; };
 		0AA0DD241930E0C000FDD29F /* KVNProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD231930E0C000FDD29F /* KVNProgress.m */; };
 		0AA0DD281930E62A00FDD29F /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD271930E62A00FDD29F /* UIImage+ImageEffects.m */; };
+		0AA0DD2D1930F76A00FDD29F /* KVNProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		0AA0DD231930E0C000FDD29F /* KVNProgress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVNProgress.m; sourceTree = "<group>"; };
 		0AA0DD261930E62A00FDD29F /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		0AA0DD271930E62A00FDD29F /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KVNProgressView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 				0AA0DCFC1930DFAD00FDD29F /* Main.storyboard */,
 				0AA0DCFF1930DFAD00FDD29F /* KVNViewController.h */,
 				0AA0DD001930DFAD00FDD29F /* KVNViewController.m */,
+				0AA0DD2B1930F76A00FDD29F /* Ressources */,
 				0AA0DD021930DFAD00FDD29F /* Images.xcassets */,
 				0AA0DCF11930DFAD00FDD29F /* Supporting Files */,
 			);
@@ -176,6 +179,14 @@
 				0AA0DD271930E62A00FDD29F /* UIImage+ImageEffects.m */,
 			);
 			path = Categories;
+			sourceTree = "<group>";
+		};
+		0AA0DD2B1930F76A00FDD29F /* Ressources */ = {
+			isa = PBXGroup;
+			children = (
+				0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */,
+			);
+			path = Ressources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,6 +271,7 @@
 				0AA0DD031930DFAD00FDD29F /* Images.xcassets in Resources */,
 				0AA0DCF51930DFAD00FDD29F /* InfoPlist.strings in Resources */,
 				0AA0DCFE1930DFAD00FDD29F /* Main.storyboard in Resources */,
+				0AA0DD2D1930F76A00FDD29F /* KVNProgressView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +312,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "bundleVersion=$(git --git-dir=\"${PROJECT_DIR}/.git\" --work-tree=\"${PROJECT_DIR}\" rev-list HEAD | wc -l)\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $bundleVersion\" \"${PROJECT_DIR}/${PROJECT_NAME}/EAS-Info.plist\"";
+			shellScript = "bundleVersion=$(git --git-dir=\"${PROJECT_DIR}/.git\" --work-tree=\"${PROJECT_DIR}\" rev-list HEAD | wc -l)\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $bundleVersion\" \"${PROJECT_DIR}/${PROJECT_NAME}/KVNProgress-Info.plist\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -520,6 +532,7 @@
 				0AA0DD1B1930DFAD00FDD29F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0AA0DD1C1930DFAD00FDD29F /* Build configuration list for PBXNativeTarget "KVNProgressTests" */ = {
 			isa = XCConfigurationList;
@@ -528,6 +541,7 @@
 				0AA0DD1E1930DFAD00FDD29F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

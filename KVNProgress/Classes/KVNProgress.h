@@ -6,11 +6,21 @@
 //  Copyright (c) 2014 Kevin Hirsch. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import UIKit;
 
-@interface KVNProgress : NSObject
+@interface KVNProgress : UIView
+
+#pragma mark - Appearance
+
+@property (nonatomic) UIColor *backgroundTintColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic) UIColor *loaderForegroundColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic) UIColor *loaderBackgroundColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic) UIColor *statusColor UI_APPEARANCE_SELECTOR;
+
+#pragma mark - Progress methods
 
 + (void)showProgress NS_AVAILABLE_IOS(6_0);
 + (void)showProgressWithStatus:(NSString *)status NS_AVAILABLE_IOS(6_0);
++ (void)hideProgress NS_AVAILABLE_IOS(6_0);
 
 @end

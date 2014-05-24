@@ -8,6 +8,8 @@
 
 #import "KVNViewController.h"
 
+#import "KVNProgress.h"
+
 @interface KVNViewController ()
 
 @end
@@ -18,6 +20,14 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+	
+	sleep(3);
+	[KVNProgress showProgressWithStatus:@"Loading..."];
 }
 
 - (void)didReceiveMemoryWarning

@@ -7,6 +7,7 @@
 //
 
 #import "KVNAppDelegate.h"
+#import "KVNProgress.h"
 
 @implementation KVNAppDelegate
 

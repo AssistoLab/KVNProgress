@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="KVNProgress">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="gu2-d7-GWy">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </imageView>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="gXU-1y-b5M">
+                    <rect key="frame" x="20" y="273" width="280" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="centerY" secondItem="gXU-1y-b5M" secondAttribute="centerY" id="AGh-oi-tHX"/>
+                <constraint firstAttribute="bottom" secondItem="gu2-d7-GWy" secondAttribute="bottom" id="Be3-ek-XOn"/>
+                <constraint firstAttribute="trailing" secondItem="gXU-1y-b5M" secondAttribute="trailing" constant="20" id="ESk-uI-rXQ"/>
+                <constraint firstItem="gXU-1y-b5M" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" id="He1-oh-llm"/>
+                <constraint firstAttribute="centerX" secondItem="gXU-1y-b5M" secondAttribute="centerX" id="IUy-oj-hNx"/>
+                <constraint firstAttribute="trailing" secondItem="gu2-d7-GWy" secondAttribute="trailing" id="Jt6-eM-AZR"/>
+                <constraint firstItem="gu2-d7-GWy" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="L7R-iU-5gw"/>
+                <constraint firstItem="gu2-d7-GWy" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qT5-aY-Brf"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="backgroundImageView" destination="gu2-d7-GWy" id="7Fp-LH-s0k"/>
+                <outlet property="statusLabel" destination="gXU-1y-b5M" id="3SM-0c-hjG"/>
+            </connections>
+        </view>
+    </objects>
+</document>
