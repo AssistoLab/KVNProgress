@@ -200,11 +200,11 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 	self.statusLabel.text = self.status;
 	self.statusLabel.textColor = self.statusColor;
 	self.statusLabel.font = self.statusFont;
-	
 	self.statusLabel.hidden = !showStatus;
+	
 	self.circleProgressViewToStatusLabelVerticalSpaceConstraint.constant = (showStatus) ? KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant : 0.0f;
 	
-	CGSize maximumLabelSize = CGSizeMake(CGRectGetWidth(self.statusLabel.bounds) ,CGFLOAT_MAX);
+	CGSize maximumLabelSize = CGSizeMake(CGRectGetWidth(self.statusLabel.bounds), CGFLOAT_MAX);
 	CGSize statusLabelSize = [self.statusLabel sizeThatFits:maximumLabelSize];
 	self.statusLabelHeightConstraint.constant = statusLabelSize.height;
 	
@@ -213,6 +213,10 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 
 - (void)setupBackground
 {
+	if ([self isVisible]) {
+		return; // No reload of background when view is showing
+	}
+	
 	UIImage *backgroundImage = nil;
 	UIColor *backgroundColor = nil;
 	
