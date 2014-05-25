@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A85E76F1932753300B16419 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85E76E1932753300B16419 /* main.m */; };
+		0A85E7761932755300B16419 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A85E7711932755300B16419 /* Images.xcassets */; };
+		0A85E7771932755300B16419 /* KVNAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85E7731932755300B16419 /* KVNAppDelegate.m */; };
+		0A85E7781932755300B16419 /* KVNViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85E7751932755300B16419 /* KVNViewController.m */; };
 		0AA0DCEB1930DFAD00FDD29F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA0DCEA1930DFAD00FDD29F /* Foundation.framework */; };
 		0AA0DCED1930DFAD00FDD29F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA0DCEC1930DFAD00FDD29F /* CoreGraphics.framework */; };
 		0AA0DCEF1930DFAD00FDD29F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA0DCEE1930DFAD00FDD29F /* UIKit.framework */; };
 		0AA0DCF51930DFAD00FDD29F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0AA0DCF31930DFAD00FDD29F /* InfoPlist.strings */; };
-		0AA0DCF71930DFAD00FDD29F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DCF61930DFAD00FDD29F /* main.m */; };
-		0AA0DCFB1930DFAD00FDD29F /* KVNAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DCFA1930DFAD00FDD29F /* KVNAppDelegate.m */; };
 		0AA0DCFE1930DFAD00FDD29F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AA0DCFC1930DFAD00FDD29F /* Main.storyboard */; };
-		0AA0DD011930DFAD00FDD29F /* KVNViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD001930DFAD00FDD29F /* KVNViewController.m */; };
-		0AA0DD031930DFAD00FDD29F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AA0DD021930DFAD00FDD29F /* Images.xcassets */; };
 		0AA0DD0A1930DFAD00FDD29F /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA0DD091930DFAD00FDD29F /* XCTest.framework */; };
 		0AA0DD0B1930DFAD00FDD29F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA0DCEA1930DFAD00FDD29F /* Foundation.framework */; };
 		0AA0DD0C1930DFAD00FDD29F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA0DCEE1930DFAD00FDD29F /* UIKit.framework */; };
@@ -24,6 +24,7 @@
 		0AA0DD241930E0C000FDD29F /* KVNProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD231930E0C000FDD29F /* KVNProgress.m */; };
 		0AA0DD281930E62A00FDD29F /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD271930E62A00FDD29F /* UIImage+ImageEffects.m */; };
 		0AA0DD2D1930F76A00FDD29F /* KVNProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */; };
+		0AA0DD301931EB3D00FDD29F /* UIImage+Empty.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD2F1931EB3D00FDD29F /* UIImage+Empty.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,20 +38,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0A85E76D1932588700B16419 /* KVNProgress-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KVNProgress-Prefix.pch"; sourceTree = "<group>"; };
+		0A85E76E1932753300B16419 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		0A85E7711932755300B16419 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		0A85E7721932755300B16419 /* KVNAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVNAppDelegate.h; sourceTree = "<group>"; };
+		0A85E7731932755300B16419 /* KVNAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVNAppDelegate.m; sourceTree = "<group>"; };
+		0A85E7741932755300B16419 /* KVNViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVNViewController.h; sourceTree = "<group>"; };
+		0A85E7751932755300B16419 /* KVNViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVNViewController.m; sourceTree = "<group>"; };
 		0AA0DCE71930DFAD00FDD29F /* KVNProgress.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KVNProgress.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AA0DCEA1930DFAD00FDD29F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0AA0DCEC1930DFAD00FDD29F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0AA0DCEE1930DFAD00FDD29F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0AA0DCF21930DFAD00FDD29F /* KVNProgress-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KVNProgress-Info.plist"; sourceTree = "<group>"; };
 		0AA0DCF41930DFAD00FDD29F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		0AA0DCF61930DFAD00FDD29F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		0AA0DCF81930DFAD00FDD29F /* KVNProgress-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KVNProgress-Prefix.pch"; sourceTree = "<group>"; };
-		0AA0DCF91930DFAD00FDD29F /* KVNAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KVNAppDelegate.h; sourceTree = "<group>"; };
-		0AA0DCFA1930DFAD00FDD29F /* KVNAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KVNAppDelegate.m; sourceTree = "<group>"; };
 		0AA0DCFD1930DFAD00FDD29F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		0AA0DCFF1930DFAD00FDD29F /* KVNViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KVNViewController.h; sourceTree = "<group>"; };
-		0AA0DD001930DFAD00FDD29F /* KVNViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KVNViewController.m; sourceTree = "<group>"; };
-		0AA0DD021930DFAD00FDD29F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		0AA0DD081930DFAD00FDD29F /* KVNProgressTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KVNProgressTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AA0DD091930DFAD00FDD29F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		0AA0DD111930DFAD00FDD29F /* KVNProgressTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KVNProgressTests-Info.plist"; sourceTree = "<group>"; };
@@ -61,6 +62,8 @@
 		0AA0DD261930E62A00FDD29F /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		0AA0DD271930E62A00FDD29F /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KVNProgressView.xib; sourceTree = "<group>"; };
+		0AA0DD2E1931EB3D00FDD29F /* UIImage+Empty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Empty.h"; sourceTree = "<group>"; };
+		0AA0DD2F1931EB3D00FDD29F /* UIImage+Empty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Empty.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A85E7701932755300B16419 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				0A85E7721932755300B16419 /* KVNAppDelegate.h */,
+				0A85E7731932755300B16419 /* KVNAppDelegate.m */,
+				0A85E7741932755300B16419 /* KVNViewController.h */,
+				0A85E7751932755300B16419 /* KVNViewController.m */,
+				0AA0DCFC1930DFAD00FDD29F /* Main.storyboard */,
+				0A85E7711932755300B16419 /* Images.xcassets */,
+			);
+			path = Demo;
+			sourceTree = "<group>";
+		};
 		0AA0DCDE1930DFAD00FDD29F = {
 			isa = PBXGroup;
 			children = (
@@ -121,14 +137,9 @@
 			isa = PBXGroup;
 			children = (
 				0AA0DD251930E62A00FDD29F /* Categories */,
-				0AA0DD211930E0AB00FDD29F /* Classes */,
-				0AA0DCF91930DFAD00FDD29F /* KVNAppDelegate.h */,
-				0AA0DCFA1930DFAD00FDD29F /* KVNAppDelegate.m */,
-				0AA0DCFC1930DFAD00FDD29F /* Main.storyboard */,
-				0AA0DCFF1930DFAD00FDD29F /* KVNViewController.h */,
-				0AA0DD001930DFAD00FDD29F /* KVNViewController.m */,
 				0AA0DD2B1930F76A00FDD29F /* Ressources */,
-				0AA0DD021930DFAD00FDD29F /* Images.xcassets */,
+				0AA0DD211930E0AB00FDD29F /* Classes */,
+				0A85E7701932755300B16419 /* Demo */,
 				0AA0DCF11930DFAD00FDD29F /* Supporting Files */,
 			);
 			path = KVNProgress;
@@ -139,8 +150,8 @@
 			children = (
 				0AA0DCF21930DFAD00FDD29F /* KVNProgress-Info.plist */,
 				0AA0DCF31930DFAD00FDD29F /* InfoPlist.strings */,
-				0AA0DCF61930DFAD00FDD29F /* main.m */,
-				0AA0DCF81930DFAD00FDD29F /* KVNProgress-Prefix.pch */,
+				0A85E76E1932753300B16419 /* main.m */,
+				0A85E76D1932588700B16419 /* KVNProgress-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -177,6 +188,8 @@
 			children = (
 				0AA0DD261930E62A00FDD29F /* UIImage+ImageEffects.h */,
 				0AA0DD271930E62A00FDD29F /* UIImage+ImageEffects.m */,
+				0AA0DD2E1931EB3D00FDD29F /* UIImage+Empty.h */,
+				0AA0DD2F1931EB3D00FDD29F /* UIImage+Empty.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -268,8 +281,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0AA0DD031930DFAD00FDD29F /* Images.xcassets in Resources */,
 				0AA0DCF51930DFAD00FDD29F /* InfoPlist.strings in Resources */,
+				0A85E7761932755300B16419 /* Images.xcassets in Resources */,
 				0AA0DCFE1930DFAD00FDD29F /* Main.storyboard in Resources */,
 				0AA0DD2D1930F76A00FDD29F /* KVNProgressView.xib in Resources */,
 			);
@@ -321,11 +334,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A85E7771932755300B16419 /* KVNAppDelegate.m in Sources */,
 				0AA0DD241930E0C000FDD29F /* KVNProgress.m in Sources */,
 				0AA0DD281930E62A00FDD29F /* UIImage+ImageEffects.m in Sources */,
-				0AA0DCFB1930DFAD00FDD29F /* KVNAppDelegate.m in Sources */,
-				0AA0DD011930DFAD00FDD29F /* KVNViewController.m in Sources */,
-				0AA0DCF71930DFAD00FDD29F /* main.m in Sources */,
+				0A85E76F1932753300B16419 /* main.m in Sources */,
+				0A85E7781932755300B16419 /* KVNViewController.m in Sources */,
+				0AA0DD301931EB3D00FDD29F /* UIImage+Empty.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,6 +376,7 @@
 				0AA0DCFD1930DFAD00FDD29F /* Base */,
 			);
 			name = Main.storyboard;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		0AA0DD121930DFAD00FDD29F /* InfoPlist.strings */ = {
