@@ -137,7 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				0AA0DD251930E62A00FDD29F /* Categories */,
-				0AA0DD2B1930F76A00FDD29F /* Ressources */,
+				0AA0DD2B1930F76A00FDD29F /* Resources */,
 				0AA0DD211930E0AB00FDD29F /* Classes */,
 				0A85E7701932755300B16419 /* Demo */,
 				0AA0DCF11930DFAD00FDD29F /* Supporting Files */,
@@ -194,12 +194,12 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
-		0AA0DD2B1930F76A00FDD29F /* Ressources */ = {
+		0AA0DD2B1930F76A00FDD29F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */,
 			);
-			path = Ressources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
