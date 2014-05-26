@@ -77,8 +77,8 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = "Classes", "Classes/**/*.{h,m}", "Categories", "Categories/**/*.{h,m}"
-  s.exclude_files = "Classes/Exclude"
+  s.source_files  = "KVNProgress/Classes", "KVNProgress/Classes/**/*.{h,m}", "KVNProgress/Categories", "KVNProgress/Categories/**/*.{h,m}"
+  s.exclude_files = "KVNProgress/Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"
 
