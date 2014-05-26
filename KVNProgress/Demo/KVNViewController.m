@@ -60,7 +60,8 @@
 
 - (IBAction)showWithStatus
 {
-	[KVNProgress showWithStatus:@"Loading..."];
+	[KVNProgress showWithStatus:@"Loading..."
+					 fullScreen:YES];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		[KVNProgress dismiss];
@@ -70,8 +71,8 @@
 - (IBAction)showWithSolidBackground
 {
 	[KVNProgress showWithStatus:@"Loading..."
-				 backgroundType:KVNProgressBackgroundTypeSolid
-					 fullScreen:NO];
+				 backgroundType:KVNProgressBackgroundTypeBlurred
+					 fullScreen:YES];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		[KVNProgress dismiss];

@@ -23,6 +23,8 @@ static CGFloat const KVNProgressIndeterminate = CGFLOAT_MAX;
 static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant = 20.0f;
 static CGFloat const KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 0.0f;
 static CGFloat const KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 55.0f;
+static CGFloat const KNVContentViewWithStatusInset = 10.0f;
+static CGFloat const KNVContentViewWithoutStatusInset = 20.0f;
 static CGFloat const KNVContentViewCornerRadius = 8.0f;
 
 @interface KVNProgress ()
@@ -48,6 +50,8 @@ static CGFloat const KNVContentViewCornerRadius = 8.0f;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewLeadingToSuperviewConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewTrailingToSuperviewConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewTopToSuperViewConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelBottomToSuperViewConstraint;
 
 @end
 
@@ -98,6 +102,11 @@ static CGFloat const KNVContentViewCornerRadius = 8.0f;
 
 - (void)setupUI
 {
+	self.circleProgressViewTopToSuperViewConstraint.constant = KNVContentViewWithStatusInset;
+	self.statusLabelBottomToSuperViewConstraint.constant = KNVContentViewWithStatusInset;
+	self.contentViewLeadingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+	self.contentViewTrailingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+	
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
 	[self setupBackground];
@@ -245,15 +254,15 @@ static CGFloat const KNVContentViewCornerRadius = 8.0f;
 		
 		self.contentView.layer.cornerRadius = 0.0f;
 		self.contentView.layer.masksToBounds = NO;
-		self.backgroundImageView.image = [UIImage emptyImage];
+		self.contentView.image = [UIImage emptyImage];
 		self.contentView.backgroundColor = [UIColor clearColor];
 	}
 	else
 	{
-		if (self.status.length > 0) {
-			self.contentViewLeadingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
-			self.contentViewTrailingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
-		} else {
+		if (self.status.length == 0) {
+			self.circleProgressViewTopToSuperViewConstraint.constant = KNVContentViewWithoutStatusInset;
+			self.statusLabelBottomToSuperViewConstraint.constant = KNVContentViewWithoutStatusInset;
+			
 			CGFloat contentViewHeight = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
 			CGFloat screenSize = CGRectGetWidth([UIScreen mainScreen].bounds);
 			CGFloat leadingAndTrailingConstraint = (screenSize - contentViewHeight) / 2.0f;
@@ -270,7 +279,7 @@ static CGFloat const KNVContentViewCornerRadius = 8.0f;
 		self.contentView.contentMode = UIViewContentModeCenter;
 		self.contentView.backgroundColor = self.backgroundFillColor;
 		
-		self.contentView.image = [self blurredScreenShot];
+		self.contentView.image = backgroundImage;
 	}
 	
 	[self setNeedsUpdateConstraints];

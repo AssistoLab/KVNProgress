@@ -68,11 +68,13 @@
                 <outlet property="circleProgressView" destination="iI6-MR-KeW" id="n2f-pL-dzZ"/>
                 <outlet property="circleProgressViewHeightConstraint" destination="mRF-1b-hE3" id="wYx-x1-gfA"/>
                 <outlet property="circleProgressViewToStatusLabelVerticalSpaceConstraint" destination="EMi-mI-8Vy" id="OQe-by-cVT"/>
+                <outlet property="circleProgressViewTopToSuperViewConstraint" destination="axR-gj-btf" id="hwn-Ep-vNd"/>
                 <outlet property="circleProgressViewWidthConstraint" destination="c6q-Xh-pet" id="7XZ-bz-Ury"/>
                 <outlet property="contentView" destination="dvZ-0c-TMi" id="l4W-xx-PIG"/>
                 <outlet property="contentViewLeadingToSuperviewConstraint" destination="q68-L1-eGD" id="z31-Mz-ZKN"/>
                 <outlet property="contentViewTrailingToSuperviewConstraint" destination="gBi-Hb-Mr7" id="VZI-F3-zLF"/>
                 <outlet property="statusLabel" destination="gXU-1y-b5M" id="3SM-0c-hjG"/>
+                <outlet property="statusLabelBottomToSuperViewConstraint" destination="bXO-fJ-Lwk" id="v84-sv-hIw"/>
                 <outlet property="statusLabelHeightConstraint" destination="V0y-U4-QII" id="Xbn-CE-kP0"/>
             </connections>
         </view>
