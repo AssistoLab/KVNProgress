@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "KVNProgress"
-  s.version      = "0.1.3"
+  s.version      = "0.1.4"
   s.summary      = "A full screen progress view for iOS 7"
   
   s.homepage     = "https://github.com/kevin-hirsch/KVNProgress"
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   }
 
   s.source_files  = "KVNProgress/Classes", "KVNProgress/Classes/**/*.{h,m}", "KVNProgress/Categories", "KVNProgress/Categories/**/*.{h,m}"
-  s.resources = "KVNProgress/Resources", "KVNProgress/Resources/*.{png,xib}"
+  s.resources = "KVNProgress/Resources/*.{png,xib}"
 
   s.frameworks = "QuartzCore", "GLKit"
   s.requires_arc = true
