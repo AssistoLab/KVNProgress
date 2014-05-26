@@ -423,9 +423,30 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 	
 	UIGraphicsEndImageContext();
 	
-	blurredScreenShot = [blurredScreenShot applyTintEffectWithColor:self.backgroundTintColor];
+	blurredScreenShot = [self applyTintEffectWithColor:self.backgroundTintColor
+												 image:blurredScreenShot];
 	
 	return blurredScreenShot;
+}
+
+- (UIImage *)applyTintEffectWithColor:(UIColor *)tintColor image:(UIImage *)image
+{
+    const CGFloat EffectColorAlpha = 0.6;
+    UIColor *effectColor = tintColor;
+    int componentCount = CGColorGetNumberOfComponents(tintColor.CGColor);
+    if (componentCount == 2) {
+        CGFloat b;
+        if ([tintColor getWhite:&b alpha:NULL]) {
+            effectColor = [UIColor colorWithWhite:b alpha:EffectColorAlpha];
+        }
+    }
+    else {
+        CGFloat r, g, b;
+        if ([tintColor getRed:&r green:&g blue:&b alpha:NULL]) {
+            effectColor = [UIColor colorWithRed:r green:g blue:b alpha:EffectColorAlpha];
+        }
+    }
+    return [image applyBlurWithRadius:10 tintColor:effectColor saturationDeltaFactor:1.0 maskImage:nil];
 }
 
 #pragma mark - Information
