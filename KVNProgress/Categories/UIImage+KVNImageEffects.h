@@ -95,7 +95,7 @@
 
 @import UIKit;
 
-@interface UIImage (ImageEffects)
+@interface UIImage (KVNImageEffects)
 
 - (UIImage *)applyLightEffect;
 - (UIImage *)applyExtraLightEffect;

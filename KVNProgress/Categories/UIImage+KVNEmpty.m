@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Kevin Hirsch. All rights reserved.
 //
 
-#import "UIImage+Empty.h"
+#import "UIImage+KVNEmpty.h"
 
-@implementation UIImage (Empty)
+@implementation UIImage (KVNEmpty)
 
 + (UIImage *)emptyImage
 {

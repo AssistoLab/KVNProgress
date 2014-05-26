@@ -8,7 +8,7 @@
 
 @import UIKit;
 
-@interface UIImage (Empty)
+@interface UIImage (KVNEmpty)
 
 + (UIImage *)emptyImage;
 

@@ -11,8 +11,8 @@
 
 #import "KVNProgress.h"
 
-#import "UIImage+ImageEffects.h"
-#import "UIImage+Empty.h"
+#import "UIImage+KVNImageEffects.h"
+#import "UIImage+KVNEmpty.h"
 
 static CGFloat const KVNFadeAnimationDuration = 0.3f;
 static CGFloat const KVNLayoutAnimationDuration = 0.3f;
