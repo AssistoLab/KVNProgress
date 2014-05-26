@@ -139,7 +139,7 @@
             effectColor = [UIColor colorWithRed:r green:g blue:b alpha:EffectColorAlpha];
         }
     }
-    return [self applyBlurWithRadius:10 tintColor:effectColor saturationDeltaFactor:-1.0 maskImage:nil];
+    return [self applyBlurWithRadius:10 tintColor:effectColor saturationDeltaFactor:1.0 maskImage:nil];
 }
 
 
