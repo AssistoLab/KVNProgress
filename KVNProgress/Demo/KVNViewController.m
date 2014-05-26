@@ -29,7 +29,7 @@
 	[KVNProgress appearance].circleStrokeForegroundColor = [UIColor brownColor];
 	[KVNProgress appearance].circleStrokeBackgroundColor = [[UIColor brownColor] colorWithAlphaComponent:0.3f];
 	[KVNProgress appearance].circleFillBackgroundColor = [UIColor clearColor];
-	[KVNProgress appearance].backgroundColor = [UIColor colorWithRed:1.000 green:0.841 blue:0.582 alpha:0.900];
+	[KVNProgress appearance].backgroundFillColor = [UIColor colorWithRed:1.000 green:0.841 blue:0.582 alpha:0.900];
 	[KVNProgress appearance].backgroundTintColor = [UIColor colorWithRed:1.000 green:0.841 blue:0.582 alpha:1.000];
 	[KVNProgress appearance].circleSize = 90.0f;
 	[KVNProgress appearance].lineWidth = 2.0f;
@@ -41,7 +41,7 @@
 	[KVNProgress appearance].circleStrokeForegroundColor = [UIColor colorWithRed:0.261 green:0.678 blue:0.199 alpha:1.000];
 	[KVNProgress appearance].circleStrokeBackgroundColor = [UIColor colorWithRed:0.559 green:0.834 blue:0.486 alpha:0.750];
 	[KVNProgress appearance].circleFillBackgroundColor = [[UIColor grayColor] colorWithAlphaComponent:0.25f];
-	[KVNProgress appearance].backgroundColor = [UIColor blueColor];
+	[KVNProgress appearance].backgroundFillColor = [UIColor blueColor];
 	[KVNProgress appearance].backgroundTintColor = [UIColor colorWithRed:0.681 green:1.000 blue:0.582 alpha:1.000];
 	[KVNProgress appearance].circleSize = 150.0f;
 	[KVNProgress appearance].lineWidth = 5.0f;

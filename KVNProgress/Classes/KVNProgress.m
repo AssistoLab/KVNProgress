@@ -73,7 +73,7 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 {
     if (self = [super initWithCoder:aDecoder]) {
 		// Appearance
-		_backgroundColor = [UIColor colorWithWhite:1.0f alpha:0.85f];
+		_backgroundFillColor = [UIColor colorWithWhite:1.0f alpha:0.85f];
 		_backgroundTintColor = [UIColor whiteColor];
 		
 		_circleStrokeForegroundColor = [UIColor lightGrayColor];
@@ -223,7 +223,7 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 	switch (self.backgroundType) {
 		case KVNProgressBackgroundTypeSolid:
 			backgroundImage = [UIImage emptyImage];
-			backgroundColor = self.backgroundColor;
+			backgroundColor = self.backgroundFillColor;
 			break;
 		case KVNProgressBackgroundTypeBlurred:
 			backgroundImage = [self blurredScreenShot];
@@ -441,11 +441,12 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 	return blurredScreenShot;
 }
 
-- (UIImage *)applyTintEffectWithColor:(UIColor *)tintColor image:(UIImage *)image
+- (UIImage *)applyTintEffectWithColor:(UIColor *)tintColor
+								image:(UIImage *)image
 {
     const CGFloat EffectColorAlpha = 0.6;
     UIColor *effectColor = tintColor;
-    int componentCount = CGColorGetNumberOfComponents(tintColor.CGColor);
+    int componentCount = (int)CGColorGetNumberOfComponents(tintColor.CGColor);
     if (componentCount == 2) {
         CGFloat b;
         if ([tintColor getWhite:&b alpha:NULL]) {
@@ -475,15 +476,15 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 
 #pragma mark - UIAppearance getters
 
-- (UIColor *)backgroundColor
+- (UIColor *)backgroundFillColor
 {
-	UIColor *appearanceColor = [[[self class] appearance] backgroundColor];
+	UIColor *appearanceColor = [[[self class] appearance] backgroundFillColor];
 	
 	if (appearanceColor) {
-		_backgroundColor = appearanceColor;
+		_backgroundFillColor = appearanceColor;
 	}
 	
-	return _backgroundColor;
+	return _backgroundFillColor;
 }
 
 - (UIColor *)backgroundTintColor

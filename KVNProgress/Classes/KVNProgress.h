@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 #pragma mark - Appearance
 
 /** Color of the background view. Is not used when backgroundType is KVNProgressBackgroundTypeBlurred. */
-@property (nonatomic) UIColor *backgroundColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic) UIColor *backgroundFillColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 /** Tint color of the background view. Used to tint blurred background only when backgroundType is KVNProgressBackgroundTypeBlurred. */
 @property (nonatomic) UIColor *backgroundTintColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 /** Color of the circle stroke. */
