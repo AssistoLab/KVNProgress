@@ -24,7 +24,6 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 
 @interface KVNProgress ()
 
-@property (nonatomic, getter = isIndeterminate) BOOL indeterminate;
 @property (nonatomic) CGFloat progress;
 @property (nonatomic) KVNProgressBackgroundType backgroundType;
 @property (nonatomic) NSString *status;
@@ -342,7 +341,6 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 {
 	self.progress = progress;
-	self.indeterminate = (progress == KVNProgressIndeterminate);
 	self.status = [status copy];
 	self.backgroundType = backgroundType;
 	
@@ -365,7 +363,7 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 					 animations:^{
 						 progressView.alpha = 0.0f;
 					 } completion:^(BOOL finished) {
-						[progressView removeFromSuperview];
+						 [progressView removeFromSuperview];
 						 [UIApplication sharedApplication].keyWindow.userInteractionEnabled = YES;
 					 }];
 }
@@ -390,15 +388,20 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 }
 
 + (void)updateProgress:(CGFloat)progress
-		   animated:(BOOL)animated
+			  animated:(BOOL)animated
 {
 	[[self sharedView] updateProgress:progress
 							 animated:animated];
 }
 
 - (void)updateProgress:(CGFloat)progress
-		   animated:(BOOL)animated
+			  animated:(BOOL)animated
 {
+	if ([self isIndeterminate]) {
+		self.progress = progress;
+		[self setupCircleProgressView];
+	}
+	
 	// Boundry correctness
     progress = MIN(progress, 1.0f);
     progress = MAX(progress, 0.0f);
@@ -463,6 +466,11 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 }
 
 #pragma mark - Information
+
+- (BOOL)isIndeterminate
+{
+	return (self.progress == KVNProgressIndeterminate);
+}
 
 - (BOOL)isVisible
 {
