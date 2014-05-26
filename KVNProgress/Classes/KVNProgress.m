@@ -313,6 +313,14 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 }
 
 + (void)showProgress:(CGFloat)progress
+	  backgroundType:(KVNProgressBackgroundType)backgroundType
+{
+	[self showProgress:progress
+				status:nil
+		backgroundType:backgroundType];
+}
+
++ (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status
 {
 	[self showProgress:progress
@@ -347,6 +355,10 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 
 + (void)dismiss
 {
+	if (![self isVisible]) {
+		return;
+	}
+	
 	KVNProgress *progressView = [self sharedView];
 	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
