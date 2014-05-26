@@ -21,15 +21,19 @@ static CGFloat const KVNInfiniteLoopAnimationDuration = 1.0f;
 static CGFloat const KVNProgressAnimationDuration = 0.25f;
 static CGFloat const KVNProgressIndeterminate = CGFLOAT_MAX;
 static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant = 20.0f;
+static CGFloat const KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 0.0f;
+static CGFloat const KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 55.0f;
+static CGFloat const KNVContentViewCornerRadius = 8.0f;
 
 @interface KVNProgress ()
 
 @property (nonatomic) CGFloat progress;
 @property (nonatomic) KVNProgressBackgroundType backgroundType;
 @property (nonatomic) NSString *status;
+@property (nonatomic, getter = isFullScreen) BOOL fullScreen;
 
 // UI
-@property (nonatomic, weak) IBOutlet UIView *contentView;
+@property (nonatomic, weak) IBOutlet UIImageView *contentView;
 @property (nonatomic, weak) IBOutlet UIView *circleProgressView;
 @property (nonatomic, weak) IBOutlet UILabel *statusLabel;
 @property (nonatomic, weak) IBOutlet UIImageView *backgroundImageView;
@@ -42,6 +46,8 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewToStatusLabelVerticalSpaceConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelHeightConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewLeadingToSuperviewConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewTrailingToSuperviewConstraint;
 
 @end
 
@@ -82,7 +88,6 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 		_statusColor = [UIColor grayColor];
 		_statusFont = [UIFont systemFontOfSize:17.0f];
 		
-		_circleSize = 90.0f;
 		_lineWidth = 2.0f;
     }
 	
@@ -230,8 +235,45 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 			break;
 	}
 	
-	self.backgroundImageView.image = backgroundImage;
-	self.backgroundImageView.backgroundColor = backgroundColor;
+	if ([self isFullScreen])
+	{
+		self.contentViewLeadingToSuperviewConstraint.constant = KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+		self.contentViewTrailingToSuperviewConstraint.constant = KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+		
+		self.backgroundImageView.image = backgroundImage;
+		self.backgroundImageView.backgroundColor = backgroundColor;
+		
+		self.contentView.layer.cornerRadius = 0.0f;
+		self.contentView.layer.masksToBounds = NO;
+		self.backgroundImageView.image = [UIImage emptyImage];
+		self.contentView.backgroundColor = [UIColor clearColor];
+	}
+	else
+	{
+		if (self.status.length > 0) {
+			self.contentViewLeadingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+			self.contentViewTrailingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+		} else {
+			CGFloat contentViewHeight = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+			CGFloat screenSize = CGRectGetWidth([UIScreen mainScreen].bounds);
+			CGFloat leadingAndTrailingConstraint = (screenSize - contentViewHeight) / 2.0f;
+			self.contentViewLeadingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
+			self.contentViewTrailingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
+		}
+		
+		self.backgroundImageView.image = [UIImage emptyImage];
+		self.backgroundImageView.backgroundColor = [UIColor colorWithWhite:0.0f
+																	 alpha:0.2f];
+		
+		self.contentView.layer.cornerRadius = KNVContentViewCornerRadius;
+		self.contentView.layer.masksToBounds = YES;
+		self.contentView.contentMode = UIViewContentModeCenter;
+		self.contentView.backgroundColor = self.backgroundFillColor;
+		
+		self.contentView.image = [self blurredScreenShot];
+	}
+	
+	[self setNeedsUpdateConstraints];
 }
 
 - (void)addViewToViewHierarchyIfNeeded
@@ -278,45 +320,75 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 										 forKey:@"rotationAnimation"];
 }
 
-#pragma mark - Progress methods
+#pragma mark - Undeterminate progress methods
 
 + (void)show
 {
 	[self showWithStatus:nil];
 }
 
-+ (void)showWithBackgroundType:(KVNProgressBackgroundType)backgroundType
++ (void)showFullScreen:(BOOL)fullScreen
 {
 	[self showWithStatus:nil
-		  backgroundType:backgroundType];
+			  fullScreen:fullScreen];
+}
+
++ (void)showWithBackgroundType:(KVNProgressBackgroundType)backgroundType
+					fullScreen:(BOOL)fullScreen
+{
+	[self showWithStatus:nil
+		  backgroundType:backgroundType
+			  fullScreen:fullScreen];
 }
 
 + (void)showWithStatus:(NSString *)status
 {
 	[self showWithStatus:status
-		  backgroundType:KVNProgressBackgroundTypeBlurred];
+			  fullScreen:NO];
+}
+
++ (void)showWithStatus:(NSString *)status
+			fullScreen:(BOOL)fullScreen
+{
+	[self showWithStatus:status
+		  backgroundType:KVNProgressBackgroundTypeBlurred
+			  fullScreen:fullScreen];
 }
 
 + (void)showWithStatus:(NSString *)status
 		backgroundType:(KVNProgressBackgroundType)backgroundType
+			fullScreen:(BOOL)fullScreen
 {
 	[[self sharedView] showProgress:KVNProgressIndeterminate
 							 status:status
-					 backgroundType:backgroundType];
+					 backgroundType:backgroundType
+						 fullScreen:fullScreen];
 }
+
+#pragma mark - Determinate progress methods
 
 + (void)showProgress:(CGFloat)progress
 {
 	[self showProgress:progress
-				status:nil];
+			fullScreen:NO];
+}
+
++ (void)showProgress:(CGFloat)progress
+		  fullScreen:(BOOL)fullScreen
+{
+	[self showProgress:progress
+				status:nil
+			fullScreen:fullScreen];
 }
 
 + (void)showProgress:(CGFloat)progress
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
+		  fullScreen:(BOOL)fullScreen
 {
 	[self showProgress:progress
 				status:nil
-		backgroundType:backgroundType];
+		backgroundType:backgroundType
+			fullScreen:fullScreen];
 }
 
 + (void)showProgress:(CGFloat)progress
@@ -324,25 +396,42 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 {
 	[self showProgress:progress
 				status:status
-		backgroundType:KVNProgressBackgroundTypeBlurred];
+		backgroundType:KVNProgressBackgroundTypeBlurred
+			fullScreen:NO];
+}
+
++ (void)showProgress:(CGFloat)progress
+			  status:(NSString*)status
+		  fullScreen:(BOOL)fullScreen
+{
+	[self showProgress:progress
+				status:status
+		backgroundType:KVNProgressBackgroundTypeBlurred
+			fullScreen:fullScreen];
 }
 
 + (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
+		  fullScreen:(BOOL)fullScreen
 {
 	[[self sharedView] showProgress:progress
 							 status:status
-					 backgroundType:backgroundType];
+					 backgroundType:backgroundType
+						 fullScreen:fullScreen];
 }
+
+#pragma mark - Base progress instance method
 
 - (void)showProgress:(CGFloat)progress
 			  status:(NSString *)status
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
+		  fullScreen:(BOOL)fullScreen
 {
 	self.progress = progress;
 	self.status = [status copy];
 	self.backgroundType = backgroundType;
+	self.fullScreen = fullScreen;
 	
 	[self setupUI];
 	
@@ -350,6 +439,8 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 	
 	[UIApplication sharedApplication].keyWindow.userInteractionEnabled = NO;
 }
+
+#pragma mark - Dimiss
 
 + (void)dismiss
 {
@@ -401,7 +492,8 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 		//was inderminate
 		[self showProgress:progress
 					status:self.status
-			backgroundType:self.backgroundType];
+			backgroundType:self.backgroundType
+				fullScreen:self.fullScreen];
 		
 		return;
 	}
@@ -435,9 +527,16 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 {
 	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
 	
-	UIGraphicsBeginImageContextWithOptions(keyWindow.bounds.size, NO, 0);
+	return [self blurredScreenShotWithRect:keyWindow.frame];
+}
+
+- (UIImage *)blurredScreenShotWithRect:(CGRect)rect
+{
+	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
 	
-	[keyWindow drawViewHierarchyInRect:keyWindow.bounds afterScreenUpdates:NO];
+	UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0);
+	
+	[keyWindow drawViewHierarchyInRect:rect afterScreenUpdates:NO];
 	UIImage *blurredScreenShot = UIGraphicsGetImageFromCurrentImageContext();
 	
 	UIGraphicsEndImageContext();
@@ -480,6 +579,18 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 							tintColor:effectColor
 				saturationDeltaFactor:1.0f
 							maskImage:nil];
+}
+
+- (UIImage *)cropImage:(UIImage *)image
+				  rect:(CGRect)cropRect
+{
+	// Create bitmap image from original image data,
+	// using rectangle to specify desired crop area
+	CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);
+	image = [UIImage imageWithCGImage:imageRef];
+	CGImageRelease(imageRef);
+	
+	return image;
 }
 
 #pragma mark - Information
@@ -584,6 +695,10 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 	
 	if (appearanceCircleSize != 0) {
 		_circleSize = appearanceCircleSize;
+	}
+	
+	if (_circleSize == 0) {
+		_circleSize = ([self isFullScreen]) ? 90.0f : 75.0f;
 	}
 	
 	return _circleSize;

@@ -38,30 +38,95 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 /** Width of the circle stroke line */
 @property (nonatomic) CGFloat lineWidth NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 
-#pragma mark - Progress methods
+#pragma mark - Undeterminate progress methods
 
-/** Show a full screen indeterminate progress view with blurred background and no status. */
+/** Show an indeterminate progress view with blurred background and no status (not in fullscreen). */
 + (void)show NS_AVAILABLE_IOS(7_0);
-/** Show a full screen indeterminate progress view with specified background and no status. */
-+ (void)showWithBackgroundType:(KVNProgressBackgroundType)backgroundType NS_AVAILABLE_IOS(7_0);
-/** Show a full screen indeterminate progress view with blurred background and specified status. */
+/** 
+ Show an indeterminate progress view with blurred background and no status.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showFullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/** 
+ Show an indeterminate progress view with specified background and no status.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showWithBackgroundType:(KVNProgressBackgroundType)backgroundType
+					fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/** 
+ Show an indeterminate progress view with blurred background and specified status (not in fullscreen).
+ @param status The status to show on the displayed view.
+ */
 + (void)showWithStatus:(NSString *)status NS_AVAILABLE_IOS(7_0);
-/** Show a full screen indeterminate progress view with specified background and specified status. */
+/**
+ Show an indeterminate progress view with blurred background and specified status.
+ @param status The status to show on the displayed view.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
 + (void)showWithStatus:(NSString *)status
-		backgroundType:(KVNProgressBackgroundType)backgroundType NS_AVAILABLE_IOS(7_0);
+			fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/** 
+ Show an indeterminate progress view with specified background and specified status.
+ @param status The status to show on the displayed view.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showWithStatus:(NSString *)status
+		backgroundType:(KVNProgressBackgroundType)backgroundType
+			fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
 
-/** Show a full screen specified progress view with blurred background and no status. */
+#pragma mark - Determinate progress methods
+
+/** 
+ Show a specified progress view with blurred background and no status (not in fullscreen).
+ @param progress The progress to display between 0 and 1.
+ */
 + (void)showProgress:(CGFloat)progress NS_AVAILABLE_IOS(7_0);
-/** Show a full screen specified progress view with specified background and no status. */
+/**
+ Show a specified progress view with blurred background and no status.
+ @param progress The progress to display between 0 and 1.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
 + (void)showProgress:(CGFloat)progress
-	  backgroundType:(KVNProgressBackgroundType)backgroundType NS_AVAILABLE_IOS(7_0);
-/** Show a full screen specified progress view with blurred background and specified status. */
+		  fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/**
+ Show a specified progress view with specified background and no status.
+ @param progress The progress to display between 0 and 1.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showProgress:(CGFloat)progress
+	  backgroundType:(KVNProgressBackgroundType)backgroundType
+		  fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/** 
+ Show a specified progress view with blurred background and specified status (not in fullscreen).
+ @param status The status to show on the displayed view.
+ */
 + (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status NS_AVAILABLE_IOS(7_0);
-/** Show a full screen specified progress view with specified background and specified status. */
+/** 
+ Show a specified progress view with blurred background and specified status.
+ @param progress The progress to display between 0 and 1.
+ @param status The status to show on the displayed view.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
 + (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status
-	  backgroundType:(KVNProgressBackgroundType)backgroundType NS_AVAILABLE_IOS(7_0);
+		  fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/** 
+ Show a full screen specified progress view with specified background and specified status.
+ @param progress The progress to display between 0 and 1.
+ @param status The status to show on the displayed view.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showProgress:(CGFloat)progress
+			  status:(NSString*)status
+	  backgroundType:(KVNProgressBackgroundType)backgroundType
+		  fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+
+#pragma mark - Dimiss
 
 /** Dismiss progress view with a fade animation. Does nothing if the progress view is not on screen. */
 + (void)dismiss NS_AVAILABLE_IOS(7_0);

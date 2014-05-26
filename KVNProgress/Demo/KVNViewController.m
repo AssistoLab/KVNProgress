@@ -31,7 +31,7 @@
 	[KVNProgress appearance].circleFillBackgroundColor = [UIColor clearColor];
 	[KVNProgress appearance].backgroundFillColor = [UIColor colorWithRed:1.000 green:0.841 blue:0.582 alpha:0.900];
 	[KVNProgress appearance].backgroundTintColor = [UIColor colorWithRed:1.000 green:0.841 blue:0.582 alpha:1.000];
-	[KVNProgress appearance].circleSize = 90.0f;
+	[KVNProgress appearance].circleSize = 75.0f;
 	[KVNProgress appearance].lineWidth = 2.0f;
 }
 
@@ -70,7 +70,8 @@
 - (IBAction)showWithSolidBackground
 {
 	[KVNProgress showWithStatus:@"Loading..."
-				 backgroundType:KVNProgressBackgroundTypeSolid];
+				 backgroundType:KVNProgressBackgroundTypeSolid
+					 fullScreen:NO];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		[KVNProgress dismiss];

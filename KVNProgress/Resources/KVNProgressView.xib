@@ -15,7 +15,7 @@
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </imageView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dvZ-0c-TMi" userLabel="Content View">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dvZ-0c-TMi" userLabel="Content View" customClass="UIImageView">
                     <rect key="frame" x="0.0" y="197" width="320" height="175"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
@@ -70,6 +70,8 @@
                 <outlet property="circleProgressViewToStatusLabelVerticalSpaceConstraint" destination="EMi-mI-8Vy" id="OQe-by-cVT"/>
                 <outlet property="circleProgressViewWidthConstraint" destination="c6q-Xh-pet" id="7XZ-bz-Ury"/>
                 <outlet property="contentView" destination="dvZ-0c-TMi" id="l4W-xx-PIG"/>
+                <outlet property="contentViewLeadingToSuperviewConstraint" destination="q68-L1-eGD" id="z31-Mz-ZKN"/>
+                <outlet property="contentViewTrailingToSuperviewConstraint" destination="gBi-Hb-Mr7" id="VZI-F3-zLF"/>
                 <outlet property="statusLabel" destination="gXU-1y-b5M" id="3SM-0c-hjG"/>
                 <outlet property="statusLabelHeightConstraint" destination="V0y-U4-QII" id="Xbn-CE-kP0"/>
             </connections>
