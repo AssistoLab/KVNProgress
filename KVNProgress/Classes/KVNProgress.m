@@ -398,8 +398,12 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
 			  animated:(BOOL)animated
 {
 	if ([self isIndeterminate]) {
-		self.progress = progress;
-		[self setupCircleProgressView];
+		//was inderminate
+		[self showProgress:progress
+					status:self.status
+			backgroundType:self.backgroundType];
+		
+		return;
 	}
 	
 	// Boundry correctness
@@ -450,6 +454,15 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
     const CGFloat EffectColorAlpha = 0.6;
     UIColor *effectColor = tintColor;
     int componentCount = (int)CGColorGetNumberOfComponents(tintColor.CGColor);
+	CGFloat tintAlpha = CGColorGetAlpha(tintColor.CGColor);
+	
+	if (tintAlpha == 0.0f) {
+		return [image applyBlurWithRadius:10.0f
+								tintColor:nil
+					saturationDeltaFactor:1.0f
+								maskImage:nil];
+	}
+	
     if (componentCount == 2) {
         CGFloat b;
         if ([tintColor getWhite:&b alpha:NULL]) {
@@ -462,7 +475,11 @@ static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintCo
             effectColor = [UIColor colorWithRed:r green:g blue:b alpha:EffectColorAlpha];
         }
     }
-    return [image applyBlurWithRadius:10 tintColor:effectColor saturationDeltaFactor:1.0 maskImage:nil];
+	
+    return [image applyBlurWithRadius:10.0f
+							tintColor:effectColor
+				saturationDeltaFactor:1.0f
+							maskImage:nil];
 }
 
 #pragma mark - Information
