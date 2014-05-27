@@ -26,6 +26,7 @@ static CGFloat const KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConst
 static CGFloat const KNVContentViewWithStatusInset = 10.0f;
 static CGFloat const KNVContentViewWithoutStatusInset = 20.0f;
 static CGFloat const KNVContentViewCornerRadius = 8.0f;
+static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 @interface KVNProgress ()
 
@@ -102,14 +103,22 @@ static CGFloat const KNVContentViewCornerRadius = 8.0f;
 
 - (void)setupUI
 {
-	self.circleProgressViewTopToSuperViewConstraint.constant = KNVContentViewWithStatusInset;
-	self.statusLabelBottomToSuperViewConstraint.constant = KNVContentViewWithStatusInset;
-	self.contentViewLeadingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
-	self.contentViewTrailingToSuperviewConstraint.constant = KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
-	
+	[self setupConstraints];
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
 	[self setupBackground];
+}
+
+- (void)setupConstraints
+{
+	CGFloat statusInset = (self.status.length > 0) ? KNVContentViewWithStatusInset : KNVContentViewWithoutStatusInset;
+	CGFloat contentMargin = ([self isFullScreen]) ? KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant : KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+	
+	self.circleProgressViewTopToSuperViewConstraint.constant = statusInset;
+	self.statusLabelBottomToSuperViewConstraint.constant = statusInset;
+	
+	self.contentViewLeadingToSuperviewConstraint.constant = contentMargin;
+	self.contentViewTrailingToSuperviewConstraint.constant = contentMargin;
 }
 
 - (void)setupCircleProgressView
@@ -246,9 +255,6 @@ static CGFloat const KNVContentViewCornerRadius = 8.0f;
 	
 	if ([self isFullScreen])
 	{
-		self.contentViewLeadingToSuperviewConstraint.constant = KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
-		self.contentViewTrailingToSuperviewConstraint.constant = KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
-		
 		self.backgroundImageView.image = backgroundImage;
 		self.backgroundImageView.backgroundColor = backgroundColor;
 		
@@ -274,15 +280,13 @@ static CGFloat const KNVContentViewCornerRadius = 8.0f;
 		self.backgroundImageView.backgroundColor = [UIColor colorWithWhite:0.0f
 																	 alpha:0.2f];
 		
-		self.contentView.layer.cornerRadius = KNVContentViewCornerRadius;
+		self.contentView.layer.cornerRadius = (self.status) ? KNVContentViewCornerRadius : KNVContentViewWithoutStatusCornerRadius;
 		self.contentView.layer.masksToBounds = YES;
 		self.contentView.contentMode = UIViewContentModeCenter;
 		self.contentView.backgroundColor = self.backgroundFillColor;
 		
 		self.contentView.image = backgroundImage;
 	}
-	
-	[self setNeedsUpdateConstraints];
 }
 
 - (void)addViewToViewHierarchyIfNeeded

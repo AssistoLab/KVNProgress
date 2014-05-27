@@ -64,7 +64,7 @@
 					 fullScreen:YES];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[KVNProgress dismiss];
+		[self showProgressFullScreen];
 	});
 }
 
@@ -75,6 +75,21 @@
 					 fullScreen:YES];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[KVNProgress dismiss];
+	});
+}
+
+- (void)showProgressFullScreen
+{
+	[KVNProgress showProgress:0.0f
+					   status:@"Loading with progress..."
+				   fullScreen:YES];
+	[self updateProgress];
+	
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.70f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[KVNProgress updateStatus:@"You can change multiline status text dynamically !"];
+	});
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		[KVNProgress dismiss];
 	});
 }
