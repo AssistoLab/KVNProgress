@@ -461,6 +461,8 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		return;
 	}
 	
+	[UIApplication sharedApplication].keyWindow.userInteractionEnabled = YES;
+	
 	KVNProgress *progressView = [self sharedView];
 	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
@@ -468,7 +470,6 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 						 progressView.alpha = 0.0f;
 					 } completion:^(BOOL finished) {
 						 [progressView removeFromSuperview];
-						 [UIApplication sharedApplication].keyWindow.userInteractionEnabled = YES;
 					 }];
 }
 
