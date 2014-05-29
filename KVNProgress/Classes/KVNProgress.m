@@ -465,12 +465,14 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	
 	KVNProgress *progressView = [self sharedView];
 	
-	[UIView animateWithDuration:KVNFadeAnimationDuration
-					 animations:^{
-						 progressView.alpha = 0.0f;
-					 } completion:^(BOOL finished) {
-						 [progressView removeFromSuperview];
-					 }];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[UIView animateWithDuration:KVNFadeAnimationDuration
+						 animations:^{
+							 progressView.alpha = 0.0f;
+						 } completion:^(BOOL finished) {
+							 [progressView removeFromSuperview];
+						 }];
+	});
 }
 
 #pragma mark - Update
