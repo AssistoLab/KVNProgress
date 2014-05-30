@@ -103,6 +103,8 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 - (void)setupUI
 {
+	self.alpha = 1.0f;
+	
 	[self setupConstraints];
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
@@ -235,7 +237,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 - (void)setupBackground
 {
-	if ([self isVisible]) {
+	if ([self.class isVisible]) {
 		return; // No reload of background when view is showing
 	}
 	
@@ -293,7 +295,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 {
 	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
 	
-	if (![self isVisible]) {
+	if (![self.class isVisible]) {
 		[keyWindow addSubview:self];
 		[keyWindow bringSubviewToFront:self];
 		
@@ -311,10 +313,12 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		self.contentView.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
 		
 		[UIView animateWithDuration:KVNFadeAnimationDuration
+							  delay:0.0f
+							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
 							 self.alpha = 1.0f;
 							 self.contentView.transform = CGAffineTransformIdentity;
-						 }];
+						 } completion:nil];
 	}
 }
 
@@ -441,16 +445,19 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen
 {
+	[self.layer removeAllAnimations];
+	
 	self.progress = progress;
 	self.status = [status copy];
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
 	
-	[self setupUI];
-	
-	[self addViewToViewHierarchyIfNeeded];
-	
-	[UIApplication sharedApplication].keyWindow.userInteractionEnabled = NO;
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self setupUI];
+		[self addViewToViewHierarchyIfNeeded];
+		
+		[UIApplication sharedApplication].keyWindow.userInteractionEnabled = NO;
+	});
 }
 
 #pragma mark - Dimiss
@@ -461,18 +468,20 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		return;
 	}
 	
-	[UIApplication sharedApplication].keyWindow.userInteractionEnabled = YES;
-	
 	KVNProgress *progressView = [self sharedView];
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[UIView animateWithDuration:KVNFadeAnimationDuration
-						 animations:^{
-							 progressView.alpha = 0.0f;
-						 } completion:^(BOOL finished) {
-							 [progressView removeFromSuperview];
-						 }];
-	});
+	[progressView.layer removeAllAnimations];
+	
+	[UIApplication sharedApplication].keyWindow.userInteractionEnabled = YES;
+	
+	[UIView animateWithDuration:KVNFadeAnimationDuration
+						  delay:0.0f
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{
+						 progressView.alpha = 0.0f;
+					 } completion:^(BOOL finished) {
+						 [progressView removeFromSuperview];
+					 }];
 }
 
 #pragma mark - Update
@@ -484,7 +493,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 - (void)updateStatus:(NSString *)status
 {
-	if ([self isVisible]) {
+	if ([self.class isVisible]) {
 		[UIView animateWithDuration:KVNLayoutAnimationDuration
 						 animations:^{
 							 [self setupStatus:status];
@@ -616,14 +625,9 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	return (self.progress == KVNProgressIndeterminate);
 }
 
-- (BOOL)isVisible
-{
-	return (self.superview != nil);
-}
-
 + (BOOL)isVisible
 {
-	return [[self sharedView] isVisible];
+	return [self sharedView].alpha != 0.0f;
 }
 
 #pragma mark - UIAppearance getters

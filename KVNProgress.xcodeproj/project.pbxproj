@@ -250,7 +250,7 @@
 			attributes = {
 				CLASSPREFIX = KVN;
 				LastUpgradeCheck = 0510;
-				ORGANIZATIONNAME = "Kevin Hirsch";
+				ORGANIZATIONNAME = Pinch;
 				TargetAttributes = {
 					0AA0DD071930DFAD00FDD29F = {
 						TestTargetID = 0AA0DCE61930DFAD00FDD29F;
