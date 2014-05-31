@@ -187,6 +187,8 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 															endAngle:GLKMathDegreesToRadians(275.0f)
 														   clockwise:YES];
 	
+	[self cancelCircleAnimation];
+	
 	self.circleProgressLineLayer = [CAShapeLayer layer];
 	self.circleProgressLineLayer.path = circlePath.CGPath;
 	self.circleProgressLineLayer.strokeColor = self.circleStrokeForegroundColor.CGColor;
@@ -280,7 +282,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		
 		self.backgroundImageView.image = [UIImage emptyImage];
 		self.backgroundImageView.backgroundColor = [UIColor colorWithWhite:0.0f
-																	 alpha:0.2f];
+																	 alpha:0.35f];
 		
 		self.contentView.layer.cornerRadius = (self.status) ? KNVContentViewCornerRadius : KNVContentViewWithoutStatusCornerRadius;
 		self.contentView.layer.masksToBounds = YES;
@@ -289,36 +291,57 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		
 		self.contentView.image = backgroundImage;
 	}
+	
+	self.userInteractionEnabled = NO;
 }
 
 - (void)addViewToViewHierarchyIfNeeded
 {
-	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+	UIWindow *currentWindow = nil;
 	
-	if (![self.class isVisible]) {
-		[keyWindow addSubview:self];
-		[keyWindow bringSubviewToFront:self];
+	if(!self.superview) {
+        NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
+        
+        for (UIWindow *window in frontToBackWindows) {
+            if (window.windowLevel == UIWindowLevelNormal) {
+                currentWindow = window;
+                break;
+            }
+		}
+		
+		[currentWindow addSubview:self];
+		[currentWindow bringSubviewToFront:self];
 		
 		self.translatesAutoresizingMaskIntoConstraints = NO;
-		[keyWindow addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
-																		  options:kNilOptions
-																		  metrics:nil
-																			views:@{@"self" : self}]];
-		[keyWindow addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
-																		  options:kNilOptions
-																		  metrics:nil
-																			views:@{@"self" : self}]];
+		[currentWindow addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
+																			  options:kNilOptions
+																			  metrics:nil
+																				views:@{@"self" : self}]];
+		[currentWindow addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
+																			  options:kNilOptions
+																			  metrics:nil
+																				views:@{@"self" : self}]];
+		
+		[UIView animateWithDuration:0.0f
+							  delay:0.0f
+							options:UIViewAnimationOptionBeginFromCurrentState
+						 animations:^{}
+						 completion:nil];
 		
 		self.alpha = 0.0f;
-		self.contentView.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+		self.contentView.transform = CGAffineTransformScale(self.contentView.transform, 1.2f, 1.2f);
 		
 		[UIView animateWithDuration:KVNFadeAnimationDuration
 							  delay:0.0f
-							options:UIViewAnimationOptionBeginFromCurrentState
+							options:(UIViewAnimationOptionAllowUserInteraction |
+									 UIViewAnimationCurveEaseOut)
 						 animations:^{
 							 self.alpha = 1.0f;
 							 self.contentView.transform = CGAffineTransformIdentity;
-						 } completion:nil];
+						 } completion:^(BOOL finished) {
+							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+                             UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
+						 }];
 	}
 }
 
@@ -445,19 +468,13 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen
 {
-	[self.layer removeAllAnimations];
-	
 	self.progress = progress;
 	self.status = [status copy];
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[self setupUI];
-		[self addViewToViewHierarchyIfNeeded];
-		
-		[UIApplication sharedApplication].keyWindow.userInteractionEnabled = NO;
-	});
+	[self setupUI];
+	[self addViewToViewHierarchyIfNeeded];
 }
 
 #pragma mark - Dimiss
@@ -470,17 +487,27 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	
 	KVNProgress *progressView = [self sharedView];
 	
-	[progressView.layer removeAllAnimations];
-	
-	[UIApplication sharedApplication].keyWindow.userInteractionEnabled = YES;
+	progressView.userInteractionEnabled = YES;
 	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
 						  delay:0.0f
-						options:UIViewAnimationOptionBeginFromCurrentState
+						options:(UIViewAnimationCurveEaseIn |
+								 UIViewAnimationOptionAllowUserInteraction)
 					 animations:^{
 						 progressView.alpha = 0.0f;
 					 } completion:^(BOOL finished) {
-						 [progressView removeFromSuperview];
+						 if(progressView.alpha == 0 || progressView.contentView.alpha == 0) {
+							 [progressView cancelCircleAnimation];
+							 [progressView removeFromSuperview];
+							 
+							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+							 
+							 // Tell the rootViewController to update the StatusBar appearance
+							 UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
+							 if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+								 [rootController setNeedsStatusBarAppearanceUpdate];
+							 }
+						 }
 					 }];
 }
 
@@ -546,13 +573,36 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	self.progress = progress;
 }
 
+- (void)cancelCircleAnimation
+{
+	[CATransaction begin];
+    [CATransaction setDisableActions:YES];
+	
+    [self.circleProgressView.layer removeAllAnimations];
+	[self.circleProgressLineLayer removeAllAnimations];
+	[self.circleBackgroundLineLayer removeAllAnimations];
+    
+    self.circleProgressLineLayer.strokeEnd = 0.0f;
+	self.circleBackgroundLineLayer.strokeEnd = 0.0f;
+    
+	if (self.circleProgressLineLayer.superlayer) {
+        [self.circleProgressLineLayer removeFromSuperlayer];
+    }
+	if (self.circleBackgroundLineLayer.superlayer) {
+        [self.circleBackgroundLineLayer removeFromSuperlayer];
+    }
+	
+    self.circleProgressLineLayer = nil;
+	self.circleBackgroundLineLayer = nil;
+    
+    [CATransaction commit];
+}
+
 #pragma mark - Helpers
 
 - (UIImage *)blurredScreenShot
 {
-	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-	
-	return [self blurredScreenShotWithRect:keyWindow.frame];
+	return [self blurredScreenShotWithRect:[UIApplication sharedApplication].keyWindow.frame];
 }
 
 - (UIImage *)blurredScreenShotWithRect:(CGRect)rect
@@ -627,7 +677,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 + (BOOL)isVisible
 {
-	return [self sharedView].alpha != 0.0f;
+	return ([self sharedView].superview != nil);
 }
 
 #pragma mark - UIAppearance getters
