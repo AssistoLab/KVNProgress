@@ -291,8 +291,6 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		
 		self.contentView.image = backgroundImage;
 	}
-	
-	self.userInteractionEnabled = NO;
 }
 
 - (void)addViewToViewHierarchyIfNeeded
@@ -334,7 +332,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		[UIView animateWithDuration:KVNFadeAnimationDuration
 							  delay:0.0f
 							options:(UIViewAnimationOptionAllowUserInteraction |
-									 UIViewAnimationCurveEaseOut)
+									 UIViewAnimationOptionCurveEaseOut)
 						 animations:^{
 							 self.alpha = 1.0f;
 							 self.contentView.transform = CGAffineTransformIdentity;
@@ -487,11 +485,9 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	
 	KVNProgress *progressView = [self sharedView];
 	
-	progressView.userInteractionEnabled = YES;
-	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
 						  delay:0.0f
-						options:(UIViewAnimationCurveEaseIn |
+						options:(UIViewAnimationOptionCurveEaseIn |
 								 UIViewAnimationOptionAllowUserInteraction)
 					 animations:^{
 						 progressView.alpha = 0.0f;
@@ -783,6 +779,17 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	}
 	
 	return _lineWidth;
+}
+
+#pragma mark - HitTest
+
+// Used to block interaction for all views behind
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+	if (CGRectContainsPoint(self.frame, point)) {
+		return self;
+	} else {
+		return nil;
+	}
 }
 
 @end
