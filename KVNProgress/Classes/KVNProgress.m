@@ -55,6 +55,8 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewTopToSuperViewConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelBottomToSuperViewConstraint;
 
+@property (nonatomic) NSArray *constraintsToSuperview;
+
 @end
 
 @implementation KVNProgress
@@ -70,7 +72,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		UINib *nib = [UINib nibWithNibName:@"KVNProgressView"
 									bundle:nil];
 		NSArray *nibViews = [nib instantiateWithOwner:self
-											  options:kNilOptions];
+											  options:0];
 		
 		sharedView = nibViews[0];
 	});
@@ -104,8 +106,6 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 
 - (void)setupUI
 {
-	self.alpha = 1.0f;
-	
 	[self setupConstraints];
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
@@ -304,54 +304,76 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	}
 }
 
-- (void)addViewToViewHierarchyIfNeeded
+- (void)addToCurrentWindow
 {
 	UIWindow *currentWindow = nil;
 	
-	if(!self.superview) {
-		NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
-		
-		for (UIWindow *window in frontToBackWindows) {
-			if (window.windowLevel == UIWindowLevelNormal) {
-				currentWindow = window;
-				break;
-			}
+	NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
+	
+	for (UIWindow *window in frontToBackWindows) {
+		if (window.windowLevel == UIWindowLevelNormal) {
+			currentWindow = window;
+			break;
 		}
-		
-		[currentWindow addSubview:self];
-		[currentWindow bringSubviewToFront:self];
-		
-		self.translatesAutoresizingMaskIntoConstraints = NO;
-		[currentWindow addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
-																			  options:kNilOptions
-																			  metrics:nil
-																				views:@{@"self" : self}]];
-		[currentWindow addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
-																			  options:kNilOptions
-																			  metrics:nil
-																				views:@{@"self" : self}]];
-		
-		[UIView animateWithDuration:0.0f
-							  delay:0.0f
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{}
-						 completion:nil];
-		
-		self.alpha = 0.0f;
-		self.contentView.transform = CGAffineTransformScale(self.contentView.transform, 1.2f, 1.2f);
-		
-		[UIView animateWithDuration:KVNFadeAnimationDuration
-							  delay:0.0f
-							options:(UIViewAnimationOptionAllowUserInteraction |
-									 UIViewAnimationOptionCurveEaseOut)
-						 animations:^{
-							 self.alpha = 1.0f;
-							 self.contentView.transform = CGAffineTransformIdentity;
-						 } completion:^(BOOL finished) {
-							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-							 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
-						 }];
 	}
+	
+	if (self.superview != currentWindow) {
+		[self addToView:currentWindow];
+	}
+}
+
+- (void)addToView:(UIView *)superview
+{
+	if (self.superview) {
+		[self.superview removeConstraints:self.constraintsToSuperview];
+		[self removeFromSuperview];
+	}
+	
+	[superview addSubview:self];
+	[superview bringSubviewToFront:self];
+	
+	NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self(height)]|"
+																		   options:0
+																		   metrics:@{@"height" : @(CGRectGetHeight(superview.bounds))}
+																			 views:@{@"self" : self}];
+	NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self(width)]|"
+																			 options:0
+																			 metrics:@{@"width" : @(CGRectGetWidth(superview.bounds))}
+																			   views:@{@"self" : self}];
+	
+	self.constraintsToSuperview = [verticalConstraints arrayByAddingObjectsFromArray:horizontalConstraints];
+	
+	self.translatesAutoresizingMaskIntoConstraints = NO;
+	[superview addConstraints:verticalConstraints];
+	[superview addConstraints:horizontalConstraints];
+	
+	[self layoutIfNeeded];
+	
+	self.alpha = 0.0f;
+}
+
+- (void)animateAppearance
+{
+	[UIView animateWithDuration:0.0f
+						  delay:0.0f
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{}
+					 completion:nil];
+	
+	self.alpha = 0.0f;
+	self.contentView.transform = CGAffineTransformScale(self.contentView.transform, 1.2f, 1.2f);
+	
+	[UIView animateWithDuration:KVNFadeAnimationDuration
+						  delay:0.0f
+						options:(UIViewAnimationOptionAllowUserInteraction |
+								 UIViewAnimationOptionCurveEaseOut)
+					 animations:^{
+						 self.alpha = 1.0f;
+						 self.contentView.transform = CGAffineTransformIdentity;
+					 } completion:^(BOOL finished) {
+						 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+						 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
+					 }];
 }
 
 #pragma mark - Circle progress animations
@@ -411,7 +433,19 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	[[self sharedView] showProgress:KVNProgressIndeterminate
 							 status:status
 					 backgroundType:backgroundType
-						 fullScreen:fullScreen];
+						 fullScreen:fullScreen
+							   view:nil];
+}
+
++ (void)showWithStatus:(NSString *)status
+		backgroundType:(KVNProgressBackgroundType)backgroundType
+				  view:(UIView *)view
+{
+	[[self sharedView] showProgress:KVNProgressIndeterminate
+							 status:status
+					 backgroundType:backgroundType
+						 fullScreen:NO
+							   view:view];
 }
 
 #pragma mark - Determinate progress methods
@@ -467,7 +501,8 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	[[self sharedView] showProgress:progress
 							 status:status
 					 backgroundType:backgroundType
-						 fullScreen:fullScreen];
+						 fullScreen:fullScreen
+							   view:nil];
 }
 
 #pragma mark - Base progress instance method
@@ -476,14 +511,26 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 			  status:(NSString *)status
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen
+				view:(UIView *)superview
 {
+	if (self.superview) {
+		return;
+	}
+	
 	self.progress = progress;
 	self.status = [status copy];
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
 	
 	[self setupUI];
-	[self addViewToViewHierarchyIfNeeded];
+	
+	if (superview) {
+		[self addToView:superview];
+	} else {
+		[self addToCurrentWindow];
+	}
+	
+	[self animateAppearance];
 }
 
 #pragma mark - Dimiss
@@ -552,7 +599,8 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		[self showProgress:progress
 					status:self.status
 			backgroundType:self.backgroundType
-				fullScreen:self.fullScreen];
+				fullScreen:self.fullScreen
+					  view:self.superview];
 		
 		return;
 	}
