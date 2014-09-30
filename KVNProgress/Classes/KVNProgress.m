@@ -20,13 +20,14 @@ static CGFloat const KVNTextUpdateAnimationDuration = 0.5f;
 static CGFloat const KVNInfiniteLoopAnimationDuration = 1.0f;
 static CGFloat const KVNProgressAnimationDuration = 0.25f;
 static CGFloat const KVNProgressIndeterminate = CGFLOAT_MAX;
-static CGFloat const KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant = 20.0f;
-static CGFloat const KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 0.0f;
-static CGFloat const KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 55.0f;
-static CGFloat const KNVContentViewWithStatusInset = 10.0f;
-static CGFloat const KNVContentViewWithoutStatusInset = 20.0f;
-static CGFloat const KNVContentViewCornerRadius = 8.0f;
-static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
+static CGFloat const KVNCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant = 20.0f;
+static CGFloat const KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 0.0f;
+static CGFloat const KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 55.0f;
+static CGFloat const KVNContentViewWithStatusInset = 10.0f;
+static CGFloat const KVNContentViewWithoutStatusInset = 20.0f;
+static CGFloat const KVNContentViewCornerRadius = 8.0f;
+static CGFloat const KVNContentViewWithoutStatusCornerRadius = 15.0f;
+static CGFloat const KVNAlertViewWidth = 270.0f;
 
 @interface KVNProgress ()
 
@@ -81,7 +82,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    if (self = [super initWithCoder:aDecoder]) {
+	if (self = [super initWithCoder:aDecoder]) {
 		// Appearance
 		_backgroundFillColor = [UIColor colorWithWhite:1.0f alpha:0.85f];
 		_backgroundTintColor = [UIColor whiteColor];
@@ -94,9 +95,9 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		_statusFont = [UIFont systemFontOfSize:17.0f];
 		
 		_lineWidth = 2.0f;
-    }
+	}
 	
-    return self;
+	return self;
 }
 
 #pragma mark - UI
@@ -113,8 +114,18 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 - (void)setupConstraints
 {
-	CGFloat statusInset = (self.status.length > 0) ? KNVContentViewWithStatusInset : KNVContentViewWithoutStatusInset;
-	CGFloat contentMargin = ([self isFullScreen]) ? KNVContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant : KNVContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+	CGFloat statusInset = (self.status.length > 0) ? KVNContentViewWithStatusInset : KVNContentViewWithoutStatusInset;
+	CGFloat contentMargin = ([self isFullScreen]) ? KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant : KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+	
+	if ([self isFullScreen]) {
+		contentMargin = KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+	} else {
+		CGFloat contentWidth = CGRectGetWidth([UIScreen mainScreen].bounds) - (2 * KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant);
+		
+		if (contentWidth > KVNAlertViewWidth) {
+			contentMargin = (CGRectGetWidth([UIScreen mainScreen].bounds) - KVNAlertViewWidth) / 2.0f;
+		}
+	}
 	
 	self.circleProgressViewTopToSuperViewConstraint.constant = statusInset;
 	self.statusLabelBottomToSuperViewConstraint.constant = statusInset;
@@ -228,7 +239,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	self.statusLabel.font = self.statusFont;
 	self.statusLabel.hidden = !showStatus;
 	
-	self.circleProgressViewToStatusLabelVerticalSpaceConstraint.constant = (showStatus) ? KNVCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant : 0.0f;
+	self.circleProgressViewToStatusLabelVerticalSpaceConstraint.constant = (showStatus) ? KVNCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant : 0.0f;
 	
 	CGSize maximumLabelSize = CGSizeMake(CGRectGetWidth(self.statusLabel.bounds), CGFLOAT_MAX);
 	CGSize statusLabelSize = [self.statusLabel sizeThatFits:maximumLabelSize];
@@ -270,8 +281,8 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	else
 	{
 		if (self.status.length == 0) {
-			self.circleProgressViewTopToSuperViewConstraint.constant = KNVContentViewWithoutStatusInset;
-			self.statusLabelBottomToSuperViewConstraint.constant = KNVContentViewWithoutStatusInset;
+			self.circleProgressViewTopToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
+			self.statusLabelBottomToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
 			
 			CGFloat contentViewHeight = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
 			CGFloat screenSize = CGRectGetWidth([UIScreen mainScreen].bounds);
@@ -284,7 +295,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 		self.backgroundImageView.backgroundColor = [UIColor colorWithWhite:0.0f
 																	 alpha:0.35f];
 		
-		self.contentView.layer.cornerRadius = (self.status) ? KNVContentViewCornerRadius : KNVContentViewWithoutStatusCornerRadius;
+		self.contentView.layer.cornerRadius = (self.status) ? KVNContentViewCornerRadius : KVNContentViewWithoutStatusCornerRadius;
 		self.contentView.layer.masksToBounds = YES;
 		self.contentView.contentMode = UIViewContentModeCenter;
 		self.contentView.backgroundColor = self.backgroundFillColor;
@@ -298,13 +309,13 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	UIWindow *currentWindow = nil;
 	
 	if(!self.superview) {
-        NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
-        
-        for (UIWindow *window in frontToBackWindows) {
-            if (window.windowLevel == UIWindowLevelNormal) {
-                currentWindow = window;
-                break;
-            }
+		NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
+		
+		for (UIWindow *window in frontToBackWindows) {
+			if (window.windowLevel == UIWindowLevelNormal) {
+				currentWindow = window;
+				break;
+			}
 		}
 		
 		[currentWindow addSubview:self];
@@ -338,7 +349,7 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 							 self.contentView.transform = CGAffineTransformIdentity;
 						 } completion:^(BOOL finished) {
 							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-                             UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
+							 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
 						 }];
 	}
 }
@@ -347,14 +358,14 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 
 - (void)animateCircleWithInfiniteLoop
 {
-    CABasicAnimation* rotationAnimation;
-    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-    rotationAnimation.toValue = @(M_PI * 2.0f * KVNInfiniteLoopAnimationDuration);
-    rotationAnimation.duration = KVNInfiniteLoopAnimationDuration;
-    rotationAnimation.cumulative = YES;
-    rotationAnimation.repeatCount = HUGE_VALF;
+	CABasicAnimation* rotationAnimation;
+	rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+	rotationAnimation.toValue = @(M_PI * 2.0f * KVNInfiniteLoopAnimationDuration);
+	rotationAnimation.duration = KVNInfiniteLoopAnimationDuration;
+	rotationAnimation.cumulative = YES;
+	rotationAnimation.repeatCount = HUGE_VALF;
 	
-    [self.circleProgressView.layer addAnimation:rotationAnimation
+	[self.circleProgressView.layer addAnimation:rotationAnimation
 										 forKey:@"rotationAnimation"];
 }
 
@@ -547,8 +558,8 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 	}
 	
 	// Boundry correctness
-    progress = MIN(progress, 1.0f);
-    progress = MAX(progress, 0.0f);
+	progress = MIN(progress, 1.0f);
+	progress = MAX(progress, 0.0f);
 	
 	if (animated) {
 		CABasicAnimation *progressAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
@@ -572,26 +583,26 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 - (void)cancelCircleAnimation
 {
 	[CATransaction begin];
-    [CATransaction setDisableActions:YES];
+	[CATransaction setDisableActions:YES];
 	
-    [self.circleProgressView.layer removeAllAnimations];
+	[self.circleProgressView.layer removeAllAnimations];
 	[self.circleProgressLineLayer removeAllAnimations];
 	[self.circleBackgroundLineLayer removeAllAnimations];
-    
-    self.circleProgressLineLayer.strokeEnd = 0.0f;
-	self.circleBackgroundLineLayer.strokeEnd = 0.0f;
-    
-	if (self.circleProgressLineLayer.superlayer) {
-        [self.circleProgressLineLayer removeFromSuperlayer];
-    }
-	if (self.circleBackgroundLineLayer.superlayer) {
-        [self.circleBackgroundLineLayer removeFromSuperlayer];
-    }
 	
-    self.circleProgressLineLayer = nil;
+	self.circleProgressLineLayer.strokeEnd = 0.0f;
+	self.circleBackgroundLineLayer.strokeEnd = 0.0f;
+	
+	if (self.circleProgressLineLayer.superlayer) {
+		[self.circleProgressLineLayer removeFromSuperlayer];
+	}
+	if (self.circleBackgroundLineLayer.superlayer) {
+		[self.circleBackgroundLineLayer removeFromSuperlayer];
+	}
+	
+	self.circleProgressLineLayer = nil;
 	self.circleBackgroundLineLayer = nil;
-    
-    [CATransaction commit];
+	
+	[CATransaction commit];
 }
 
 #pragma mark - Helpers
@@ -621,9 +632,9 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 - (UIImage *)applyTintEffectWithColor:(UIColor *)tintColor
 								image:(UIImage *)image
 {
-    const CGFloat EffectColorAlpha = 0.6;
-    UIColor *effectColor = tintColor;
-    int componentCount = (int)CGColorGetNumberOfComponents(tintColor.CGColor);
+	const CGFloat EffectColorAlpha = 0.6;
+	UIColor *effectColor = tintColor;
+	int componentCount = (int)CGColorGetNumberOfComponents(tintColor.CGColor);
 	CGFloat tintAlpha = CGColorGetAlpha(tintColor.CGColor);
 	
 	if (tintAlpha == 0.0f) {
@@ -633,20 +644,20 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 								maskImage:nil];
 	}
 	
-    if (componentCount == 2) {
-        CGFloat b;
-        if ([tintColor getWhite:&b alpha:NULL]) {
-            effectColor = [UIColor colorWithWhite:b alpha:EffectColorAlpha];
-        }
-    }
-    else {
-        CGFloat r, g, b;
-        if ([tintColor getRed:&r green:&g blue:&b alpha:NULL]) {
-            effectColor = [UIColor colorWithRed:r green:g blue:b alpha:EffectColorAlpha];
-        }
-    }
+	if (componentCount == 2) {
+		CGFloat b;
+		if ([tintColor getWhite:&b alpha:NULL]) {
+			effectColor = [UIColor colorWithWhite:b alpha:EffectColorAlpha];
+		}
+	}
+	else {
+		CGFloat r, g, b;
+		if ([tintColor getRed:&r green:&g blue:&b alpha:NULL]) {
+			effectColor = [UIColor colorWithRed:r green:g blue:b alpha:EffectColorAlpha];
+		}
+	}
 	
-    return [image applyBlurWithRadius:10.0f
+	return [image applyBlurWithRadius:10.0f
 							tintColor:effectColor
 				saturationDeltaFactor:1.0f
 							maskImage:nil];
@@ -784,12 +795,9 @@ static CGFloat const KNVContentViewWithoutStatusCornerRadius = 15.0f;
 #pragma mark - HitTest
 
 // Used to block interaction for all views behind
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-	if (CGRectContainsPoint(self.frame, point)) {
-		return self;
-	} else {
-		return nil;
-	}
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+	return (CGRectContainsPoint(self.frame, point)) ? self : nil;
 }
 
 @end
