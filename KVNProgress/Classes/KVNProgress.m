@@ -155,12 +155,6 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		 */
 		[subLayer removeFromSuperlayer];
 	}
-	
-	if ([self isIndeterminate]) {
-		[self setupInfiniteCircle];
-	} else {
-		[self setupProgressCircle];
-	}
 }
 
 - (void)setupInfiniteCircle
@@ -352,6 +346,15 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.alpha = 0.0f;
 }
 
+- (void)animateUI
+{
+	if ([self isIndeterminate]) {
+		[self setupInfiniteCircle];
+	} else {
+		[self setupProgressCircle];
+	}
+}
+
 - (void)animateAppearance
 {
 	[UIView animateWithDuration:0.0f
@@ -530,7 +533,13 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		[self addToCurrentWindow];
 	}
 	
-	[self animateAppearance];
+	// FIXME: find a way to wait for the views to be added to the window vefore launching the animations
+	// (Fix to make the animations work fine)
+	__block KVNProgress *__blockSelf = self;
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[__blockSelf animateUI];
+		[__blockSelf animateAppearance];
+	});
 }
 
 #pragma mark - Dimiss
