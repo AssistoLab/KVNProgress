@@ -10,9 +10,9 @@
 
 typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 	/** Don't allow user interactions and show a solid color background */
-    KVNProgressBackgroundTypeSolid,
+	KVNProgressBackgroundTypeSolid,
 	/** Don't allow user interactions and show a blurred background */
-    KVNProgressBackgroundTypeBlurred
+	KVNProgressBackgroundTypeBlurred
 };
 
 @interface KVNProgress : UIView
@@ -42,19 +42,19 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 
 /** Show an indeterminate progress view with blurred background and no status (not in fullscreen). */
 + (void)show NS_AVAILABLE_IOS(7_0);
-/** 
+/**
  Show an indeterminate progress view with blurred background and no status.
  @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
  */
 + (void)showFullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
-/** 
+/**
  Show an indeterminate progress view with specified background and no status.
  @param backgroundType The view background type. See KVNProgressBackgroundType.
  @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
  */
 + (void)showWithBackgroundType:(KVNProgressBackgroundType)backgroundType
 					fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
-/** 
+/**
  Show an indeterminate progress view with blurred background and specified status (not in fullscreen).
  @param status The status to show on the displayed view.
  */
@@ -66,7 +66,7 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
  */
 + (void)showWithStatus:(NSString *)status
 			fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
-/** 
+/**
  Show an indeterminate progress view with specified background and specified status.
  @param status The status to show on the displayed view.
  @param backgroundType The view background type. See KVNProgressBackgroundType.
@@ -76,9 +76,19 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 		backgroundType:(KVNProgressBackgroundType)backgroundType
 			fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
 
+/**
+ Show an indeterminate progress view with specified background and specified status.
+ @param status The status to show on the displayed view.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param view The superview of the progress view.
+ */
++ (void)showWithStatus:(NSString *)status
+		backgroundType:(KVNProgressBackgroundType)backgroundType
+				  view:(UIView *)view;
+
 #pragma mark - Determinate progress methods
 
-/** 
+/**
  Show a specified progress view with blurred background and no status (not in fullscreen).
  @param progress The progress to display between 0 and 1.
  */
@@ -99,13 +109,13 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 + (void)showProgress:(CGFloat)progress
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
-/** 
+/**
  Show a specified progress view with blurred background and specified status (not in fullscreen).
  @param status The status to show on the displayed view.
  */
 + (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status NS_AVAILABLE_IOS(7_0);
-/** 
+/**
  Show a specified progress view with blurred background and specified status.
  @param progress The progress to display between 0 and 1.
  @param status The status to show on the displayed view.
@@ -114,7 +124,7 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 + (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status
 		  fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
-/** 
+/**
  Show a full screen specified progress view with specified background and specified status.
  @param progress The progress to display between 0 and 1.
  @param status The status to show on the displayed view.
