@@ -533,7 +533,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		[self addToCurrentWindow];
 	}
 	
-	// FIXME: find a way to wait for the views to be added to the window vefore launching the animations
+	// FIXME: find a way to wait for the views to be added to the window before launching the animations
 	// (Fix to make the animations work fine)
 	__block KVNProgress *__blockSelf = self;
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -550,6 +550,15 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		return;
 	}
 	
+	// FIXME: find a way to wait for the views to be added to the window before launching the animations
+	// (Fix to make the dismiss work fine)
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self dismissAnimated];
+	});
+}
+
++ (void)dismissAnimated
+{
 	KVNProgress *progressView = [self sharedView];
 	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
