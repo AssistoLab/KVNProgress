@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
     :tag => s.version.to_s
   }
 
-  s.source_files  = "Classes/*.{h,m}", "Categories/*.{h,m}"
+  s.source_files  = "KVNProgress/Classes", "KVNProgress/Classes/**/*.{h,m}", "KVNProgress/Categories", "KVNProgress/Categories/**/*.{h,m}"
   s.resource_bundle = { 'MapBox' => "KVNProgress/Resources/*.{png,xib}" }
 
   s.frameworks = "QuartzCore", "GLKit"
