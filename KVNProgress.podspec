@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "KVNProgress"
-  s.version      = "1.4.4"
+  s.version      = "1.4.5"
   s.summary      = "A full screen progress view for iOS 7"
   
   s.homepage     = "https://github.com/kevin-hirsch/KVNProgress"
@@ -11,12 +11,12 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.source = { 
     :git => "https://github.com/kevin-hirsch/KVNProgress.git", 
-    :commit => "3cd24b3ea9235e8526147cc0d4de27373239732c", 
+    :commit => "54404476ed454e988d127f0600a0a960bf319d59", 
     :tag => s.version.to_s
   }
 
   s.source_files  = "KVNProgress/Classes", "KVNProgress/Classes/**/*.{h,m}", "KVNProgress/Categories", "KVNProgress/Categories/**/*.{h,m}"
-  s.resource_bundle = { 'MapBox' => "KVNProgress/Resources/*.{png,xib}" }
+  s.resource_bundle = { 'Resources' => "KVNProgress/Resources/*.{png,xib}" }
 
   s.frameworks = "QuartzCore", "GLKit"
   s.requires_arc = true
