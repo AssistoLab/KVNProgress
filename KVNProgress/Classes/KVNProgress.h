@@ -15,6 +15,9 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 	KVNProgressBackgroundTypeBlurred
 };
 
+/** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
+static NSTimeInterval const KVNMinimumDisplayTime = 0.3;
+
 @interface KVNProgress : UIView
 
 #pragma mark - Appearance
@@ -138,8 +141,19 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 
 #pragma mark - Dimiss
 
-/** Dismiss progress view with a fade animation. Does nothing if the progress view is not on screen. */
+/** 
+ Dismiss progress view with a fade animation. Does nothing if the progress view is not on screen.
+ <br/><br/><b>Remark:</b> You may want to use <code>dismissWithCompletion:</code> if <code>KVNMinimumDisplayTime</code> is greater than zero.
+ @see dismissWithCompletion:
+ */
 + (void)dismiss NS_AVAILABLE_IOS(7_0);
+
+/**
+ Dismiss progress view with a fade animation and call a completion handler when the dismiss process is finished. Does nothing if the progress view is not on screen.
+ <br/><br/><b>Remark:</b> This method can be usefull if the <code>KVNMinimumDisplayTime</code> constant is greater than zero to ensure the view is correctly dismissed.
+ @param completion The completion handler called after the view is completely dismissed
+ */
++ (void)dismissWithCompletion:(void (^)(void))completion NS_AVAILABLE_IOS(7_0);
 
 #pragma mark - Update
 

@@ -35,6 +35,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 @property (nonatomic) KVNProgressBackgroundType backgroundType;
 @property (nonatomic) NSString *status;
 @property (nonatomic, getter = isFullScreen) BOOL fullScreen;
+@property (nonatomic) NSDate *showActionTrigerredDate;
 
 // UI
 @property (nonatomic, weak) IBOutlet UIImageView *contentView;
@@ -366,10 +367,13 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.alpha = 0.0f;
 	self.contentView.transform = CGAffineTransformScale(self.contentView.transform, 1.2f, 1.2f);
 	
+	self.showActionTrigerredDate = [NSDate date];
+	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
 						  delay:0.0f
-						options:(UIViewAnimationOptionAllowUserInteraction |
-								 UIViewAnimationOptionCurveEaseOut)
+						options:(UIViewAnimationOptionAllowUserInteraction
+								 | UIViewAnimationOptionCurveEaseOut
+								 | UIViewAnimationOptionBeginFromCurrentState)
 					 animations:^{
 						 self.alpha = 1.0f;
 						 self.contentView.transform = CGAffineTransformIdentity;
@@ -516,10 +520,6 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		  fullScreen:(BOOL)fullScreen
 				view:(UIView *)superview
 {
-	if (self.superview) {
-		return;
-	}
-	
 	self.progress = progress;
 	self.status = [status copy];
 	self.backgroundType = backgroundType;
@@ -527,24 +527,33 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	
 	[self setupUI];
 	
-	if (superview) {
-		[self addToView:superview];
+	if (self.superview) {
+		[self animateUI];
 	} else {
-		[self addToCurrentWindow];
+		if (superview) {
+			[self addToView:superview];
+		} else {
+			[self addToCurrentWindow];
+		}
+		
+		// FIXME: find a way to wait for the views to be added to the window before launching the animations
+		// (Fix to make the animations work fine)
+		__block KVNProgress *__blockSelf = self;
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+			[__blockSelf animateUI];
+			[__blockSelf animateAppearance];
+		});
 	}
-	
-	// FIXME: find a way to wait for the views to be added to the window before launching the animations
-	// (Fix to make the animations work fine)
-	__block KVNProgress *__blockSelf = self;
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[__blockSelf animateUI];
-		[__blockSelf animateAppearance];
-	});
 }
 
 #pragma mark - Dimiss
 
 + (void)dismiss
+{
+	[self dismissWithCompletion:nil];
+}
+
++ (void)dismissWithCompletion:(void (^)(void))completion
 {
 	if (![self isVisible]) {
 		return;
@@ -553,18 +562,27 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	// FIXME: find a way to wait for the views to be added to the window before launching the animations
 	// (Fix to make the dismiss work fine)
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[self dismissAnimated];
+		[self dismissAnimatedWithCompletion:completion];
 	});
 }
 
-+ (void)dismissAnimated
++ (void)dismissAnimatedWithCompletion:(void (^)(void))completion
 {
 	KVNProgress *progressView = [self sharedView];
 	
+	NSTimeInterval timeIntervalSinceShow = fabs([progressView.showActionTrigerredDate timeIntervalSinceNow]);
+	NSTimeInterval delay = 0;
+	
+	if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
+		// The hud hasn't showed enough time
+		delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
+	}
+	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
-						  delay:0.0f
-						options:(UIViewAnimationOptionCurveEaseIn |
-								 UIViewAnimationOptionAllowUserInteraction)
+						  delay:delay
+						options:(UIViewAnimationOptionCurveEaseIn
+								 | UIViewAnimationOptionAllowUserInteraction
+								 | UIViewAnimationOptionBeginFromCurrentState)
 					 animations:^{
 						 progressView.alpha = 0.0f;
 					 } completion:^(BOOL finished) {
@@ -578,6 +596,12 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 							 UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
 							 if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
 								 [rootController setNeedsStatusBarAppearanceUpdate];
+							 }
+							 
+							 if (completion) {
+								 dispatch_async(dispatch_get_main_queue(), ^{
+									 completion();
+								 });
 							 }
 						 }
 					 }];
@@ -613,7 +637,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 			  animated:(BOOL)animated
 {
 	if ([self isIndeterminate]) {
-		//was inderminate
+		// was inderminate
 		[self showProgress:progress
 					status:self.status
 			backgroundType:self.backgroundType
