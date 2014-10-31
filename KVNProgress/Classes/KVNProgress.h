@@ -17,6 +17,8 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 
 /** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
 static NSTimeInterval const KVNMinimumDisplayTime = 0.3;
+/** The minimum time (in seconds) the success checkmark will be displayed. */
+static NSTimeInterval const KVNMinimumSuccessDisplayTime = 2.0;
 
 @interface KVNProgress : UIView
 
@@ -32,6 +34,10 @@ static NSTimeInterval const KVNMinimumDisplayTime = 0.3;
 @property (nonatomic) UIColor *circleStrokeBackgroundColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 /** background color of the circle. */
 @property (nonatomic) UIColor *circleFillBackgroundColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+/** color of the circle and checkmark when showing success. */
+@property (nonatomic) UIColor *successColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+/** color of the circle and checkmark when showing error. */
+@property (nonatomic) UIColor *errorColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 /** Color of the status label. */
 @property (nonatomic) UIColor *statusColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 /** Font of the status label. */
@@ -139,9 +145,57 @@ static NSTimeInterval const KVNMinimumDisplayTime = 0.3;
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
 
+#pragma mark - Success methods
+
+/** Show a sucess view with blurred background and no status (not in fullscreen). */
++ (void)showSuccess NS_AVAILABLE_IOS(7_0);
+/**
+ Show a sucess view with blurred background and no status.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showSuccessFullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/**
+ Show a sucess view with specified background and no status.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showSuccessWithBackgroundType:(KVNProgressBackgroundType)backgroundType
+						   fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/**
+ Show a sucess view with blurred background and specified status (not in fullscreen).
+ @param status The status to show on the displayed view.
+ */
++ (void)showSuccessWithStatus:(NSString *)status NS_AVAILABLE_IOS(7_0);
+/**
+ Show a sucess view with blurred background and specified status.
+ @param status The status to show on the displayed view.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showSuccessWithStatus:(NSString *)status
+				   fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+/**
+ Show a sucess view with specified background and specified status.
+ @param status The status to show on the displayed view.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param fullScreen Boolean that tells if view has to be fullscreen or display as a basic HUD.
+ */
++ (void)showSuccessWithStatus:(NSString *)status
+			   backgroundType:(KVNProgressBackgroundType)backgroundType
+				   fullScreen:(BOOL)fullScreen NS_AVAILABLE_IOS(7_0);
+
+/**
+ Show a sucess view with specified background and specified status.
+ @param status The status to show on the displayed view.
+ @param backgroundType The view background type. See KVNProgressBackgroundType.
+ @param view The superview of the progress view.
+ */
++ (void)showSuccessWithStatus:(NSString *)status
+			   backgroundType:(KVNProgressBackgroundType)backgroundType
+						 view:(UIView *)view;
+
 #pragma mark - Dimiss
 
-/** 
+/**
  Dismiss progress view with a fade animation. Does nothing if the progress view is not on screen.
  <br/><br/><b>Remark:</b> You may want to use <code>dismissWithCompletion:</code> if <code>KVNMinimumDisplayTime</code> is greater than zero.
  @see dismissWithCompletion:
