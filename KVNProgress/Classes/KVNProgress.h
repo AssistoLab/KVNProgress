@@ -71,7 +71,7 @@ static NSTimeInterval const KVNMinimumErrorDisplayTime = 1.3;
  <br/><br/><code><b>KVNProgressViewParameterFullScreen</b></code>:<br/> to precise full screen or not HUD (<code>NSNumber</code> value from a boolean). <br/><i>Omit to set default non full screen.</i>
  <br/><br/><code><b>KVNProgressViewParameterBackgroundType</b></code>:<br/> to precise blurred or solid HUD background (<code>NSNumber</code> value from a <code>KVNProgressBackgroundType</code> enumeration value). <br/><i>Omit to set default blurred background type.</i>
  <br/><br/><code><b>KVNProgressViewParameterStatus</b></code>:<br/> to precise the HUD status (<code>NSString</code> value). <br/><i>Omit to set default no status.</i>
- <br/><br/><code><b>KVNProgressViewParameterSuperview</b></code>:<br/> to precise blurred or solid HUD background (<code>NSNumber</code> value from a <code>KVNProgressBackgroundType</code> enumeration value). <br/><i>Omit to set default current window superview.</i>
+ <br/><br/><code><b>KVNProgressViewParameterSuperview</b></code>:<br/> to precise the superview of the HUD. <br/><i>Omit to set default current window superview.</i>
  <br/><br/>Example:
  <br/>
  <pre>
