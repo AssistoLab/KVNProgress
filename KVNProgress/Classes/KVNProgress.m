@@ -75,7 +75,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 
 @implementation KVNProgress
 
-#pragma mark - Shared view
+#pragma mark - Shared
 
 + (KVNProgress *)sharedView
 {
@@ -117,6 +117,189 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	}
 	
 	return self;
+}
+
+#pragma mark - Loading
+
++ (void)show
+{
+	[self showWithStatus:nil];
+}
+
++ (void)showWithStatus:(NSString *)status
+{
+	[self showWithParameters:@{KVNProgressViewParameterStatus: status,
+							   KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+							   KVNProgressViewParameterFullScreen: @(NO)}];
+}
+
++ (void)showWithParameters:(NSDictionary *)parameters
+{
+	[self showHUDWithProgress:KVNProgressIndeterminate
+						style:KVNProgressStyleProgress
+				   parameters:parameters];
+}
+
+#pragma mark - Progress
+
++ (void)showProgress:(CGFloat)progress
+{
+	[self showProgress:progress
+				status:nil];
+}
+
++ (void)showProgress:(CGFloat)progress
+			  status:(NSString*)status
+{
+	[self showProgress:progress
+			parameters:@{KVNProgressViewParameterStatus: status,
+						 KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+						 KVNProgressViewParameterFullScreen: @(NO)}];
+}
+
++ (void)showProgress:(CGFloat)progress
+		  parameters:(NSDictionary *)parameters
+{
+	[self showHUDWithProgress:progress
+						style:KVNProgressStyleProgress
+				   parameters:parameters];
+}
+
+#pragma mark - Success
+
++ (void)showSuccess
+{
+	[self showSuccessWithStatus:nil];
+}
+
++ (void)showSuccessWithStatus:(NSString *)status
+{
+	[self showSuccessWithParameters:@{KVNProgressViewParameterStatus: status,
+									  KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+									  KVNProgressViewParameterFullScreen: @(NO)}];
+}
+
++ (void)showSuccessWithParameters:(NSDictionary *)parameters
+{
+	[self showHUDWithProgress:KVNProgressIndeterminate
+						style:KVNProgressStyleSuccess
+				   parameters:parameters];
+}
+
+#pragma mark - Show
+
++ (void)showHUDWithProgress:(CGFloat)progress
+					  style:(KVNProgressStyle)style
+				 parameters:(NSDictionary *)parameters
+{
+	[[self sharedView] showProgress:progress
+							 status:parameters[KVNProgressViewParameterStatus]
+							  style:style
+					 backgroundType:(KVNProgressBackgroundType)parameters[KVNProgressViewParameterBackgroundType]
+						 fullScreen:[parameters[KVNProgressViewParameterFullScreen] boolValue]
+							   view:parameters[KVNProgressViewParameterSuperview]];
+}
+
+- (void)showProgress:(CGFloat)progress
+			  status:(NSString *)status
+			   style:(KVNProgressStyle)style
+	  backgroundType:(KVNProgressBackgroundType)backgroundType
+		  fullScreen:(BOOL)fullScreen
+				view:(UIView *)superview
+{
+	self.progress = progress;
+	self.status = [status copy];
+	self.style = style;
+	self.backgroundType = backgroundType;
+	self.fullScreen = fullScreen;
+	
+	[self setupUI];
+	
+	if (self.superview) {
+		[self animateUI];
+	} else {
+		if (superview) {
+			[self addToView:superview];
+		} else {
+			[self addToCurrentWindow];
+		}
+		
+		// FIXME: find a way to wait for the views to be added to the window before launching the animations
+		// (Fix to make the animations work fine)
+		__block KVNProgress *__blockSelf = self;
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+			[__blockSelf animateUI];
+			[__blockSelf animateAppearance];
+		});
+	}
+	
+	if (self.style != KVNProgressStyleProgress) {
+		__block KVNProgress *__blockSelf = self;
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(KVNMinimumSuccessDisplayTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+			[__blockSelf.class dismiss];
+		});
+	}
+}
+
+#pragma mark - Dimiss
+
++ (void)dismiss
+{
+	[self dismissWithCompletion:nil];
+}
+
++ (void)dismissWithCompletion:(void (^)(void))completion
+{
+	if (![self isVisible]) {
+		return;
+	}
+	
+	// FIXME: find a way to wait for the views to be added to the window before launching the animations
+	// (Fix to make the dismiss work fine)
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self dismissAnimatedWithCompletion:completion];
+	});
+}
+
++ (void)dismissAnimatedWithCompletion:(void (^)(void))completion
+{
+	KVNProgress *progressView = [self sharedView];
+	
+	NSTimeInterval timeIntervalSinceShow = fabs([progressView.showActionTrigerredDate timeIntervalSinceNow]);
+	NSTimeInterval delay = 0;
+	
+	if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
+		// The hud hasn't showed enough time
+		delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
+	}
+	
+	[UIView animateWithDuration:KVNFadeAnimationDuration
+						  delay:delay
+						options:(UIViewAnimationOptionCurveEaseIn
+								 | UIViewAnimationOptionAllowUserInteraction
+								 | UIViewAnimationOptionBeginFromCurrentState)
+					 animations:^{
+						 progressView.alpha = 0.0f;
+					 } completion:^(BOOL finished) {
+						 if(progressView.alpha == 0 || progressView.contentView.alpha == 0) {
+							 [progressView cancelCircleAnimation];
+							 [progressView removeFromSuperview];
+							 
+							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+							 
+							 // Tell the rootViewController to update the StatusBar appearance
+							 UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
+							 if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+								 [rootController setNeedsStatusBarAppearanceUpdate];
+							 }
+							 
+							 if (completion) {
+								 dispatch_async(dispatch_get_main_queue(), ^{
+									 completion();
+								 });
+							 }
+						 }
+					 }];
 }
 
 #pragma mark - UI
@@ -403,286 +586,6 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.alpha = 0.0f;
 }
 
-- (void)animateUI
-{
-	switch (self.style) {
-		case KVNProgressStyleProgress: {
-			if ([self isIndeterminate]) {
-				[self setupInfiniteCircle];
-			} else {
-				[self setupProgressCircle];
-			}
-			
-			break;
-		}
-		case KVNProgressStyleSuccess: {
-			[self setupSuccessUI];
-		}
-	}
-}
-
-- (void)animateAppearance
-{
-	[UIView animateWithDuration:0.0f
-						  delay:0.0f
-						options:UIViewAnimationOptionBeginFromCurrentState
-					 animations:^{}
-					 completion:nil];
-	
-	self.alpha = 0.0f;
-	self.contentView.transform = CGAffineTransformScale(self.contentView.transform, 1.2f, 1.2f);
-	
-	self.showActionTrigerredDate = [NSDate date];
-	
-	[UIView animateWithDuration:KVNFadeAnimationDuration
-						  delay:0.0f
-						options:(UIViewAnimationOptionAllowUserInteraction
-								 | UIViewAnimationOptionCurveEaseOut
-								 | UIViewAnimationOptionBeginFromCurrentState)
-					 animations:^{
-						 self.alpha = 1.0f;
-						 self.contentView.transform = CGAffineTransformIdentity;
-					 } completion:^(BOOL finished) {
-						 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-						 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
-					 }];
-}
-
-#pragma mark - Circle progress animations
-
-- (void)animateCircleWithInfiniteLoop
-{
-	CABasicAnimation* rotationAnimation;
-	rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-	rotationAnimation.toValue = @(M_PI * 2.0f * KVNInfiniteLoopAnimationDuration);
-	rotationAnimation.duration = KVNInfiniteLoopAnimationDuration;
-	rotationAnimation.cumulative = YES;
-	rotationAnimation.repeatCount = HUGE_VALF;
-	
-	[self.circleProgressView.layer addAnimation:rotationAnimation
-										 forKey:@"rotationAnimation"];
-}
-
-#pragma mark - Checkmark progress animation
-
-- (void)animateSuccess
-{
-	CABasicAnimation *circleAnimation;
-	if (self.superview) {
-		circleAnimation = [CABasicAnimation animationWithKeyPath:@"strokeColor"];
-		circleAnimation.duration = KVNCheckmarkAnimationDuration;
-		circleAnimation.toValue = (id)self.successColor.CGColor;
-		circleAnimation.fillMode = kCAFillModeBoth;
-		circleAnimation.removedOnCompletion = NO;
-	} else {
-		circleAnimation = [CABasicAnimation animationWithKeyPath:@"alpha"];
-		circleAnimation.duration = KVNCheckmarkAnimationDuration;
-		circleAnimation.fromValue = @(0);
-		circleAnimation.toValue = @(1);
-		circleAnimation.fillMode = kCAFillModeBoth;
-		circleAnimation.removedOnCompletion = NO;
-	}
-	
-	[self.circleProgressLineLayer addAnimation:circleAnimation
-										forKey:@"appearance"];
-	
-	CABasicAnimation *checkmarkAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-	checkmarkAnimation.duration = KVNCheckmarkAnimationDuration;
-	checkmarkAnimation.removedOnCompletion = NO;
-	checkmarkAnimation.fillMode = kCAFillModeBoth;
-	checkmarkAnimation.fromValue = @(0);
-	checkmarkAnimation.toValue = @(1);
-	checkmarkAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-	
-	[self.checkmarkLayer addAnimation:checkmarkAnimation
-							   forKey:@"strokeEnd"];
-}
-
-#pragma mark - Undeterminate progress methods
-
-+ (void)show
-{
-	[self showWithStatus:nil];
-}
-
-+ (void)showWithStatus:(NSString *)status
-{
-	[self showWithParameters:@{KVNProgressViewParameterStatus: status,
-							   KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-							   KVNProgressViewParameterFullScreen: @(NO)}];
-}
-
-+ (void)showWithParameters:(NSDictionary *)parameters
-{
-	[self showHUDWithProgress:KVNProgressIndeterminate
-						style:KVNProgressStyleProgress
-				   parameters:parameters];
-}
-
-#pragma mark - Determinate progress methods
-
-+ (void)showProgress:(CGFloat)progress
-{
-	[self showProgress:progress
-				status:nil];
-}
-
-+ (void)showProgress:(CGFloat)progress
-			  status:(NSString*)status
-{
-	[self showProgress:progress
-			parameters:@{KVNProgressViewParameterStatus: status,
-						 KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-						 KVNProgressViewParameterFullScreen: @(NO)}];
-}
-
-+ (void)showProgress:(CGFloat)progress
-		  parameters:(NSDictionary *)parameters
-{
-	[self showHUDWithProgress:progress
-						style:KVNProgressStyleProgress
-				   parameters:parameters];
-}
-
-#pragma mark - Success methods
-
-+ (void)showSuccess
-{
-	[self showSuccessWithStatus:nil];
-}
-
-+ (void)showSuccessWithStatus:(NSString *)status
-{
-	[self showSuccessWithParameters:@{KVNProgressViewParameterStatus: status,
-									  KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-									  KVNProgressViewParameterFullScreen: @(NO)}];
-}
-
-+ (void)showSuccessWithParameters:(NSDictionary *)parameters
-{
-	[self showHUDWithProgress:KVNProgressIndeterminate
-						style:KVNProgressStyleSuccess
-				   parameters:parameters];
-}
-
-#pragma mark - Base HUD method
-
-+ (void)showHUDWithProgress:(CGFloat)progress
-					  style:(KVNProgressStyle)style
-				 parameters:(NSDictionary *)parameters
-{
-	[[self sharedView] showProgress:progress
-							 status:parameters[KVNProgressViewParameterStatus]
-							  style:style
-					 backgroundType:(KVNProgressBackgroundType)parameters[KVNProgressViewParameterBackgroundType]
-						 fullScreen:[parameters[KVNProgressViewParameterFullScreen] boolValue]
-							   view:parameters[KVNProgressViewParameterSuperview]];
-}
-
-#pragma mark - Base progress instance method
-
-- (void)showProgress:(CGFloat)progress
-			  status:(NSString *)status
-			   style:(KVNProgressStyle)style
-	  backgroundType:(KVNProgressBackgroundType)backgroundType
-		  fullScreen:(BOOL)fullScreen
-				view:(UIView *)superview
-{
-	self.progress = progress;
-	self.status = [status copy];
-	self.style = style;
-	self.backgroundType = backgroundType;
-	self.fullScreen = fullScreen;
-	
-	[self setupUI];
-	
-	if (self.superview) {
-		[self animateUI];
-	} else {
-		if (superview) {
-			[self addToView:superview];
-		} else {
-			[self addToCurrentWindow];
-		}
-		
-		// FIXME: find a way to wait for the views to be added to the window before launching the animations
-		// (Fix to make the animations work fine)
-		__block KVNProgress *__blockSelf = self;
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			[__blockSelf animateUI];
-			[__blockSelf animateAppearance];
-		});
-	}
-	
-	if (self.style != KVNProgressStyleProgress) {
-		__block KVNProgress *__blockSelf = self;
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(KVNMinimumSuccessDisplayTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			[__blockSelf.class dismiss];
-		});
-	}
-}
-
-#pragma mark - Dimiss
-
-+ (void)dismiss
-{
-	[self dismissWithCompletion:nil];
-}
-
-+ (void)dismissWithCompletion:(void (^)(void))completion
-{
-	if (![self isVisible]) {
-		return;
-	}
-	
-	// FIXME: find a way to wait for the views to be added to the window before launching the animations
-	// (Fix to make the dismiss work fine)
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[self dismissAnimatedWithCompletion:completion];
-	});
-}
-
-+ (void)dismissAnimatedWithCompletion:(void (^)(void))completion
-{
-	KVNProgress *progressView = [self sharedView];
-	
-	NSTimeInterval timeIntervalSinceShow = fabs([progressView.showActionTrigerredDate timeIntervalSinceNow]);
-	NSTimeInterval delay = 0;
-	
-	if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
-		// The hud hasn't showed enough time
-		delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
-	}
-	
-	[UIView animateWithDuration:KVNFadeAnimationDuration
-						  delay:delay
-						options:(UIViewAnimationOptionCurveEaseIn
-								 | UIViewAnimationOptionAllowUserInteraction
-								 | UIViewAnimationOptionBeginFromCurrentState)
-					 animations:^{
-						 progressView.alpha = 0.0f;
-					 } completion:^(BOOL finished) {
-						 if(progressView.alpha == 0 || progressView.contentView.alpha == 0) {
-							 [progressView cancelCircleAnimation];
-							 [progressView removeFromSuperview];
-							 
-							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-							 
-							 // Tell the rootViewController to update the StatusBar appearance
-							 UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
-							 if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
-								 [rootController setNeedsStatusBarAppearanceUpdate];
-							 }
-							 
-							 if (completion) {
-								 dispatch_async(dispatch_get_main_queue(), ^{
-									 completion();
-								 });
-							 }
-						 }
-					 }];
-}
-
 #pragma mark - Update
 
 + (void)updateStatus:(NSString*)status
@@ -747,6 +650,66 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.progress = progress;
 }
 
+#pragma mark - Animations
+
+- (void)animateUI
+{
+	switch (self.style) {
+		case KVNProgressStyleProgress: {
+			if ([self isIndeterminate]) {
+				[self setupInfiniteCircle];
+			} else {
+				[self setupProgressCircle];
+			}
+			
+			break;
+		}
+		case KVNProgressStyleSuccess: {
+			[self setupSuccessUI];
+		}
+	}
+}
+
+- (void)animateAppearance
+{
+	[UIView animateWithDuration:0.0f
+						  delay:0.0f
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{}
+					 completion:nil];
+	
+	self.alpha = 0.0f;
+	self.contentView.transform = CGAffineTransformScale(self.contentView.transform, 1.2f, 1.2f);
+	
+	self.showActionTrigerredDate = [NSDate date];
+	
+	[UIView animateWithDuration:KVNFadeAnimationDuration
+						  delay:0.0f
+						options:(UIViewAnimationOptionAllowUserInteraction
+								 | UIViewAnimationOptionCurveEaseOut
+								 | UIViewAnimationOptionBeginFromCurrentState)
+					 animations:^{
+						 self.alpha = 1.0f;
+						 self.contentView.transform = CGAffineTransformIdentity;
+					 } completion:^(BOOL finished) {
+						 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+						 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
+					 }];
+}
+
+- (void)animateCircleWithInfiniteLoop
+{
+	CABasicAnimation* rotationAnimation;
+	rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+	rotationAnimation.toValue = @(M_PI * 2.0f * KVNInfiniteLoopAnimationDuration);
+	rotationAnimation.duration = KVNInfiniteLoopAnimationDuration;
+	rotationAnimation.cumulative = YES;
+	rotationAnimation.repeatCount = HUGE_VALF;
+	
+	[self.circleProgressView.layer addAnimation:rotationAnimation
+										 forKey:@"rotationAnimation"];
+}
+
 - (void)cancelCircleAnimation
 {
 	[CATransaction begin];
@@ -770,6 +733,39 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.circleBackgroundLineLayer = nil;
 	
 	[CATransaction commit];
+}
+
+- (void)animateSuccess
+{
+	CABasicAnimation *circleAnimation;
+	if (self.superview) {
+		circleAnimation = [CABasicAnimation animationWithKeyPath:@"strokeColor"];
+		circleAnimation.duration = KVNCheckmarkAnimationDuration;
+		circleAnimation.toValue = (id)self.successColor.CGColor;
+		circleAnimation.fillMode = kCAFillModeBoth;
+		circleAnimation.removedOnCompletion = NO;
+	} else {
+		circleAnimation = [CABasicAnimation animationWithKeyPath:@"alpha"];
+		circleAnimation.duration = KVNCheckmarkAnimationDuration;
+		circleAnimation.fromValue = @(0);
+		circleAnimation.toValue = @(1);
+		circleAnimation.fillMode = kCAFillModeBoth;
+		circleAnimation.removedOnCompletion = NO;
+	}
+	
+	[self.circleProgressLineLayer addAnimation:circleAnimation
+										forKey:@"appearance"];
+	
+	CABasicAnimation *checkmarkAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+	checkmarkAnimation.duration = KVNCheckmarkAnimationDuration;
+	checkmarkAnimation.removedOnCompletion = NO;
+	checkmarkAnimation.fillMode = kCAFillModeBoth;
+	checkmarkAnimation.fromValue = @(0);
+	checkmarkAnimation.toValue = @(1);
+	checkmarkAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+	
+	[self.checkmarkLayer addAnimation:checkmarkAnimation
+							   forKey:@"strokeEnd"];
 }
 
 #pragma mark - Helpers
@@ -854,7 +850,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	return ([self sharedView].superview != nil);
 }
 
-#pragma mark - UIAppearance getters
+#pragma mark - Appearance
 
 - (UIColor *)backgroundFillColor
 {

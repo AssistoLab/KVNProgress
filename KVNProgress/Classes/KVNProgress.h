@@ -52,7 +52,7 @@ static NSTimeInterval const KVNMinimumSuccessDisplayTime = 2.0;
 /** Width of the circle stroke line */
 @property (nonatomic) CGFloat lineWidth NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 
-#pragma mark - Undeterminate progress methods
+#pragma mark - Loading
 
 /** Shows an indeterminate progress view with blurred background and no status (not in fullscreen). */
 + (void)show NS_AVAILABLE_IOS(7_0);
@@ -84,7 +84,7 @@ static NSTimeInterval const KVNMinimumSuccessDisplayTime = 2.0;
  */
 + (void)showWithParameters:(NSDictionary *)parameters NS_AVAILABLE_IOS(7_0);
 
-#pragma mark - Determinate progress methods
+#pragma mark - Progress
 
 /**
  Show a specified progress view with blurred background and no status (not in fullscreen).
@@ -108,7 +108,7 @@ static NSTimeInterval const KVNMinimumSuccessDisplayTime = 2.0;
 + (void)showProgress:(CGFloat)progress
 		  parameters:(NSDictionary *)parameters NS_AVAILABLE_IOS(7_0);
 
-#pragma mark - Success methods
+#pragma mark - Success
 
 /** Show a sucess view with blurred background and no status (not in fullscreen). */
 + (void)showSuccess NS_AVAILABLE_IOS(7_0);
