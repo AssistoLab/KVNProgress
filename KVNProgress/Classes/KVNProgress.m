@@ -210,7 +210,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	[[self sharedView] showProgress:progress
 							 status:parameters[KVNProgressViewParameterStatus]
 							  style:style
-					 backgroundType:(KVNProgressBackgroundType)parameters[KVNProgressViewParameterBackgroundType]
+					 backgroundType:(KVNProgressBackgroundType)[parameters[KVNProgressViewParameterBackgroundType] unsignedIntegerValue]
 						 fullScreen:[parameters[KVNProgressViewParameterFullScreen] boolValue]
 							   view:parameters[KVNProgressViewParameterSuperview]];
 }
