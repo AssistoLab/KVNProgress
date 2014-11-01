@@ -380,13 +380,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.circleProgressView.backgroundColor = [UIColor clearColor];
 	
 	// Remove all previous added layers
-	for (CALayer *subLayer in [self.circleProgressView.layer.sublayers copy]) {
-		/* Technical :
-		 we use a copy of self.circleProgressView.layer.sublayers because this array will
-		 change when we remove its sublayers
-		 */
-		[subLayer removeFromSuperlayer];
-	}
+	[self removeAllSubLayersOfLayer:self.circleProgressView.layer];
 }
 
 - (void)setupInfiniteCircle
@@ -856,6 +850,17 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	}
 	
 	return parameters;
+}
+
+- (void)removeAllSubLayersOfLayer:(CALayer *)layer
+{
+	for (CALayer *subLayer in [layer.sublayers copy]) {
+		/* Technical :
+		 we use a copy of self.circleProgressView.layer.sublayers because this array will
+		 change when we remove its sublayers
+		 */
+		[subLayer removeFromSuperlayer];
+	}
 }
 
 - (UIImage *)blurredScreenShot
