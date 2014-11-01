@@ -130,9 +130,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 
 + (void)showWithStatus:(NSString *)status
 {
-	[self showWithParameters:@{KVNProgressViewParameterStatus: status,
-							   KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-							   KVNProgressViewParameterFullScreen: @(NO)}];
+	[self showWithParameters:[self baseHUDParametersWithStatus:status]];
 }
 
 + (void)showWithParameters:(NSDictionary *)parameters
@@ -154,9 +152,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 			  status:(NSString*)status
 {
 	[self showProgress:progress
-			parameters:@{KVNProgressViewParameterStatus: status,
-						 KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-						 KVNProgressViewParameterFullScreen: @(NO)}];
+			parameters:[self baseHUDParametersWithStatus:status]];
 }
 
 + (void)showProgress:(CGFloat)progress
@@ -176,9 +172,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 
 + (void)showSuccessWithStatus:(NSString *)status
 {
-	[self showSuccessWithParameters:@{KVNProgressViewParameterStatus: status,
-									  KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-									  KVNProgressViewParameterFullScreen: @(NO)}];
+	[self showSuccessWithParameters:[self baseHUDParametersWithStatus:status]];
 }
 
 + (void)showSuccessWithParameters:(NSDictionary *)parameters
@@ -197,9 +191,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 
 + (void)showErrorWithStatus:(NSString *)status
 {
-	[self showErrorWithParameters:@{KVNProgressViewParameterStatus: status,
-									KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-									KVNProgressViewParameterFullScreen: @(NO)}];
+	[self showErrorWithParameters:[self baseHUDParametersWithStatus:status]];
 }
 
 + (void)showErrorWithParameters:(NSDictionary *)parameters
@@ -847,6 +839,19 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 }
 
 #pragma mark - Helpers
+
++ (NSDictionary *)baseHUDParametersWithStatus:(NSString *)status
+{
+	NSDictionary *fixedParameters = @{KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+									  KVNProgressViewParameterFullScreen: @(NO)};
+	NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:fixedParameters];
+	
+	if (status) {
+		parameters[KVNProgressViewParameterStatus] = status;
+	}
+	
+	return parameters;
+}
 
 - (UIImage *)blurredScreenShot
 {
