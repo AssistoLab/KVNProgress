@@ -746,9 +746,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
 						  delay:0.0f
-						options:(UIViewAnimationOptionAllowUserInteraction
-								 | UIViewAnimationOptionCurveEaseOut
-								 | UIViewAnimationOptionBeginFromCurrentState)
+						options:UIViewAnimationOptionCurveEaseOut
 					 animations:^{
 						 self.alpha = 1.0f;
 						 self.contentView.transform = CGAffineTransformIdentity;
