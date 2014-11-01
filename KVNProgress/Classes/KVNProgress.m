@@ -722,9 +722,11 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		}
 		case KVNProgressStyleSuccess: {
 			[self setupSuccessUI];
+			break;
 		}
 		case KVNProgressStyleError: {
 			[self setupErrorUI];
+			break;
 		}
 	}
 }
