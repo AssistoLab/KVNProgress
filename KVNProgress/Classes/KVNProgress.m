@@ -485,7 +485,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.crossLayer.lineWidth = self.lineWidth;
 	
 	[self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
-	[self.circleProgressView.layer addSublayer:self.checkmarkLayer];
+	[self.circleProgressView.layer addSublayer:self.crossLayer];
 	
 	[self.circleProgressLineLayer removeAllAnimations];
 	[self.circleProgressView.layer removeAllAnimations];
