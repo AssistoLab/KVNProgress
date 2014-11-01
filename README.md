@@ -228,6 +228,7 @@ There are 3 static variables you can change that do that:
 ### Remains to do
 
 * Use real-time blur
+* Use UIMotionEffect for non full screen HUD
 
 ## Credits
 
@@ -235,6 +236,8 @@ KVNProgress was inspired by [MRProgress](https://github.com/mrackwitz/MRProgress
 
 KVNProgress was done to integrate in a project I work on: [Assisto](https://assis.to).
 It will be updated when necessary and fixes will be done as soon as discovered to keep it up to date.
+
+I work at [Pinch](http://pinchproject.com).
 
 You can find me on Twitter [@kevinh6113](https://twitter.com/kevinh6113).
 
