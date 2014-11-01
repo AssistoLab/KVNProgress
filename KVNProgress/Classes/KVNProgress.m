@@ -228,11 +228,16 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
 	
-	[self setupUI];
-	
-	if (self.superview) {
+	if ([self.class isVisible]) {
+		[UIView animateWithDuration:KVNLayoutAnimationDuration
+						 animations:^{
+							 [self setupUI];
+						 }];
+		
 		[self animateUI];
 	} else {
+		[self setupUI];
+		
 		if (superview) {
 			[self addToView:superview];
 		} else {
