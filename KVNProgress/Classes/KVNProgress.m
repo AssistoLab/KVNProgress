@@ -14,6 +14,16 @@
 #import "UIImage+KVNImageEffects.h"
 #import "UIImage+KVNEmpty.h"
 
+typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
+	KVNProgressStyleProgress,
+	KVNProgressStyleSuccess
+};
+
+NSString * const KVNProgressViewParameterFullScreen = @"KVNProgressViewParameterFullScreen";
+NSString * const KVNProgressViewParameterBackgroundType = @"KVNProgressViewParameterBackgroundType";
+NSString * const KVNProgressViewParameterStatus = @"KVNProgressViewParameterStatus";
+NSString * const KVNProgressViewParameterSuperview = @"KVNProgressViewParameterSuperview";
+
 static CGFloat const KVNFadeAnimationDuration = 0.3f;
 static CGFloat const KVNLayoutAnimationDuration = 0.3f;
 static CGFloat const KVNTextUpdateAnimationDuration = 0.5f;
@@ -29,11 +39,6 @@ static CGFloat const KVNContentViewWithoutStatusInset = 20.0f;
 static CGFloat const KVNContentViewCornerRadius = 8.0f;
 static CGFloat const KVNContentViewWithoutStatusCornerRadius = 15.0f;
 static CGFloat const KVNAlertViewWidth = 270.0f;
-
-typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
-	KVNProgressStyleProgress,
-	KVNProgressStyleSuccess
-};
 
 @interface KVNProgress ()
 
@@ -500,56 +505,18 @@ typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	[self showWithStatus:nil];
 }
 
-+ (void)showFullScreen:(BOOL)fullScreen
-{
-	[self showWithStatus:nil
-			  fullScreen:fullScreen];
-}
-
-+ (void)showWithBackgroundType:(KVNProgressBackgroundType)backgroundType
-					fullScreen:(BOOL)fullScreen
-{
-	[self showWithStatus:nil
-		  backgroundType:backgroundType
-			  fullScreen:fullScreen];
-}
-
 + (void)showWithStatus:(NSString *)status
 {
-	[self showWithStatus:status
-			  fullScreen:NO];
+	[self showWithParameters:@{KVNProgressViewParameterStatus: status,
+							   KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+							   KVNProgressViewParameterFullScreen: @(NO)}];
 }
 
-+ (void)showWithStatus:(NSString *)status
-			fullScreen:(BOOL)fullScreen
++ (void)showWithParameters:(NSDictionary *)parameters
 {
-	[self showWithStatus:status
-		  backgroundType:KVNProgressBackgroundTypeBlurred
-			  fullScreen:fullScreen];
-}
-
-+ (void)showWithStatus:(NSString *)status
-		backgroundType:(KVNProgressBackgroundType)backgroundType
-			fullScreen:(BOOL)fullScreen
-{
-	[[self sharedView] showProgress:KVNProgressIndeterminate
-							 status:status
-							  style:KVNProgressStyleProgress
-					 backgroundType:backgroundType
-						 fullScreen:fullScreen
-							   view:nil];
-}
-
-+ (void)showWithStatus:(NSString *)status
-		backgroundType:(KVNProgressBackgroundType)backgroundType
-				  view:(UIView *)view
-{
-	[[self sharedView] showProgress:KVNProgressIndeterminate
-							 status:status
-							  style:KVNProgressStyleProgress
-					 backgroundType:backgroundType
-						 fullScreen:NO
-							   view:view];
+	[self showHUDWithProgress:KVNProgressIndeterminate
+						style:KVNProgressStyleProgress
+				   parameters:parameters];
 }
 
 #pragma mark - Determinate progress methods
@@ -557,57 +524,24 @@ typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 + (void)showProgress:(CGFloat)progress
 {
 	[self showProgress:progress
-			fullScreen:NO];
-}
-
-+ (void)showProgress:(CGFloat)progress
-		  fullScreen:(BOOL)fullScreen
-{
-	[self showProgress:progress
-				status:nil
-			fullScreen:fullScreen];
-}
-
-+ (void)showProgress:(CGFloat)progress
-	  backgroundType:(KVNProgressBackgroundType)backgroundType
-		  fullScreen:(BOOL)fullScreen
-{
-	[self showProgress:progress
-				status:nil
-		backgroundType:backgroundType
-			fullScreen:fullScreen];
+				status:nil];
 }
 
 + (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status
 {
 	[self showProgress:progress
-				status:status
-		backgroundType:KVNProgressBackgroundTypeBlurred
-			fullScreen:NO];
+			parameters:@{KVNProgressViewParameterStatus: status,
+						 KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+						 KVNProgressViewParameterFullScreen: @(NO)}];
 }
 
 + (void)showProgress:(CGFloat)progress
-			  status:(NSString*)status
-		  fullScreen:(BOOL)fullScreen
+		  parameters:(NSDictionary *)parameters
 {
-	[self showProgress:progress
-				status:status
-		backgroundType:KVNProgressBackgroundTypeBlurred
-			fullScreen:fullScreen];
-}
-
-+ (void)showProgress:(CGFloat)progress
-			  status:(NSString*)status
-	  backgroundType:(KVNProgressBackgroundType)backgroundType
-		  fullScreen:(BOOL)fullScreen
-{
-	[[self sharedView] showProgress:progress
-							 status:status
-							  style:KVNProgressStyleProgress
-					 backgroundType:backgroundType
-						 fullScreen:fullScreen
-							   view:nil];
+	[self showHUDWithProgress:progress
+						style:KVNProgressStyleProgress
+				   parameters:parameters];
 }
 
 #pragma mark - Success methods
@@ -617,56 +551,32 @@ typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	[self showSuccessWithStatus:nil];
 }
 
-+ (void)showSuccessFullScreen:(BOOL)fullScreen
-{
-	[self showSuccessWithStatus:nil
-					 fullScreen:fullScreen];
-}
-
-+ (void)showSuccessWithBackgroundType:(KVNProgressBackgroundType)backgroundType
-						   fullScreen:(BOOL)fullScreen
-{
-	[self showSuccessWithStatus:nil
-				 backgroundType:backgroundType
-					 fullScreen:fullScreen];
-}
-
 + (void)showSuccessWithStatus:(NSString *)status
 {
-	[self showSuccessWithStatus:status
-					 fullScreen:NO];
+	[self showSuccessWithParameters:@{KVNProgressViewParameterStatus: status,
+									  KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+									  KVNProgressViewParameterFullScreen: @(NO)}];
 }
 
-+ (void)showSuccessWithStatus:(NSString *)status
-				   fullScreen:(BOOL)fullScreen
++ (void)showSuccessWithParameters:(NSDictionary *)parameters
 {
-	[self showSuccessWithStatus:status
-				 backgroundType:KVNProgressBackgroundTypeBlurred
-					 fullScreen:fullScreen];
+	[self showHUDWithProgress:KVNProgressIndeterminate
+						style:KVNProgressStyleSuccess
+				   parameters:parameters];
 }
 
-+ (void)showSuccessWithStatus:(NSString *)status
-			   backgroundType:(KVNProgressBackgroundType)backgroundType
-				   fullScreen:(BOOL)fullScreen
-{
-	[[self sharedView] showProgress:KVNProgressIndeterminate
-							 status:status
-							  style:KVNProgressStyleSuccess
-					 backgroundType:backgroundType
-						 fullScreen:fullScreen
-							   view:nil];
-}
+#pragma mark - Base HUD method
 
-+ (void)showSuccessWithStatus:(NSString *)status
-			   backgroundType:(KVNProgressBackgroundType)backgroundType
-						 view:(UIView *)view
++ (void)showHUDWithProgress:(CGFloat)progress
+					  style:(KVNProgressStyle)style
+				 parameters:(NSDictionary *)parameters
 {
-	[[self sharedView] showProgress:KVNProgressIndeterminate
-							 status:status
-							  style:KVNProgressStyleSuccess
-					 backgroundType:backgroundType
-						 fullScreen:NO
-							   view:view];
+	[[self sharedView] showProgress:progress
+							 status:parameters[KVNProgressViewParameterStatus]
+							  style:style
+					 backgroundType:(KVNProgressBackgroundType)parameters[KVNProgressViewParameterBackgroundType]
+						 fullScreen:[parameters[KVNProgressViewParameterFullScreen] boolValue]
+							   view:parameters[KVNProgressViewParameterSuperview]];
 }
 
 #pragma mark - Base progress instance method
