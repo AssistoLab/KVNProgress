@@ -9,10 +9,10 @@
 @import UIKit;
 
 typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
-	/** Don't allow user interactions and show a solid color background */
+	/** Don't allow user interactions and show a blurred background. Default value. */
+	KVNProgressBackgroundTypeBlurred,
+	/** Don't allow user interactions and show a solid color background. */
 	KVNProgressBackgroundTypeSolid,
-	/** Don't allow user interactions and show a blurred background */
-	KVNProgressBackgroundTypeBlurred
 };
 
 extern NSString * const KVNProgressViewParameterFullScreen;
