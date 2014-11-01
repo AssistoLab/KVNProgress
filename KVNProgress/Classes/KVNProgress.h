@@ -22,8 +22,10 @@ extern NSString * const KVNProgressViewParameterSuperview;
 
 /** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
 static NSTimeInterval const KVNMinimumDisplayTime = 0.3;
-/** The minimum time (in seconds) the success checkmark will be displayed. */
+/** The minimum time (in seconds) the success will be displayed. */
 static NSTimeInterval const KVNMinimumSuccessDisplayTime = 2.0;
+/** The minimum time (in seconds) the error will be displayed. */
+static NSTimeInterval const KVNMinimumErrorDisplayTime = 1.3;
 
 @interface KVNProgress : UIView
 
@@ -110,21 +112,39 @@ static NSTimeInterval const KVNMinimumSuccessDisplayTime = 2.0;
 
 #pragma mark - Success
 
-/** Show a sucess view with blurred background and no status (not in fullscreen). */
+/** Show a success view with blurred background and no status (not in fullscreen). */
 + (void)showSuccess NS_AVAILABLE_IOS(7_0);
 
 /**
- Show a sucess view with blurred background and specified status (not in fullscreen).
+ Show a success view with blurred background and specified status (not in fullscreen).
  @param status The status to show on the displayed view.
  */
 + (void)showSuccessWithStatus:(NSString *)status NS_AVAILABLE_IOS(7_0);
 
 /**
- Shows a sucess view with defined parameters.
+ Shows a success view with defined parameters.
  @see <code> showWithParameters:</code> method for more information on the possible parameters.
  @param parameters The parameters of the progress view.
  */
 + (void)showSuccessWithParameters:(NSDictionary *)parameters NS_AVAILABLE_IOS(7_0);
+
+#pragma mark - Error
+
+/** Show an error view with blurred background and no status (not in fullscreen). */
++ (void)showError NS_AVAILABLE_IOS(7_0);
+
+/**
+ Show an error view with blurred background and specified status (not in fullscreen).
+ @param status The status to show on the displayed view.
+ */
++ (void)showErrorWithStatus:(NSString *)status NS_AVAILABLE_IOS(7_0);
+
+/**
+ Shows an error view with defined parameters.
+ @see <code> showWithParameters:</code> method for more information on the possible parameters.
+ @param parameters The parameters of the progress view.
+ */
++ (void)showErrorWithParameters:(NSDictionary *)parameters NS_AVAILABLE_IOS(7_0);
 
 #pragma mark - Dimiss
 

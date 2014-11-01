@@ -16,7 +16,8 @@
 
 typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	KVNProgressStyleProgress,
-	KVNProgressStyleSuccess
+	KVNProgressStyleSuccess,
+	KVNProgressStyleError
 };
 
 NSString * const KVNProgressViewParameterFullScreen = @"KVNProgressViewParameterFullScreen";
@@ -56,6 +57,7 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 @property (nonatomic, weak) IBOutlet UIImageView *backgroundImageView;
 
 @property (nonatomic, strong) CAShapeLayer *checkmarkLayer;
+@property (nonatomic, strong) CAShapeLayer *crossLayer;
 @property (nonatomic, strong) CAShapeLayer *circleProgressLineLayer;
 @property (nonatomic, strong) CAShapeLayer *circleBackgroundLineLayer;
 
@@ -186,6 +188,27 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 				   parameters:parameters];
 }
 
+#pragma mark - Error
+
++ (void)showError
+{
+	[self showErrorWithStatus:nil];
+}
+
++ (void)showErrorWithStatus:(NSString *)status
+{
+	[self showErrorWithParameters:@{KVNProgressViewParameterStatus: status,
+									KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+									KVNProgressViewParameterFullScreen: @(NO)}];
+}
+
++ (void)showErrorWithParameters:(NSDictionary *)parameters
+{
+	[self showHUDWithProgress:KVNProgressIndeterminate
+						style:KVNProgressStyleError
+				   parameters:parameters];
+}
+
 #pragma mark - Show
 
 + (void)showHUDWithProgress:(CGFloat)progress
@@ -234,8 +257,20 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	}
 	
 	if (self.style != KVNProgressStyleProgress) {
+		NSTimeInterval delay;
+		switch (self.style) {
+			case KVNProgressStyleProgress:
+				return;
+			case KVNProgressStyleSuccess:
+				delay = KVNMinimumSuccessDisplayTime;
+				break;
+			case KVNProgressStyleError:
+				delay = KVNMinimumErrorDisplayTime;
+				break;
+		}
+		
 		__block KVNProgress *__blockSelf = self;
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(KVNMinimumSuccessDisplayTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			[__blockSelf.class dismiss];
 		});
 	}
@@ -418,23 +453,8 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 
 - (void)setupSuccessUI
 {
-	CGFloat radius = (self.circleSize / 2.0f);
-	CGPoint center = CGPointMake(radius, radius);
+	[self setupFullRoundCircleWithColor:self.successColor];
 	
-	// Circle
-	UIBezierPath *circlePath = [UIBezierPath bezierPathWithArcCenter:center
-															  radius:(radius - self.lineWidth)
-														  startAngle:GLKMathDegreesToRadians(-90.0f)
-															endAngle:GLKMathDegreesToRadians(275.0f)
-														   clockwise:YES];
-	
-	self.circleProgressLineLayer = [CAShapeLayer layer];
-	self.circleProgressLineLayer.path = circlePath.CGPath;
-	self.circleProgressLineLayer.strokeColor = self.successColor.CGColor;
-	self.circleProgressLineLayer.fillColor = self.circleFillBackgroundColor.CGColor;
-	self.circleProgressLineLayer.lineWidth = self.lineWidth;
-	
-	// Checkmark
 	UIBezierPath* checkmarkPath = [UIBezierPath bezierPath];
 	[checkmarkPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.28f, CGRectGetHeight(self.circleProgressView.bounds) * 0.53f)];
 	[checkmarkPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.42f, CGRectGetHeight(self.circleProgressView.bounds) * 0.66f)];
@@ -454,6 +474,51 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	[self.circleProgressView.layer removeAllAnimations];
 	[self.checkmarkLayer removeAllAnimations];
 	[self animateSuccess];
+}
+
+- (void)setupErrorUI
+{
+	[self setupFullRoundCircleWithColor:self.errorColor];
+	
+	UIBezierPath* crossPath = [UIBezierPath bezierPath];
+	[crossPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.72f, CGRectGetHeight(self.circleProgressView.bounds) * 0.27f)];
+	[crossPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.27f, CGRectGetHeight(self.circleProgressView.bounds) * 0.72f)];
+	[crossPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.27f, CGRectGetHeight(self.circleProgressView.bounds) * 0.27f)];
+	[crossPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.72f, CGRectGetHeight(self.circleProgressView.bounds) * 0.72f)];
+	crossPath.lineCapStyle = kCGLineCapSquare;
+	
+	self.crossLayer = [CAShapeLayer layer];
+	self.crossLayer.path = crossPath.CGPath;
+	self.crossLayer.fillColor = nil;
+	self.crossLayer.strokeColor = self.errorColor.CGColor;
+	self.crossLayer.lineWidth = self.lineWidth;
+	
+	[self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
+	[self.circleProgressView.layer addSublayer:self.checkmarkLayer];
+	
+	[self.circleProgressLineLayer removeAllAnimations];
+	[self.circleProgressView.layer removeAllAnimations];
+	[self.crossLayer removeAllAnimations];
+	[self animateError];
+}
+
+- (void)setupFullRoundCircleWithColor:(UIColor *)color
+{
+	CGFloat radius = (self.circleSize / 2.0f);
+	CGPoint center = CGPointMake(radius, radius);
+	
+	// Circle
+	UIBezierPath *circlePath = [UIBezierPath bezierPathWithArcCenter:center
+															  radius:(radius - self.lineWidth)
+														  startAngle:GLKMathDegreesToRadians(-90.0f)
+															endAngle:GLKMathDegreesToRadians(275.0f)
+														   clockwise:YES];
+	
+	self.circleProgressLineLayer = [CAShapeLayer layer];
+	self.circleProgressLineLayer.path = circlePath.CGPath;
+	self.circleProgressLineLayer.strokeColor = color.CGColor;
+	self.circleProgressLineLayer.fillColor = self.circleFillBackgroundColor.CGColor;
+	self.circleProgressLineLayer.lineWidth = self.lineWidth;
 }
 
 - (void)setupStatus:(NSString *)status
@@ -667,6 +732,9 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		case KVNProgressStyleSuccess: {
 			[self setupSuccessUI];
 		}
+		case KVNProgressStyleError: {
+			[self setupErrorUI];
+		}
 	}
 }
 
@@ -737,11 +805,32 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 
 - (void)animateSuccess
 {
+	[self animateFullCircleWithColor:self.successColor];
+	
+	CABasicAnimation *checkmarkAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+	checkmarkAnimation.duration = KVNCheckmarkAnimationDuration;
+	checkmarkAnimation.removedOnCompletion = NO;
+	checkmarkAnimation.fillMode = kCAFillModeBoth;
+	checkmarkAnimation.fromValue = @(0);
+	checkmarkAnimation.toValue = @(1);
+	checkmarkAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+	
+	[self.checkmarkLayer addAnimation:checkmarkAnimation
+							   forKey:@"strokeEnd"];
+}
+
+- (void)animateError
+{
+	[self animateFullCircleWithColor:self.errorColor];
+}
+
+- (void)animateFullCircleWithColor:(UIColor *)color
+{
 	CABasicAnimation *circleAnimation;
 	if (self.superview) {
 		circleAnimation = [CABasicAnimation animationWithKeyPath:@"strokeColor"];
 		circleAnimation.duration = KVNCheckmarkAnimationDuration;
-		circleAnimation.toValue = (id)self.successColor.CGColor;
+		circleAnimation.toValue = (id)color.CGColor;
 		circleAnimation.fillMode = kCAFillModeBoth;
 		circleAnimation.removedOnCompletion = NO;
 	} else {
@@ -755,17 +844,6 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	
 	[self.circleProgressLineLayer addAnimation:circleAnimation
 										forKey:@"appearance"];
-	
-	CABasicAnimation *checkmarkAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-	checkmarkAnimation.duration = KVNCheckmarkAnimationDuration;
-	checkmarkAnimation.removedOnCompletion = NO;
-	checkmarkAnimation.fillMode = kCAFillModeBoth;
-	checkmarkAnimation.fromValue = @(0);
-	checkmarkAnimation.toValue = @(1);
-	checkmarkAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-	
-	[self.checkmarkLayer addAnimation:checkmarkAnimation
-							   forKey:@"strokeEnd"];
 }
 
 #pragma mark - Helpers
