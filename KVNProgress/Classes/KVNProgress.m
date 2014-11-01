@@ -105,14 +105,14 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		_backgroundFillColor = [UIColor colorWithWhite:1.0f alpha:0.85f];
 		_backgroundTintColor = [UIColor whiteColor];
 		
-		_circleStrokeForegroundColor = [UIColor lightGrayColor];
-		_circleStrokeBackgroundColor = [_circleStrokeForegroundColor colorWithAlphaComponent:0.2f];
+		_circleStrokeForegroundColor = [UIColor darkGrayColor];
+		_circleStrokeBackgroundColor = [_circleStrokeForegroundColor colorWithAlphaComponent:0.3f];
 		_circleFillBackgroundColor = [UIColor clearColor];
 		
-		_successColor = [UIColor lightGrayColor];
-		_errorColor = [UIColor lightGrayColor];
+		_successColor = [UIColor darkGrayColor];
+		_errorColor = [UIColor darkGrayColor];
 		
-		_statusColor = [UIColor grayColor];
+		_statusColor = [UIColor darkGrayColor];
 		_statusFont = [UIFont systemFontOfSize:17.0f];
 		
 		_lineWidth = 2.0f;
