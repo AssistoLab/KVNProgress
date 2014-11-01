@@ -3,12 +3,15 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "twister.png"
+      "filename" : "background.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "twister-1.png"
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
