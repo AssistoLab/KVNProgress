@@ -60,8 +60,7 @@
 
 - (IBAction)showWithStatus
 {
-	[KVNProgress showWithStatus:@"Loading..."
-					 fullScreen:YES];
+	[KVNProgress showWithStatus:@"Loading..."];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		[self showProgressFullScreen];
@@ -70,9 +69,8 @@
 
 - (IBAction)showWithSolidBackground
 {
-	[KVNProgress showWithStatus:@"Loading..."
-				 backgroundType:KVNProgressBackgroundTypeBlurred
-					 fullScreen:YES];
+	[KVNProgress showWithParameters:@{KVNProgressViewParameterStatus: @"Loading...",
+									  KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred)}];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		[KVNProgress dismiss];
@@ -82,8 +80,9 @@
 - (void)showProgressFullScreen
 {
 	[KVNProgress showProgress:0.0f
-					   status:@"Loading with progress..."
-				   fullScreen:YES];
+				   parameters:@{KVNProgressViewParameterStatus: @"Loading with progress...",
+								KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
+								KVNProgressViewParameterFullScreen: @(YES)}];
 	[self updateProgress];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.70f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
