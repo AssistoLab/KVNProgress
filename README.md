@@ -117,8 +117,10 @@ To dismiss after your task is done:
    }];
    ```
 
-KVNProgress has a static variable `KVNMinimumDisplayTime` in its .h that you can change to suit your needs.
-It lets the HUD appear for a certain time even you call dismiss. The reason is that we ensure the user has the time to see the HUD even if the load is quick. This value is set to `0.3` by default.
+**Why?**
+
+Because KVNProgress remains visible for a certain time even you call `dismiss`. This is done to ensure the user has enough time to see the HUD even if the load is quick.
+This amount of time is defined in `KVNProgress.h` in a static variable `KVNMinimumDisplayTime`. Feel free to change it to suits your needs! Default value is `0.3` seconds.
 
 ### Success/Errors
 
