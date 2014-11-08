@@ -2,7 +2,7 @@
 
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
-[![Version](http://img.shields.io/badge/version-2.0-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
+[![Version](http://img.shields.io/badge/version-2.1-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
 
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
 ***
@@ -237,7 +237,10 @@ There are 3 static variables you can change that do that:
 ### Remains to do
 
 * Use real-time blur
-* Use UIMotionEffect for non full screen HUD
+
+## License
+
+This project is under MIT license. For more information, see `LICENSE` file.
 
 ## Credits
 
