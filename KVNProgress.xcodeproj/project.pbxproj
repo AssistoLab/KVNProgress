@@ -252,6 +252,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Pinch;
 				TargetAttributes = {
+					0AA0DCE61930DFAD00FDD29F = {
+						DevelopmentTeam = UAY63PVC53;
+					};
 					0AA0DD071930DFAD00FDD29F = {
 						TestTargetID = 0AA0DCE61930DFAD00FDD29F;
 					};
@@ -465,6 +468,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KVNProgress/KVNProgress-Prefix.pch";
 				INFOPLIST_FILE = "KVNProgress/KVNProgress-Info.plist";
@@ -479,6 +483,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KVNProgress/KVNProgress-Prefix.pch";
 				INFOPLIST_FILE = "KVNProgress/KVNProgress-Info.plist";
