@@ -24,6 +24,12 @@ Example of customized interface:<br/>
 [![](Images/screenshot_011.jpg)](Images/screenshot_011.jpg)
 [![](Images/screenshot_012.jpg)](Images/screenshot_012.jpg)
 
+## Demo
+
+Here is a video of the demo app that you can find in this project.
+
+[![Demo video](Images/screenshot_video.jpg)](https://www.youtube.com/watch?v=aerOmPYG_NI)
+
 ## Requirements
 
 * Xcode 5
@@ -108,7 +114,7 @@ To dismiss after your task is done:
    [KVNProgress dismiss];
    ```
 
-**But I recommend you to use:**
+**When necessary, you can use:**
 
    ```objc
    // Dismiss
@@ -119,7 +125,8 @@ To dismiss after your task is done:
 
 **Why?**
 
-Because KVNProgress remains visible for a certain time even you call `dismiss`. This is done to ensure the user has enough time to see the HUD even if the load is quick.
+Because KVNProgress remains visible for a certain time even if you call `dismiss`. This is done to ensure the user has enough time to see the HUD if the load is too quick.
+The completion block in `dismissWithCompletion` is called (on the main thread) after the HUD is completely dismissed.
 This amount of time is defined in `KVNProgress.h` in a static variable `KVNMinimumDisplayTime`. Feel free to change it to suits your needs! Default value is `0.3` seconds.
 
 ### Success/Errors
