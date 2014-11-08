@@ -41,14 +41,14 @@ Example of customized interface:<br/>
 
 1. Add `pod 'KVNProgress'` to your *Podfile*.
 2. Install the pod(s) by running `pod install`.
-3. Include KVNProgress wherever you need it with `#import <KVNProgress/KVNProgress.h>"`.
+3. Include KVNProgress wherever you need it with `#import <KVNProgress/KVNProgress.h>`.
 
 
 ### Source files
 
 1. Download the [latest code version](http://github.com/kevin-hirsch/KVNProgress/archive/master.zip) or add the repository as a git submodule to your git-tracked project.
 2. Drag and drop the **Classes**, **Categories** and also the **Resources** directory from the archive in your project navigator. Make sure to select *Copy items* when asked if you extracted the code archive outside of your project.
-3. Include KVNProgress wherever you need it with `#import <KVNProgress/KVNProgress.h>"`.
+3. Include KVNProgress wherever you need it with `#import <KVNProgress/KVNProgress.h>`.
 
 ## Usage
 
@@ -57,7 +57,7 @@ Check out the provided demo app for many examples how you can use the components
 ### Basics
 
 KVNProgress HUD will block the user from interacting with the interface behind it.
-You can customize colors, font and size of the hud.
+You can customize colors, font and size of the HUD.
 
 Add the following import to the top of the file or to your Prefix header:
 
@@ -117,8 +117,10 @@ To dismiss after your task is done:
    }];
    ```
 
-KVNProgress has a static variable `KVNMinimumDisplayTime` in its .h that you can change to suit your needs.
-It lets the HUD appear for a certain time even you call dismiss. The reason is that we ensure the user has the time to see the HUD even if the load is quick. This value is set to `0.3` by default.
+**Why?**
+
+Because KVNProgress remains visible for a certain time even you call `dismiss`. This is done to ensure the user has enough time to see the HUD even if the load is quick.
+This amount of time is defined in `KVNProgress.h` in a static variable `KVNMinimumDisplayTime`. Feel free to change it to suits your needs! Default value is `0.3` seconds.
 
 ### Success/Errors
 
