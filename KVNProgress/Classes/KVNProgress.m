@@ -40,6 +40,7 @@ static CGFloat const KVNContentViewWithoutStatusInset = 20.0f;
 static CGFloat const KVNContentViewCornerRadius = 8.0f;
 static CGFloat const KVNContentViewWithoutStatusCornerRadius = 15.0f;
 static CGFloat const KVNAlertViewWidth = 270.0f;
+static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 @interface KVNProgress ()
 
@@ -592,6 +593,22 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 		
 		self.contentView.image = backgroundImage;
 	}
+	
+	if ([self.contentView.motionEffects count] == 0) {
+		[self setupMotionEffect];
+	}
+}
+
+- (void)setupMotionEffect
+{
+	UIInterpolatingMotionEffect *xAxis = [self motionEffectWithType:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis
+															keyPath:@"center.x"];
+	UIInterpolatingMotionEffect *yAxis = [self motionEffectWithType:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis
+															keyPath:@"center.y"];
+	UIMotionEffectGroup *group = [[UIMotionEffectGroup alloc] init];
+	group.motionEffects = @[xAxis, yAxis];
+	
+	[self.contentView addMotionEffect:group];
 }
 
 - (void)addToCurrentWindow
@@ -929,6 +946,18 @@ static CGFloat const KVNAlertViewWidth = 270.0f;
 	CGImageRelease(imageRef);
 	
 	return image;
+}
+
+- (UIInterpolatingMotionEffect *)motionEffectWithType:(UIInterpolatingMotionEffectType)motionEffectType
+											  keyPath:(NSString *)keypath
+{
+	UIInterpolatingMotionEffect *motionEffect = [[UIInterpolatingMotionEffect alloc]
+												 initWithKeyPath:keypath
+												 type:motionEffectType];
+	motionEffect.minimumRelativeValue = @(-KVNMotionEffectRelativeValue);
+	motionEffect.maximumRelativeValue = @(KVNMotionEffectRelativeValue);
+	
+	return motionEffect;
 }
 
 #pragma mark - Information
