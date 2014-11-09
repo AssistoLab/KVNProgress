@@ -221,12 +221,12 @@ You can pass more parameters to the `show`, `showProgress:`, `showSuccess` and `
 
 Here are the parameter keys constants you can use:
 
-| Constant | Value | Meaning | Default |
-|------------------------------------------|-----------------------------------------------------------------|------------------------------------------|-------------------------|
-| `KVNProgressViewParameterFullScreen` | BOOL wrapped in a `NSNumber` | Precise full screen or not HUD. | Non full screen |
-| `KVNProgressViewParameterBackgroundType` | `KVNProgressBackgroundType` enumeration wrapped in a `NSNumber` | Precise blurred or solid HUD background. | Blurred background type |
-| `KVNProgressViewParameterStatus` | `NSString` | Precise the HUD status. | No status |
-| `KVNProgressViewParameterSuperview` | `UIView` | Precise the superview of the HUD. | Current window |
+| Constant | Value | Description |
+|------------------------------------------|------------------------------------------------------------------------------------|------------------------------------------|
+| `KVNProgressViewParameterFullScreen` | BOOL wrapped in a `NSNumber`. Default: `NO`. | Precise full screen or not HUD. |
+| `KVNProgressViewParameterBackgroundType` | `KVNProgressBackgroundType` enumeration wrapped in a `NSNumber`. Default: blurred. | Precise blurred or solid HUD background. |
+| `KVNProgressViewParameterStatus` | `NSString`. Default: `nil` (no status). | Precise the HUD status. |
+| `KVNProgressViewParameterSuperview` | `UIView`. Default: `nil` (current window). | Precise the superview of the HUD. |
 
 Example:
    ```objc
