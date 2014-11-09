@@ -24,6 +24,17 @@ Example of customized interface:<br/>
 [![](Images/screenshot_011.jpg)](Images/screenshot_011.jpg)
 [![](Images/screenshot_012.jpg)](Images/screenshot_012.jpg)
 
+## Advantages
+
+ * Can be full screen
+ * Uses `UIMotionEffect`
+ * Animates text update
+ * Animates succes checkmark
+ * Is fully customizable
+    * Colors
+    * Fonts
+    * Circle size and thickness
+
 ## Demo
 
 Here is a video of the demo app that you can find in this project.
