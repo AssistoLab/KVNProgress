@@ -248,7 +248,7 @@ There are 3 static variables you can change that do that:
 * `KVNMinimumSuccessDisplayTime` that has a default value of `2.0` seconds. It handles all success HUD's.
 * `KVNMinimumErrorDisplayTime` that has a default value of `1.3` seconds. It handles all error HUD's.
 
-### Remains to do
+## Remains to do
 
 * Use real-time blur
 
