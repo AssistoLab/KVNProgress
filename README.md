@@ -2,7 +2,7 @@
 
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
-[![Version](http://img.shields.io/badge/version-2.0-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
+[![Version](http://img.shields.io/badge/version-2.1-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
 
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
 ***
@@ -23,6 +23,18 @@ Example of customized interface:<br/>
 [![](Images/screenshot_006.jpg)](Images/screenshot_006.jpg)
 [![](Images/screenshot_011.jpg)](Images/screenshot_011.jpg)
 [![](Images/screenshot_012.jpg)](Images/screenshot_012.jpg)
+
+## Advantages
+
+ * Can be full screen
+ * Uses `UIMotionEffect`
+ * Animates text update
+ * Animates succes checkmark
+ * Is well documented
+ * Is fully customizable
+    * Colors
+    * Fonts
+    * Circle size and thickness
 
 ## Demo
 
@@ -209,11 +221,13 @@ You can pass more parameters to the `show`, `showProgress:`, `showSuccess` and `
 
 Here are the parameter keys constants you can use:
 
-* `KVNProgressViewParameterFullScreen` to precise full screen or not HUD (`NSNumber` value from a boolean). Omit to set default non full screen.
-* `KVNProgressViewParameterBackgroundType` to precise blurred or solid HUD background (`NSNumber` value from a `KVNProgressBackgroundType` enumeration value). Omit to set default blurred background type.
-* `KVNProgressViewParameterStatus` to precise the HUD status (`NSString` value). Omit to set default no status.
-* `KVNProgressViewParameterSuperview` to precise the HUD status. Omit to set default current window superview.
- 
+| Constant | Value | Description |
+|------------------------------------------|------------------------------------------------------------------------------------|------------------------------------------|
+| `KVNProgressViewParameterFullScreen` | BOOL wrapped in a `NSNumber`. Default: `NO`. | Precise full screen or not HUD. |
+| `KVNProgressViewParameterBackgroundType` | `KVNProgressBackgroundType` enumeration wrapped in a `NSNumber`. Default: blurred. | Precise blurred or solid HUD background. |
+| `KVNProgressViewParameterStatus` | `NSString`. Default: `nil` (no status). | Precise the HUD status. |
+| `KVNProgressViewParameterSuperview` | `UIView`. Default: `nil` (current window). | Precise the superview of the HUD. |
+
 Example:
    ```objc
    [KVNProgress showWithParameters:
@@ -237,7 +251,10 @@ There are 3 static variables you can change that do that:
 ### Remains to do
 
 * Use real-time blur
-* Use UIMotionEffect for non full screen HUD
+
+## License
+
+This project is under MIT license. For more information, see `LICENSE` file.
 
 ## Credits
 
