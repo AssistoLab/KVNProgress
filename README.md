@@ -30,6 +30,7 @@ Example of customized interface:<br/>
  * Uses `UIMotionEffect`
  * Animates text update
  * Animates succes checkmark
+ * Is well documented
  * Is fully customizable
     * Colors
     * Fonts
@@ -220,11 +221,13 @@ You can pass more parameters to the `show`, `showProgress:`, `showSuccess` and `
 
 Here are the parameter keys constants you can use:
 
-* `KVNProgressViewParameterFullScreen` to precise full screen or not HUD (`NSNumber` value from a boolean). Omit to set default non full screen.
-* `KVNProgressViewParameterBackgroundType` to precise blurred or solid HUD background (`NSNumber` value from a `KVNProgressBackgroundType` enumeration value). Omit to set default blurred background type.
-* `KVNProgressViewParameterStatus` to precise the HUD status (`NSString` value). Omit to set default no status.
-* `KVNProgressViewParameterSuperview` to precise the HUD status. Omit to set default current window superview.
- 
+| Constant | Value | Meaning | Default |
+|------------------------------------------|-----------------------------------------------------------------|------------------------------------------|-------------------------|
+| `KVNProgressViewParameterFullScreen` | BOOL wrapped in a `NSNumber` | Precise full screen or not HUD. | Non full screen |
+| `KVNProgressViewParameterBackgroundType` | `KVNProgressBackgroundType` enumeration wrapped in a `NSNumber` | Precise blurred or solid HUD background. | Blurred background type |
+| `KVNProgressViewParameterStatus` | `NSString` | Precise the HUD status. | No status |
+| `KVNProgressViewParameterSuperview` | `UIView` | Precise the superview of the HUD. | Current window |
+
 Example:
    ```objc
    [KVNProgress showWithParameters:
