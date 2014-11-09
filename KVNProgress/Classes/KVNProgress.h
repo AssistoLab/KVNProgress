@@ -15,9 +15,13 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 	KVNProgressBackgroundTypeSolid,
 };
 
+/** @see showWithParameters: */
 extern NSString * const KVNProgressViewParameterFullScreen;
+/** @see showWithParameters: */
 extern NSString * const KVNProgressViewParameterBackgroundType;
+/** @see showWithParameters: */
 extern NSString * const KVNProgressViewParameterStatus;
+/** @see showWithParameters: */
 extern NSString * const KVNProgressViewParameterSuperview;
 
 /** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
