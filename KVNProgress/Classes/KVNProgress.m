@@ -296,6 +296,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 			case KVNProgressStyleError:
 				delay = KVNMinimumErrorDisplayTime;
 				break;
+			case KVNProgressStyleHidden:
+				// should never happen
+				delay = 0;
+				break;
 		}
 		
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
