@@ -15,6 +15,7 @@
 #import "UIImage+KVNEmpty.h"
 
 typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
+	KVNProgressStyleHidden,
 	KVNProgressStyleProgress,
 	KVNProgressStyleSuccess,
 	KVNProgressStyleError
@@ -50,6 +51,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 @property (nonatomic, getter = isFullScreen) BOOL fullScreen;
 @property (nonatomic) KVNProgressStyle style;
 @property (nonatomic) NSDate *showActionTrigerredDate;
+@property (nonatomic, getter = isWaitingToChangeHUD) BOOL waitingToChangeHUD;
 
 // UI
 @property (nonatomic, weak) IBOutlet UIImageView *contentView;
@@ -223,6 +225,35 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		  fullScreen:(BOOL)fullScreen
 				view:(UIView *)superview
 {
+	__block KVNProgress *__blockSelf = self;
+	
+	if (![self isWaitingToChangeHUD] && self.style != KVNProgressStyleHidden) {
+		self.waitingToChangeHUD = YES;
+		
+		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
+		NSTimeInterval delay = 0;
+		
+		if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
+			// The hud hasn't showed enough time
+			timeIntervalSinceShow = (timeIntervalSinceShow < 0) ? 0 : timeIntervalSinceShow;
+			delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
+		}
+		
+		if (delay > 0) {
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				[__blockSelf showProgress:progress
+								   status:status
+									style:style
+						   backgroundType:backgroundType
+							   fullScreen:fullScreen
+									 view:superview];
+			});
+			
+			return;
+		}
+	}
+	
+	self.waitingToChangeHUD = NO;
 	self.progress = progress;
 	self.status = [status copy];
 	self.style = style;
@@ -232,10 +263,11 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	if ([self.class isVisible]) {
 		[UIView animateWithDuration:KVNLayoutAnimationDuration
 						 animations:^{
-							 [self setupUI];
+							 [__blockSelf setupUI];
 						 }];
 		
-		[self animateUI];
+		__blockSelf.showActionTrigerredDate = [NSDate date];
+		[__blockSelf animateUI];
 	} else {
 		[self setupUI];
 		
@@ -247,7 +279,6 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		
 		// FIXME: find a way to wait for the views to be added to the window before launching the animations
 		// (Fix to make the animations work fine)
-		__block KVNProgress *__blockSelf = self;
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			[__blockSelf animateUI];
 			[__blockSelf animateAppearance];
@@ -267,7 +298,6 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 				break;
 		}
 		
-		__block KVNProgress *__blockSelf = self;
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			[__blockSelf.class dismiss];
 		});
@@ -317,6 +347,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 						 if(progressView.alpha == 0 || progressView.contentView.alpha == 0) {
 							 [progressView cancelCircleAnimation];
 							 [progressView removeFromSuperview];
+							 
+							 progressView.style = KVNProgressStyleHidden;
 							 
 							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
 							 
