@@ -781,6 +781,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 			[self setupErrorUI];
 			break;
 		}
+		case KVNProgressStyleHidden: {
+			// should enver happen
+			break;
+		}
 	}
 }
 
