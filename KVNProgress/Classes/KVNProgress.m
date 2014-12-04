@@ -52,6 +52,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 @property (nonatomic) KVNProgressStyle style;
 @property (nonatomic) NSDate *showActionTrigerredDate;
 @property (nonatomic, getter = isWaitingToChangeHUD) BOOL waitingToChangeHUD;
+@property (nonatomic, getter = isDismissing) BOOL dismissing;
 
 // UI
 @property (nonatomic, weak) IBOutlet UIImageView *contentView;
@@ -227,9 +228,15 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 {
 	__block KVNProgress *__blockSelf = self;
 	
-	if (![self isWaitingToChangeHUD] && self.style != KVNProgressStyleHidden) {
+	// We check if a previous HUD is displaying
+	// If so, we wait its minimum display time before switching to the new one
+	// But, if we are changing from an indeterminate progress HUD to a determinate one,
+	// we do not apply this rule
+	if (![self isWaitingToChangeHUD] && self.style != KVNProgressStyleHidden
+		&& !(self.style == KVNProgressStyleProgress && self.progress == KVNProgressIndeterminate && progress != KVNProgressIndeterminate)) {
 		self.waitingToChangeHUD = YES;
-		
+		self.dismissing = NO;
+
 		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		NSTimeInterval delay = 0;
 		
@@ -241,6 +248,13 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		
 		if (delay > 0) {
 			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				if ([__blockSelf isDismissing] || ![__blockSelf.class isVisible]) {
+					// While waiting for displaying previous HUD enough time before showing the new one,
+					// the dismiss method on this new HUD has already been called
+					// So logically, we do not display the new HUD that is already dismissed (before even being displayed)
+					return;
+				}
+				
 				[__blockSelf showProgress:progress
 								   status:status
 									style:style
@@ -253,13 +267,15 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		}
 	}
 	
+	// We're going to create a new HUD
 	self.waitingToChangeHUD = NO;
 	self.progress = progress;
 	self.status = [status copy];
 	self.style = style;
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
-	
+
+	// If HUD is already added to the view we just update the UI
 	if ([self.class isVisible]) {
 		[UIView animateWithDuration:KVNLayoutAnimationDuration
 						 animations:^{
@@ -285,10 +301,12 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		});
 	}
 	
+	// If it's an auto-dismissable HUD
 	if (self.style != KVNProgressStyleProgress) {
 		NSTimeInterval delay;
 		switch (self.style) {
 			case KVNProgressStyleProgress:
+				// should never happen
 				return;
 			case KVNProgressStyleSuccess:
 				delay = KVNMinimumSuccessDisplayTime;
@@ -298,8 +316,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 				break;
 			case KVNProgressStyleHidden:
 				// should never happen
-				delay = 0;
-				break;
+				return;
 		}
 		
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -321,10 +338,16 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		return;
 	}
 	
+	[self sharedView].dismissing = YES;
+
 	// FIXME: find a way to wait for the views to be added to the window before launching the animations
 	// (Fix to make the dismiss work fine)
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[self dismissAnimatedWithCompletion:completion];
+		// If the view has changed or will change, the dismissing property is set back to NO so we don't dismiss
+		// the (scheduled) new one
+		if ([[self sharedView] isDismissing]) {
+			[self dismissAnimatedWithCompletion:completion];
+		}
 	});
 }
 
@@ -339,27 +362,33 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		// The hud hasn't showed enough time
 		delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
 	}
-	
+
 	[UIView animateWithDuration:KVNFadeAnimationDuration
 						  delay:delay
 						options:(UIViewAnimationOptionCurveEaseIn
 								 | UIViewAnimationOptionAllowUserInteraction
 								 | UIViewAnimationOptionBeginFromCurrentState)
 					 animations:^{
-						 progressView.alpha = 0.0f;
+						 if ([[self sharedView] isDismissing]) {
+							 progressView.alpha = 0.0f;
+						 }
 					 } completion:^(BOOL finished) {
 						 if(progressView.alpha == 0 || progressView.contentView.alpha == 0) {
-							 [progressView cancelCircleAnimation];
-							 [progressView removeFromSuperview];
-							 
-							 progressView.style = KVNProgressStyleHidden;
-							 
-							 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-							 
-							 // Tell the rootViewController to update the StatusBar appearance
-							 UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
-							 if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
-								 [rootController setNeedsStatusBarAppearanceUpdate];
+							 if ([progressView isDismissing]) {
+								 progressView.dismissing = NO;
+								 
+								 [progressView cancelCircleAnimation];
+								 [progressView removeFromSuperview];
+								 
+								 progressView.style = KVNProgressStyleHidden;
+								 
+								 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+								 
+								 // Tell the rootViewController to update the StatusBar appearance
+								 UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
+								 if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+									 [rootController setNeedsStatusBarAppearanceUpdate];
+								 }
 							 }
 							 
 							 if (completion) {
@@ -724,6 +753,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 - (void)updateProgress:(CGFloat)progress
 			  animated:(BOOL)animated
 {
+	if (self.style != KVNProgressStyleProgress) {
+		return;
+	}
+	
 	if ([self isIndeterminate]) {
 		// was inderminate
 		[self showProgress:progress
@@ -912,10 +945,9 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 - (void)removeAllSubLayersOfLayer:(CALayer *)layer
 {
 	for (CALayer *subLayer in [layer.sublayers copy]) {
-		/* Technical :
-		 we use a copy of self.circleProgressView.layer.sublayers because this array will
-		 change when we remove its sublayers
-		 */
+		// Technical :
+		// we use a copy of self.circleProgressView.layer.sublayers because this array will
+		// change when we remove its sublayers
 		[subLayer removeFromSuperlayer];
 	}
 }
