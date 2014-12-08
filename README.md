@@ -29,7 +29,7 @@ Example of customized interface:<br/>
  * Can be full screen
  * Uses `UIMotionEffect`
  * Animates text update
- * Animates succes checkmark
+ * Animates success checkmark
  * Is well documented
  * Is fully customizable
     * Colors
