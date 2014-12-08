@@ -233,7 +233,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	// But, if we are changing from an indeterminate progress HUD to a determinate one,
 	// we do not apply this rule
 	if (![self isWaitingToChangeHUD] && self.style != KVNProgressStyleHidden
-		&& !(self.style == KVNProgressStyleProgress && self.progress == KVNProgressIndeterminate && progress != KVNProgressIndeterminate)) {
+		&& !(self.style == KVNProgressStyleProgress && self.progress == KVNProgressIndeterminate && progress != KVNProgressIndeterminate)
+		&& !(self.style == KVNProgressStyleProgress && self.progress != KVNProgressIndeterminate)) {
 		self.waitingToChangeHUD = YES;
 		self.dismissing = NO;
 
