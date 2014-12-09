@@ -231,25 +231,6 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 {
 	__block KVNProgress *__blockSelf = self;
 	
-	NSTimeInterval defaultDelay = 0;
-	
-	switch (self.style) {
-		case KVNProgressStyleProgress:
-			// should never happen
-			return;
-		case KVNProgressStyleSuccess:
-			defaultDelay = KVNMinimumSuccessDisplayTime;
-			break;
-		case KVNProgressStyleError:
-			defaultDelay = KVNMinimumErrorDisplayTime;
-			break;
-		case KVNProgressStyleHidden:
-			// should never happen
-			return;
-	}
-	
-	NSTimeInterval delay = (minimumDisplayTime <= 0) ? defaultDelay : minimumDisplayTime;
-
 	// We check if a previous HUD is displaying
 	// If so, we wait its minimum display time before switching to the new one
 	// But, if we are changing from an indeterminate progress HUD to a determinate one,
@@ -258,6 +239,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		&& !(self.style == KVNProgressStyleProgress && self.progress == KVNProgressIndeterminate && progress != KVNProgressIndeterminate)) {
 		self.waitingToChangeHUD = YES;
 		self.dismissing = NO;
+
+		NSTimeInterval delay = 0;
 
 		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		
@@ -325,6 +308,25 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	
 	// If it's an auto-dismissable HUD
 	if (self.style != KVNProgressStyleProgress) {
+		NSTimeInterval defaultDelay = 0;
+	
+		switch (self.style) {
+			case KVNProgressStyleProgress:
+				// should never happen
+				return;
+			case KVNProgressStyleSuccess:
+				defaultDelay = KVNMinimumSuccessDisplayTime;
+				break;
+			case KVNProgressStyleError:
+				defaultDelay = KVNMinimumErrorDisplayTime;
+				break;
+			case KVNProgressStyleHidden:
+				// should never happen
+				return;
+		}
+		
+		NSTimeInterval delay = (minimumDisplayTime <= 0) ? defaultDelay : minimumDisplayTime;
+
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			[__blockSelf.class dismiss];
 		});
