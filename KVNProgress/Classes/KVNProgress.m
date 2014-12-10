@@ -244,10 +244,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		
-		if (timeIntervalSinceShow < delay) {
+		if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
 			// The hud hasn't showed enough time
 			timeIntervalSinceShow = (timeIntervalSinceShow < 0) ? 0 : timeIntervalSinceShow;
-			delay = delay - timeIntervalSinceShow;
+			delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
 		}
 		
 		if (delay > 0) {
