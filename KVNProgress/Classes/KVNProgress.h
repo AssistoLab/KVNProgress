@@ -23,6 +23,8 @@ extern NSString * const KVNProgressViewParameterBackgroundType;
 extern NSString * const KVNProgressViewParameterStatus;
 /** @see showWithParameters: */
 extern NSString * const KVNProgressViewParameterSuperview;
+/** @see showWithParameters: */
+extern NSString * const KVNProgressViewParameterTapBlock;
 
 /** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
 static NSTimeInterval const KVNMinimumDisplayTime = 0.3;

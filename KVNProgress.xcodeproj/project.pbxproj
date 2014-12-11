@@ -252,9 +252,6 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Pinch;
 				TargetAttributes = {
-					0AA0DCE61930DFAD00FDD29F = {
-						DevelopmentTeam = UAY63PVC53;
-					};
 					0AA0DD071930DFAD00FDD29F = {
 						TestTargetID = 0AA0DCE61930DFAD00FDD29F;
 					};

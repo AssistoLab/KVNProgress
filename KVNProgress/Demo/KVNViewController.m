@@ -97,15 +97,20 @@
 - (IBAction)showWithStatus
 {
 	if ([self isFullScreen]) {
-		[KVNProgress showWithParameters:@{KVNProgressViewParameterStatus: @"Loading...",
-										  KVNProgressViewParameterFullScreen: @(YES)}];
+		[KVNProgress showWithParameters:@{KVNProgressViewParameterStatus: @"Loading...\n\nTap to cancel",
+										  KVNProgressViewParameterFullScreen: @(YES),
+                                          KVNProgressViewParameterTapBlock : ^void(KVNProgress *hud) {
+            [KVNProgress dismiss];
+        }}];
 	} else {
-		[KVNProgress showWithStatus:@"Loading..."];
+        [KVNProgress showWithParameters:@{KVNProgressViewParameterStatus: @"Loading...\n\nTap to cancel",
+                                          KVNProgressViewParameterFullScreen: @(NO),
+                                          KVNProgressViewParameterTapBlock : ^void(KVNProgress *hud) {
+            [KVNProgress dismiss];
+        }}];
 	}
 	
-	dispatch_main_after(3.0f, ^{
-		[KVNProgress dismiss];
-	});
+	
 }
 
 - (IBAction)showProgress

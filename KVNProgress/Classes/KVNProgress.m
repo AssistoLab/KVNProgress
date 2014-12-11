@@ -21,10 +21,13 @@ typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	KVNProgressStyleError
 };
 
+typedef void(^KVNTapBlock)(KVNProgress *);
+
 NSString * const KVNProgressViewParameterFullScreen = @"KVNProgressViewParameterFullScreen";
 NSString * const KVNProgressViewParameterBackgroundType = @"KVNProgressViewParameterBackgroundType";
 NSString * const KVNProgressViewParameterStatus = @"KVNProgressViewParameterStatus";
 NSString * const KVNProgressViewParameterSuperview = @"KVNProgressViewParameterSuperview";
+NSString * const KVNProgressViewParameterTapBlock = @"KVNProgressViewParameterTapBlock";
 
 static CGFloat const KVNFadeAnimationDuration = 0.3f;
 static CGFloat const KVNLayoutAnimationDuration = 0.3f;
@@ -53,6 +56,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 @property (nonatomic) NSDate *showActionTrigerredDate;
 @property (nonatomic, getter = isWaitingToChangeHUD) BOOL waitingToChangeHUD;
 @property (nonatomic, getter = isDismissing) BOOL dismissing;
+@property (nonatomic, copy) KVNTapBlock tapBlock;
 
 // UI
 @property (nonatomic, weak) IBOutlet UIImageView *contentView;
@@ -216,7 +220,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 							  style:style
 					 backgroundType:(KVNProgressBackgroundType)[parameters[KVNProgressViewParameterBackgroundType] unsignedIntegerValue]
 						 fullScreen:[parameters[KVNProgressViewParameterFullScreen] boolValue]
-							   view:parameters[KVNProgressViewParameterSuperview]];
+							   view:parameters[KVNProgressViewParameterSuperview]
+                           tapBlock:parameters[KVNProgressViewParameterTapBlock]];
 }
 
 - (void)showProgress:(CGFloat)progress
@@ -225,6 +230,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen
 				view:(UIView *)superview
+            tapBlock:(KVNTapBlock)tapBlock
 {
 	__block KVNProgress *__blockSelf = self;
 	
@@ -253,15 +259,16 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 					// the dismiss method on this new HUD has already been called
 					// So logically, we do not display the new HUD that is already dismissed (before even being displayed)
 					return;
-				}
-				
-				[__blockSelf showProgress:progress
-								   status:status
-									style:style
-						   backgroundType:backgroundType
-							   fullScreen:fullScreen
-									 view:superview];
-			});
+                }
+                
+                [__blockSelf showProgress:progress
+                                   status:status
+                                    style:style
+                           backgroundType:backgroundType
+                               fullScreen:fullScreen
+                                     view:superview
+                                 tapBlock:tapBlock];
+            });
 			
 			return;
 		}
@@ -274,7 +281,12 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	self.style = style;
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
+    self.tapBlock = tapBlock;
 
+    // Add the tap gesture recognizer
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(performTapBlock)];
+    [self addGestureRecognizer:tapGestureRecognizer];
+    
 	// If HUD is already added to the view we just update the UI
 	if ([self.class isVisible]) {
 		[UIView animateWithDuration:KVNLayoutAnimationDuration
@@ -293,7 +305,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 			[self addToCurrentWindow];
 		}
 		
-		// FIXME: find a way to wait for the views to be added to the window before launching the animations
+		// find a way to wait for the views to be added to the window before launching the animations
 		// (Fix to make the animations work fine)
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			[__blockSelf animateUI];
@@ -325,6 +337,17 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	}
 }
 
+
+#pragma mark - Tap Block
+
+- (void)performTapBlock {
+    if (self.tapBlock) {
+        __weak typeof(self)weakSelf = self;
+        self.tapBlock(weakSelf);
+    }
+}
+
+
 #pragma mark - Dimiss
 
 + (void)dismiss
@@ -340,7 +363,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	
 	[self sharedView].dismissing = YES;
 
-	// FIXME: find a way to wait for the views to be added to the window before launching the animations
+    // find a way to wait for the views to be added to the window before launching the animations
 	// (Fix to make the dismiss work fine)
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		// If the view has changed or will change, the dismissing property is set back to NO so we don't dismiss
@@ -756,16 +779,17 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	if (self.style != KVNProgressStyleProgress) {
 		return;
 	}
-	
-	if ([self isIndeterminate]) {
-		// was inderminate
-		[self showProgress:progress
-					status:self.status
-					 style:self.style
-			backgroundType:self.backgroundType
-				fullScreen:self.fullScreen
-					  view:self.superview];
-		
+    
+    if ([self isIndeterminate]) {
+        // was inderminate
+        [self showProgress:progress
+                    status:self.status
+                     style:self.style
+            backgroundType:self.backgroundType
+                fullScreen:self.fullScreen
+                      view:self.superview
+                  tapBlock:nil];
+        
 		return;
 	}
 	
