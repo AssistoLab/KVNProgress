@@ -25,6 +25,7 @@ NSString * const KVNProgressViewParameterFullScreen = @"KVNProgressViewParameter
 NSString * const KVNProgressViewParameterBackgroundType = @"KVNProgressViewParameterBackgroundType";
 NSString * const KVNProgressViewParameterStatus = @"KVNProgressViewParameterStatus";
 NSString * const KVNProgressViewParameterSuperview = @"KVNProgressViewParameterSuperview";
+NSString * const KVNProgressViewParameterMinimumDisplayTime = @"KVNProgressViewParameterMinimumDisplayTime";
 
 static CGFloat const KVNFadeAnimationDuration = 0.3f;
 static CGFloat const KVNLayoutAnimationDuration = 0.3f;
@@ -216,7 +217,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 							  style:style
 					 backgroundType:(KVNProgressBackgroundType)[parameters[KVNProgressViewParameterBackgroundType] unsignedIntegerValue]
 						 fullScreen:[parameters[KVNProgressViewParameterFullScreen] boolValue]
-							   view:parameters[KVNProgressViewParameterSuperview]];
+							   view:parameters[KVNProgressViewParameterSuperview]
+					     minimumDisplayTime:[parameters[KVNProgressViewParameterMinimumDisplayTime] doubleValue]];
 }
 
 - (void)showProgress:(CGFloat)progress
@@ -225,6 +227,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen
 				view:(UIView *)superview
+		  minimumDisplayTime:(NSTimeInterval)minimumDisplayTime
 {
 	__block KVNProgress *__blockSelf = self;
 	
@@ -237,8 +240,9 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		self.waitingToChangeHUD = YES;
 		self.dismissing = NO;
 
-		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		NSTimeInterval delay = 0;
+
+		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		
 		if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
 			// The hud hasn't showed enough time
@@ -260,7 +264,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 									style:style
 						   backgroundType:backgroundType
 							   fullScreen:fullScreen
-									 view:superview];
+									 view:superview
+							   minimumDisplayTime:minimumDisplayTime];
 			});
 			
 			return;
@@ -303,22 +308,25 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	
 	// If it's an auto-dismissable HUD
 	if (self.style != KVNProgressStyleProgress) {
-		NSTimeInterval delay;
+		NSTimeInterval defaultDelay = 0;
+	
 		switch (self.style) {
 			case KVNProgressStyleProgress:
 				// should never happen
 				return;
 			case KVNProgressStyleSuccess:
-				delay = KVNMinimumSuccessDisplayTime;
+				defaultDelay = KVNMinimumSuccessDisplayTime;
 				break;
 			case KVNProgressStyleError:
-				delay = KVNMinimumErrorDisplayTime;
+				defaultDelay = KVNMinimumErrorDisplayTime;
 				break;
 			case KVNProgressStyleHidden:
 				// should never happen
 				return;
 		}
 		
+		NSTimeInterval delay = (minimumDisplayTime <= 0) ? defaultDelay : minimumDisplayTime;
+
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			[__blockSelf.class dismiss];
 		});
@@ -764,7 +772,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 					 style:self.style
 			backgroundType:self.backgroundType
 				fullScreen:self.fullScreen
-					  view:self.superview];
+					  view:self.superview
+			    minimumDisplayTime:0];
 		
 		return;
 	}
