@@ -80,7 +80,7 @@ You can customize colors, font and size of the HUD.
 Add the following import to the top of the file or to your Prefix header:
 
    ```objc
-   #import <KVNProgress/KVNPrgoress.h>
+   #import <KVNProgress/KVNProgress.h>
    ```
 
 ### Indeterminate progress
