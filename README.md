@@ -250,7 +250,10 @@ There are 3 static variables you can change that do that:
 
 ## Remains to do
 
-* Use real-time blur
+- [ ] Use real-time blur
+- [ ] iPad support
+- [ ] Dynamically changed minimum display times
+- [ ] Show success/error with completion
 
 ## License
 
