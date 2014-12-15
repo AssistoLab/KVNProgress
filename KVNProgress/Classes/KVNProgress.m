@@ -14,6 +14,8 @@
 #import "UIImage+KVNImageEffects.h"
 #import "UIImage+KVNEmpty.h"
 
+#define IPAD UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad
+
 typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	KVNProgressStyleHidden,
 	KVNProgressStyleProgress,
@@ -74,6 +76,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewTrailingToSuperviewConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewTopToSuperViewConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelBottomToSuperViewConstraint;
+@property (nonatomic) NSLayoutConstraint *contentViewWidthConstraint;
 
 @property (nonatomic) NSArray *constraintsToSuperview;
 
@@ -418,18 +421,47 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	if ([self isFullScreen]) {
 		contentMargin = KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
 	} else {
-		CGFloat contentWidth = CGRectGetWidth([UIScreen mainScreen].bounds) - (2 * KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant);
-		
-		if (contentWidth > KVNAlertViewWidth) {
-			contentMargin = (CGRectGetWidth([UIScreen mainScreen].bounds) - KVNAlertViewWidth) / 2.0f;
+		if (IPAD) {
+			__block KVNProgress *__blockSelf = self;
+			static dispatch_once_t onceToken;
+			dispatch_once(&onceToken, ^{
+				[__blockSelf removeConstraints:@[__blockSelf.contentViewLeadingToSuperviewConstraint,
+												 __blockSelf.contentViewTrailingToSuperviewConstraint]];
+				
+				__blockSelf.contentViewWidthConstraint = [NSLayoutConstraint constraintWithItem:__blockSelf.contentView
+																					  attribute:NSLayoutAttributeWidth
+																					  relatedBy:NSLayoutRelationEqual
+																						 toItem:nil
+																					  attribute:NSLayoutAttributeNotAnAttribute
+																					 multiplier:1.0f
+																					   constant:KVNAlertViewWidth];
+				NSLayoutConstraint *contentViewAlignXConstraint = [NSLayoutConstraint constraintWithItem:__blockSelf.contentView
+																							   attribute:NSLayoutAttributeCenterX
+																							   relatedBy:NSLayoutRelationEqual
+																								  toItem:__blockSelf
+																							   attribute:NSLayoutAttributeCenterX
+																							  multiplier:1.0f
+																								constant:0.0f];
+				[__blockSelf addConstraints:@[__blockSelf.contentViewWidthConstraint, contentViewAlignXConstraint]];
+			});
+			
+			self.contentViewWidthConstraint.constant = KVNAlertViewWidth;
+		} else {
+			CGFloat contentWidth = CGRectGetWidth([UIScreen mainScreen].bounds) - (2 * KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant);
+			
+			if (contentWidth > KVNAlertViewWidth) {
+				contentMargin = (CGRectGetWidth([UIScreen mainScreen].bounds) - KVNAlertViewWidth) / 2.0f;
+			}
 		}
 	}
 	
 	self.circleProgressViewTopToSuperViewConstraint.constant = statusInset;
 	self.statusLabelBottomToSuperViewConstraint.constant = statusInset;
 	
-	self.contentViewLeadingToSuperviewConstraint.constant = contentMargin;
-	self.contentViewTrailingToSuperviewConstraint.constant = contentMargin;
+	if (!IPAD) {
+		self.contentViewLeadingToSuperviewConstraint.constant = contentMargin;
+		self.contentViewTrailingToSuperviewConstraint.constant = contentMargin;
+	}
 }
 
 - (void)setupCircleProgressView
@@ -640,11 +672,18 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 			self.circleProgressViewTopToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
 			self.statusLabelBottomToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
 			
-			CGFloat contentViewHeight = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
-			CGFloat screenSize = CGRectGetWidth([UIScreen mainScreen].bounds);
-			CGFloat leadingAndTrailingConstraint = (screenSize - contentViewHeight) / 2.0f;
-			self.contentViewLeadingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
-			self.contentViewTrailingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
+			CGSize fittingSize = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+			
+			// We sets the width as the height to have a square
+			if (IPAD) {
+				self.contentViewWidthConstraint.constant = fittingSize.height;
+			} else {
+				CGFloat contentViewHeight = fittingSize.height;
+				CGFloat screenSize = CGRectGetWidth([UIScreen mainScreen].bounds);
+				CGFloat leadingAndTrailingConstraint = (screenSize - contentViewHeight) / 2.0f;
+				self.contentViewLeadingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
+				self.contentViewTrailingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
+			}
 		}
 		
 		self.backgroundImageView.image = [UIImage emptyImage];
@@ -659,9 +698,11 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		self.contentView.image = backgroundImage;
 	}
 	
-	if ([self.contentView.motionEffects count] == 0) {
-		[self setupMotionEffect];
-	}
+	__block KVNProgress *__blockSelf = self;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		[__blockSelf setupMotionEffect];
+	});
 }
 
 - (void)setupMotionEffect
