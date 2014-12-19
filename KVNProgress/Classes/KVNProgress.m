@@ -14,7 +14,11 @@
 #import "UIImage+KVNImageEffects.h"
 #import "UIImage+KVNEmpty.h"
 
-#define IPAD UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad
+#define KVNBlockSelf __blockSelf
+#define KVNPrepareBlockSelf() __weak typeof(self) KVNBlockSelf = self
+#define KVNIpad UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad
+#define KVNSystemVersionGreaterOrEqual_iOS_8 ([[[UIDevice currentDevice] systemVersion] compare:@"8" options:NSNumericSearch] != NSOrderedAscending)
+#define KVNRadiansToDegress(radians) ((radians) * (180.0 / M_PI))
 
 typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	KVNProgressStyleHidden,
@@ -37,7 +41,7 @@ static CGFloat const KVNProgressAnimationDuration = 0.25f;
 static CGFloat const KVNProgressIndeterminate = CGFLOAT_MAX;
 static CGFloat const KVNCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant = 20.0f;
 static CGFloat const KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 0.0f;
-static CGFloat const KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 55.0f;
+static CGFloat const KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant = 25.0f;
 static CGFloat const KVNContentViewWithStatusInset = 10.0f;
 static CGFloat const KVNContentViewWithoutStatusInset = 20.0f;
 static CGFloat const KVNContentViewCornerRadius = 8.0f;
@@ -72,11 +76,9 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewToStatusLabelVerticalSpaceConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelHeightConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewLeadingToSuperviewConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewTrailingToSuperviewConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewTopToSuperViewConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelBottomToSuperViewConstraint;
-@property (nonatomic) NSLayoutConstraint *contentViewWidthConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewWidthConstraint;
 
 @property (nonatomic) NSArray *constraintsToSuperview;
 
@@ -123,9 +125,41 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		_statusFont = [UIFont systemFontOfSize:17.0f];
 		
 		_lineWidth = 2.0f;
+		
+		[self registerForNotifications];
 	}
 	
 	return self;
+}
+
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - Notifications
+
+- (void)registerForNotifications {
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(orientationDidChange:)
+												 name:UIDeviceOrientationDidChangeNotification
+											   object:nil];
+}
+
+- (void)orientationDidChange:(NSNotification *)notification {
+	if (![self.class isVisible]) {
+		return;
+	}
+	
+	if ([self.superview isKindOfClass:[UIWindow class]]) {
+		KVNPrepareBlockSelf();
+		[UIView animateWithDuration:0.3f
+						 animations:^{
+							 [KVNBlockSelf updateUIForOrientation];
+						 }];
+	} else {
+		[self updateUIForOrientation];
+	}
 }
 
 #pragma mark - Loading
@@ -229,14 +263,18 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		  fullScreen:(BOOL)fullScreen
 				view:(UIView *)superview
 {
-	__block KVNProgress *__blockSelf = self;
+	KVNPrepareBlockSelf();
 	
 	// We check if a previous HUD is displaying
 	// If so, we wait its minimum display time before switching to the new one
 	// But, if we are changing from an indeterminate progress HUD to a determinate one,
 	// we do not apply this rule
-	if (![self isWaitingToChangeHUD] && self.style != KVNProgressStyleHidden
-		&& !(self.style == KVNProgressStyleProgress && self.progress == KVNProgressIndeterminate && progress != KVNProgressIndeterminate)) {
+	if (![self isWaitingToChangeHUD]
+		&& self.style != KVNProgressStyleHidden
+		&& !(self.style == KVNProgressStyleProgress
+			 && self.progress == KVNProgressIndeterminate
+			 && progress != KVNProgressIndeterminate))
+	{
 		self.waitingToChangeHUD = YES;
 		self.dismissing = NO;
 
@@ -251,19 +289,19 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		
 		if (delay > 0) {
 			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-				if ([__blockSelf isDismissing] || ![__blockSelf.class isVisible]) {
+				if ([KVNBlockSelf isDismissing] || ![KVNBlockSelf.class isVisible]) {
 					// While waiting for displaying previous HUD enough time before showing the new one,
 					// the dismiss method on this new HUD has already been called
 					// So logically, we do not display the new HUD that is already dismissed (before even being displayed)
 					return;
 				}
 				
-				[__blockSelf showProgress:progress
-								   status:status
-									style:style
-						   backgroundType:backgroundType
-							   fullScreen:fullScreen
-									 view:superview];
+				[KVNBlockSelf showProgress:progress
+									status:status
+									 style:style
+							backgroundType:backgroundType
+								fullScreen:fullScreen
+									  view:superview];
 			});
 			
 			return;
@@ -282,25 +320,25 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	if ([self.class isVisible]) {
 		[UIView animateWithDuration:KVNLayoutAnimationDuration
 						 animations:^{
-							 [__blockSelf setupUI];
+							 [KVNBlockSelf setupUI];
 						 }];
 		
-		__blockSelf.showActionTrigerredDate = [NSDate date];
-		[__blockSelf animateUI];
+		KVNBlockSelf.showActionTrigerredDate = [NSDate date];
+		[KVNBlockSelf animateUI];
 	} else {
-		[self setupUI];
-		
 		if (superview) {
 			[self addToView:superview];
 		} else {
 			[self addToCurrentWindow];
 		}
 		
+		[self setupUI];
+		
 		// FIXME: find a way to wait for the views to be added to the window before launching the animations
 		// (Fix to make the animations work fine)
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			[__blockSelf animateUI];
-			[__blockSelf animateAppearance];
+			[KVNBlockSelf animateUI];
+			[KVNBlockSelf animateAppearance];
 		});
 	}
 	
@@ -323,7 +361,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		}
 		
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			[__blockSelf.class dismiss];
+			[KVNBlockSelf.class dismiss];
 		});
 	}
 }
@@ -415,53 +453,35 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)setupConstraints
 {
+	CGRect bounds = [self correctedBounds];
 	CGFloat statusInset = (self.status.length > 0) ? KVNContentViewWithStatusInset : KVNContentViewWithoutStatusInset;
-	CGFloat contentMargin = ([self isFullScreen]) ? KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant : KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+	CGFloat contentWidth;
+	
+	if (!KVNSystemVersionGreaterOrEqual_iOS_8 && [self.superview isKindOfClass:UIWindow.class]) {
+		self.transform = CGAffineTransformMakeRotation([self rotationForStatusBarOrientation]);
+	} else {
+		self.transform = CGAffineTransformIdentity;
+	}
 	
 	if ([self isFullScreen]) {
-		contentMargin = KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant;
+		contentWidth = CGRectGetWidth(bounds) - (2 * KVNContentViewFullScreenModeLeadingAndTrailingSpaceConstraintConstant);
 	} else {
-		if (IPAD) {
-			__block KVNProgress *__blockSelf = self;
-			static dispatch_once_t onceToken;
-			dispatch_once(&onceToken, ^{
-				[__blockSelf removeConstraints:@[__blockSelf.contentViewLeadingToSuperviewConstraint,
-												 __blockSelf.contentViewTrailingToSuperviewConstraint]];
-				
-				__blockSelf.contentViewWidthConstraint = [NSLayoutConstraint constraintWithItem:__blockSelf.contentView
-																					  attribute:NSLayoutAttributeWidth
-																					  relatedBy:NSLayoutRelationEqual
-																						 toItem:nil
-																					  attribute:NSLayoutAttributeNotAnAttribute
-																					 multiplier:1.0f
-																					   constant:KVNAlertViewWidth];
-				NSLayoutConstraint *contentViewAlignXConstraint = [NSLayoutConstraint constraintWithItem:__blockSelf.contentView
-																							   attribute:NSLayoutAttributeCenterX
-																							   relatedBy:NSLayoutRelationEqual
-																								  toItem:__blockSelf
-																							   attribute:NSLayoutAttributeCenterX
-																							  multiplier:1.0f
-																								constant:0.0f];
-				[__blockSelf addConstraints:@[__blockSelf.contentViewWidthConstraint, contentViewAlignXConstraint]];
-			});
-			
-			self.contentViewWidthConstraint.constant = KVNAlertViewWidth;
+		if (KVNIpad) {
+			contentWidth = KVNAlertViewWidth;
 		} else {
-			CGFloat contentWidth = CGRectGetWidth([UIScreen mainScreen].bounds) - (2 * KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant);
+			contentWidth = CGRectGetWidth(bounds) - (2 * KVNContentViewNotFullScreenModeLeadingAndTrailingSpaceConstraintConstant);
 			
 			if (contentWidth > KVNAlertViewWidth) {
-				contentMargin = (CGRectGetWidth([UIScreen mainScreen].bounds) - KVNAlertViewWidth) / 2.0f;
+				contentWidth = KVNAlertViewWidth;
 			}
 		}
 	}
 	
 	self.circleProgressViewTopToSuperViewConstraint.constant = statusInset;
 	self.statusLabelBottomToSuperViewConstraint.constant = statusInset;
+	self.contentViewWidthConstraint.constant = contentWidth;
 	
-	if (!IPAD) {
-		self.contentViewLeadingToSuperviewConstraint.constant = contentMargin;
-		self.contentViewTrailingToSuperviewConstraint.constant = contentMargin;
-	}
+	[self layoutIfNeeded];
 }
 
 - (void)setupCircleProgressView
@@ -627,13 +647,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	self.statusLabel.font = self.statusFont;
 	self.statusLabel.hidden = !showStatus;
 	
-	self.circleProgressViewToStatusLabelVerticalSpaceConstraint.constant = (showStatus) ? KVNCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant : 0.0f;
-	
-	CGSize maximumLabelSize = CGSizeMake(CGRectGetWidth(self.statusLabel.bounds), CGFLOAT_MAX);
-	CGSize statusLabelSize = [self.statusLabel sizeThatFits:maximumLabelSize];
-	self.statusLabelHeightConstraint.constant = statusLabelSize.height;
-	
-	[self layoutIfNeeded];
+	[self updateStatusConstraints];
 }
 
 - (void)setupBackground
@@ -642,66 +656,12 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		return; // No reload of background when view is showing
 	}
 	
-	UIImage *backgroundImage = nil;
-	UIColor *backgroundColor = nil;
+	[self updateBackground];
 	
-	switch (self.backgroundType) {
-		case KVNProgressBackgroundTypeSolid:
-			backgroundImage = [UIImage emptyImage];
-			backgroundColor = self.backgroundFillColor;
-			break;
-		case KVNProgressBackgroundTypeBlurred:
-			backgroundImage = [self blurredScreenShot];
-			backgroundColor = [UIColor clearColor];
-			break;
-	}
-	
-	if ([self isFullScreen])
-	{
-		self.backgroundImageView.image = backgroundImage;
-		self.backgroundImageView.backgroundColor = backgroundColor;
-		
-		self.contentView.layer.cornerRadius = 0.0f;
-		self.contentView.layer.masksToBounds = NO;
-		self.contentView.image = [UIImage emptyImage];
-		self.contentView.backgroundColor = [UIColor clearColor];
-	}
-	else
-	{
-		if (self.status.length == 0) {
-			self.circleProgressViewTopToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
-			self.statusLabelBottomToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
-			
-			CGSize fittingSize = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-			
-			// We sets the width as the height to have a square
-			if (IPAD) {
-				self.contentViewWidthConstraint.constant = fittingSize.height;
-			} else {
-				CGFloat contentViewHeight = fittingSize.height;
-				CGFloat screenSize = CGRectGetWidth([UIScreen mainScreen].bounds);
-				CGFloat leadingAndTrailingConstraint = (screenSize - contentViewHeight) / 2.0f;
-				self.contentViewLeadingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
-				self.contentViewTrailingToSuperviewConstraint.constant = leadingAndTrailingConstraint;
-			}
-		}
-		
-		self.backgroundImageView.image = [UIImage emptyImage];
-		self.backgroundImageView.backgroundColor = [UIColor colorWithWhite:0.0f
-																	 alpha:0.35f];
-		
-		self.contentView.layer.cornerRadius = (self.status) ? KVNContentViewCornerRadius : KVNContentViewWithoutStatusCornerRadius;
-		self.contentView.layer.masksToBounds = YES;
-		self.contentView.contentMode = UIViewContentModeCenter;
-		self.contentView.backgroundColor = self.backgroundFillColor;
-		
-		self.contentView.image = backgroundImage;
-	}
-	
-	__block KVNProgress *__blockSelf = self;
+	KVNPrepareBlockSelf();
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		[__blockSelf setupMotionEffect];
+		[KVNBlockSelf setupMotionEffect];
 	});
 }
 
@@ -745,13 +705,13 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	[superview addSubview:self];
 	[superview bringSubviewToFront:self];
 	
-	NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self(height)]|"
+	NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
 																		   options:0
-																		   metrics:@{@"height" : @(CGRectGetHeight(superview.bounds))}
+																		   metrics:nil
 																			 views:@{@"self" : self}];
-	NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self(width)]|"
+	NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
 																			 options:0
-																			 metrics:@{@"width" : @(CGRectGetWidth(superview.bounds))}
+																			 metrics:nil
 																			   views:@{@"self" : self}];
 	
 	self.constraintsToSuperview = [verticalConstraints arrayByAddingObjectsFromArray:horizontalConstraints];
@@ -766,6 +726,81 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 }
 
 #pragma mark - Update
+
+- (void)updateUIForOrientation
+{
+	[self setupConstraints];
+	[self updateStatusConstraints];
+	[self updateBackgroundConstraints];
+}
+
+- (void)updateBackground
+{
+	UIImage *backgroundImage = nil;
+	UIColor *backgroundColor = nil;
+	
+	switch (self.backgroundType) {
+		case KVNProgressBackgroundTypeSolid:
+			backgroundImage = [UIImage emptyImage];
+			backgroundColor = self.backgroundFillColor;
+			break;
+		case KVNProgressBackgroundTypeBlurred:
+			backgroundImage = [self blurredScreenShot];
+			backgroundColor = [UIColor clearColor];
+			break;
+	}
+	
+	if (!KVNSystemVersionGreaterOrEqual_iOS_8
+		&& !CGAffineTransformEqualToTransform(self.transform, CGAffineTransformIdentity))
+	{
+		CIImage *transformedCIImage = backgroundImage.CIImage;
+		
+		if (!transformedCIImage) {
+			transformedCIImage = [CIImage imageWithCGImage:backgroundImage.CGImage];
+		}
+		
+		transformedCIImage = [transformedCIImage imageByApplyingTransform:self.transform];
+		backgroundImage = [UIImage imageWithCIImage:transformedCIImage];
+	}
+	
+	[self updateBackgroundConstraints];
+	
+	if ([self isFullScreen])
+	{
+		self.backgroundImageView.image = backgroundImage;
+		self.backgroundImageView.backgroundColor = backgroundColor;
+		
+		self.contentView.layer.cornerRadius = 0.0f;
+		self.contentView.layer.masksToBounds = NO;
+		self.contentView.image = [UIImage emptyImage];
+		self.contentView.backgroundColor = [UIColor clearColor];
+	}
+	else
+	{
+		self.backgroundImageView.image = [UIImage emptyImage];
+		self.backgroundImageView.backgroundColor = [UIColor colorWithWhite:0.0f
+																	 alpha:0.35f];
+		
+		self.contentView.layer.cornerRadius = (self.status) ? KVNContentViewCornerRadius : KVNContentViewWithoutStatusCornerRadius;
+		self.contentView.layer.masksToBounds = YES;
+		self.contentView.contentMode = UIViewContentModeCenter;
+		self.contentView.backgroundColor = self.backgroundFillColor;
+		
+		self.contentView.image = backgroundImage;
+	}
+}
+
+- (void)updateBackgroundConstraints
+{
+	if (![self isFullScreen] && self.status.length == 0) {
+		self.circleProgressViewTopToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
+		self.statusLabelBottomToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
+		
+		// We sets the width as the height to have a square
+		CGSize fittingSize = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+		self.contentViewWidthConstraint.constant = fittingSize.height;
+	}
+}
 
 + (void)updateStatus:(NSString*)status
 {
@@ -782,6 +817,19 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	} else {
 		[self setupStatus:status];
 	}
+}
+
+- (void)updateStatusConstraints
+{
+	BOOL showStatus = (self.status.length > 0);
+	
+	self.circleProgressViewToStatusLabelVerticalSpaceConstraint.constant = (showStatus) ? KVNCircleProgressViewToStatusLabelVerticalSpaceConstraintConstant : 0.0f;
+	
+	CGSize maximumLabelSize = CGSizeMake(CGRectGetWidth(self.statusLabel.bounds), CGFLOAT_MAX);
+	CGSize statusLabelSize = [self.statusLabel sizeThatFits:maximumLabelSize];
+	self.statusLabelHeightConstraint.constant = statusLabelSize.height;
+	
+	[self layoutIfNeeded];
 }
 
 + (void)updateProgress:(CGFloat)progress
@@ -1073,6 +1121,44 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	return motionEffect;
 }
 
+- (CGFloat)rotationForStatusBarOrientation {
+	switch ([UIApplication sharedApplication].statusBarOrientation) {
+		case UIInterfaceOrientationLandscapeLeft:
+			return -M_PI_2;
+		case UIInterfaceOrientationLandscapeRight:
+			return M_PI_2;
+		case UIInterfaceOrientationPortraitUpsideDown:
+			return M_PI;
+		case UIInterfaceOrientationPortrait:
+		case UIInterfaceOrientationUnknown:
+			return 0;
+	}
+}
+
+- (CGRect)correctedBounds
+{
+	return [self correctedBoundsForBounds:self.bounds];
+}
+
+- (CGRect)correctedBoundsForBounds:(CGRect)boundsToCorrect
+{
+	CGRect bounds = (CGRect){CGPointZero, boundsToCorrect.size};
+	
+	if (!KVNSystemVersionGreaterOrEqual_iOS_8 && [self.superview isKindOfClass:UIWindow.class])
+	{
+		// landscape orientation but width is smaller than height
+		// or portrait orientation but width is larger than height
+		if ((UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
+			 && CGRectGetWidth(bounds) < CGRectGetHeight(bounds))
+			|| (UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation)
+			 && CGRectGetWidth(bounds) > CGRectGetHeight(bounds))) {
+				bounds = (CGRect){CGPointZero, {bounds.size.height, bounds.size.width}};
+		}
+	}
+	
+	return bounds;
+}
+
 #pragma mark - Information
 
 - (BOOL)isIndeterminate
@@ -1082,7 +1168,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 + (BOOL)isVisible
 {
-	return ([self sharedView].superview != nil);
+	return ([self sharedView].superview != nil && [self sharedView].alpha > 0.0f);
 }
 
 #pragma mark - Appearance

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14B17" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -43,6 +43,7 @@
                         <constraint firstAttribute="trailing" secondItem="gXU-1y-b5M" secondAttribute="trailing" constant="20" id="NfM-dd-C8T"/>
                         <constraint firstItem="iI6-MR-KeW" firstAttribute="top" secondItem="dvZ-0c-TMi" secondAttribute="top" constant="10" id="axR-gj-btf"/>
                         <constraint firstAttribute="bottom" secondItem="gXU-1y-b5M" secondAttribute="bottom" constant="10" id="bXO-fJ-Lwk"/>
+                        <constraint firstAttribute="width" constant="320" id="eZY-e1-PNu"/>
                         <constraint firstItem="gXU-1y-b5M" firstAttribute="leading" secondItem="dvZ-0c-TMi" secondAttribute="leading" constant="20" id="mvo-ir-QnY"/>
                         <constraint firstAttribute="centerX" secondItem="iI6-MR-KeW" secondAttribute="centerX" id="vof-Gd-IFp"/>
                     </constraints>
@@ -55,8 +56,7 @@
                 <constraint firstAttribute="centerY" secondItem="dvZ-0c-TMi" secondAttribute="centerY" id="F1z-jy-68E"/>
                 <constraint firstAttribute="trailing" secondItem="gu2-d7-GWy" secondAttribute="trailing" id="Jt6-eM-AZR"/>
                 <constraint firstItem="gu2-d7-GWy" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="L7R-iU-5gw"/>
-                <constraint firstAttribute="trailing" secondItem="dvZ-0c-TMi" secondAttribute="trailing" id="gBi-Hb-Mr7"/>
-                <constraint firstItem="dvZ-0c-TMi" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="q68-L1-eGD"/>
+                <constraint firstAttribute="centerX" secondItem="dvZ-0c-TMi" secondAttribute="centerX" id="hDa-hg-DLF"/>
                 <constraint firstItem="gu2-d7-GWy" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qT5-aY-Brf"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
@@ -69,8 +69,7 @@
                 <outlet property="circleProgressViewTopToSuperViewConstraint" destination="axR-gj-btf" id="hwn-Ep-vNd"/>
                 <outlet property="circleProgressViewWidthConstraint" destination="c6q-Xh-pet" id="7XZ-bz-Ury"/>
                 <outlet property="contentView" destination="dvZ-0c-TMi" id="l4W-xx-PIG"/>
-                <outlet property="contentViewLeadingToSuperviewConstraint" destination="q68-L1-eGD" id="z31-Mz-ZKN"/>
-                <outlet property="contentViewTrailingToSuperviewConstraint" destination="gBi-Hb-Mr7" id="VZI-F3-zLF"/>
+                <outlet property="contentViewWidthConstraint" destination="eZY-e1-PNu" id="ACJ-jc-8ri"/>
                 <outlet property="statusLabel" destination="gXU-1y-b5M" id="3SM-0c-hjG"/>
                 <outlet property="statusLabelBottomToSuperViewConstraint" destination="bXO-fJ-Lwk" id="v84-sv-hIw"/>
                 <outlet property="statusLabelHeightConstraint" destination="V0y-U4-QII" id="Xbn-CE-kP0"/>
