@@ -24,13 +24,6 @@ extern NSString * const KVNProgressViewParameterStatus;
 /** @see showWithParameters: */
 extern NSString * const KVNProgressViewParameterSuperview;
 
-/** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
-static NSTimeInterval const KVNMinimumDisplayTime = 0.3;
-/** The minimum time (in seconds) the success will be displayed. */
-static NSTimeInterval const KVNMinimumSuccessDisplayTime = 2.0;
-/** The minimum time (in seconds) the error will be displayed. */
-static NSTimeInterval const KVNMinimumErrorDisplayTime = 1.3;
-
 @interface KVNProgress : UIView
 
 #pragma mark - Appearance
@@ -57,6 +50,12 @@ static NSTimeInterval const KVNMinimumErrorDisplayTime = 1.3;
 @property (nonatomic) CGFloat circleSize NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 /** Width of the circle stroke line */
 @property (nonatomic) CGFloat lineWidth NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+/** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
+@property (nonatomic) NSTimeInterval minimumDisplayTime NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+/** The minimum time (in seconds) the success will be displayed. */
+@property (nonatomic) NSTimeInterval minimumSuccessDisplayTime NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+/** The minimum time (in seconds) the error will be displayed. */
+@property (nonatomic) NSTimeInterval minimumErrorDisplayTime NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 
 #pragma mark - Loading
 

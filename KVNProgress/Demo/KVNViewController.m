@@ -50,6 +50,9 @@
 	[KVNProgress appearance].errorColor = [UIColor darkGrayColor];
 	[KVNProgress appearance].circleSize = 75.0f;
 	[KVNProgress appearance].lineWidth = 2.0f;
+	[KVNProgress appearance].minimumDisplayTime = 5.0f;
+	[KVNProgress appearance].minimumSuccessDisplayTime = 0.3f;
+	[KVNProgress appearance].minimumErrorDisplayTime = 2.0f;
 }
 
 - (void)setupCustomKVNProgressUI

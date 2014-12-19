@@ -106,6 +106,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 {
 	if (self = [super initWithCoder:aDecoder]) {
 		// Appearance
+		// TODO: check for all properties before setting here (check now on Assisto)
 		_backgroundFillColor = [UIColor colorWithWhite:1.0f alpha:0.85f];
 		_backgroundTintColor = [UIColor whiteColor];
 		
@@ -119,7 +120,11 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		_statusColor = [UIColor darkGrayColor];
 		_statusFont = [UIFont systemFontOfSize:17.0f];
 		
-		_lineWidth = 2.0f;
+		_lineWidth = 5.0f;
+		
+		_minimumDisplayTime = 0.3f;
+		_minimumSuccessDisplayTime = 2.0f;
+		_minimumErrorDisplayTime = 1.3f;
 	}
 	
 	return self;
@@ -241,10 +246,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		NSTimeInterval delay = 0;
 		
-		if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
+		if (timeIntervalSinceShow < self.minimumDisplayTime) {
 			// The hud hasn't showed enough time
 			timeIntervalSinceShow = (timeIntervalSinceShow < 0) ? 0 : timeIntervalSinceShow;
-			delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
+			delay = self.minimumDisplayTime - timeIntervalSinceShow;
 		}
 		
 		if (delay > 0) {
@@ -310,10 +315,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 				// should never happen
 				return;
 			case KVNProgressStyleSuccess:
-				delay = KVNMinimumSuccessDisplayTime;
+				delay = self.minimumSuccessDisplayTime;
 				break;
 			case KVNProgressStyleError:
-				delay = KVNMinimumErrorDisplayTime;
+				delay = self.minimumErrorDisplayTime;
 				break;
 			case KVNProgressStyleHidden:
 				// should never happen
@@ -359,9 +364,9 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	NSTimeInterval timeIntervalSinceShow = fabs([progressView.showActionTrigerredDate timeIntervalSinceNow]);
 	NSTimeInterval delay = 0;
 	
-	if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
+	if (timeIntervalSinceShow < progressView.minimumDisplayTime) {
 		// The hud hasn't showed enough time
-		delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
+		delay = progressView.minimumDisplayTime - timeIntervalSinceShow;
 	}
 
 	[UIView animateWithDuration:KVNFadeAnimationDuration
@@ -1170,6 +1175,39 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	}
 	
 	return _lineWidth;
+}
+
+- (NSTimeInterval)minimumDisplayTime
+{
+	CGFloat appearanceMinimumDisplayTime = [[[self class] appearance] lineWidth];
+	
+	if (appearanceMinimumDisplayTime != 0) {
+		_minimumDisplayTime = appearanceMinimumDisplayTime;
+	}
+	
+	return _minimumDisplayTime;
+}
+
+- (NSTimeInterval)minimumSuccessDisplayTime
+{
+	CGFloat appearanceMinimumSuccessDisplayTime = [[[self class] appearance] lineWidth];
+	
+	if (appearanceMinimumSuccessDisplayTime != 0) {
+		_minimumSuccessDisplayTime = appearanceMinimumSuccessDisplayTime;
+	}
+	
+	return _minimumSuccessDisplayTime;
+}
+
+- (NSTimeInterval)minimumErrorDisplayTime
+{
+	CGFloat appearanceMinimumErrorDisplayTime = [[[self class] appearance] lineWidth];
+	
+	if (appearanceMinimumErrorDisplayTime != 0) {
+		_minimumErrorDisplayTime = appearanceMinimumErrorDisplayTime;
+	}
+	
+	return _minimumErrorDisplayTime;
 }
 
 #pragma mark - HitTest
