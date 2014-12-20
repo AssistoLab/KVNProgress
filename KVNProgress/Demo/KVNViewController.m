@@ -46,7 +46,7 @@
 {
 	KVNProgressConfiguration *configuration = [[KVNProgressConfiguration alloc] init];
 	
-	// See the documentation of all appearance propoerties
+	// See the documentation of KVNProgressConfiguration
 	configuration.statusColor = [UIColor whiteColor];
 	configuration.statusFont = [UIFont fontWithName:@"HelveticaNeue-Thin" size:15.0f];
 	configuration.circleStrokeForegroundColor = [UIColor whiteColor];
