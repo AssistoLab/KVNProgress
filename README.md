@@ -2,7 +2,7 @@
 
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
-[![Version](http://img.shields.io/badge/version-2.1-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
+[![Version](http://img.shields.io/badge/version-2.1.4-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
 
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
 ***
@@ -28,6 +28,8 @@ Example of customized interface:<br/>
 
  * Can be full screen
  * Uses `UIMotionEffect`
+ * Supports all orientations
+ * Supports iPad
  * Animates text update
  * Animates success checkmark
  * Is well documented
@@ -90,8 +92,12 @@ To show an indeterminate progress:
    ```objc
    [KVNProgress show];
    
-   // Adds a status below the progress
+   // Adds a status below the circle
    [KVNProgress showWithStatus:@"Loading"];
+   
+   // Adds the HUD to a certain view instead of main window
+   [KVNProgress showWithStatus:@"Loading"
+                        onView:view];
    ```
 
 To change the status on the fly (animated):
@@ -111,6 +117,11 @@ To show a determinate progress and change its value along time:
    // Adds a status below the progress
    [KVNProgress showProgress:0.5f
                       status:@"Loading"];
+   
+   // Adds the HUD to a certain view instead of main window
+   [KVNProgress showProgress:0.5f
+                      status:@"Loading"
+                      onView:view];
    
    // Updates the progress
    [KVNProgress updateProgress:0.75f
@@ -139,7 +150,7 @@ To dismiss after your task is done:
 
 Because KVNProgress remains visible for a certain time even if you call `dismiss`. This is done to ensure the user has enough time to see the HUD if the load is too quick.
 The completion block in `dismissWithCompletion` is called (on the main thread) after the HUD is completely dismissed.
-This amount of time is defined in `KVNProgress.h` in a static variable `KVNMinimumDisplayTime`. Feel free to change it to suits your needs! Default value is `0.3` seconds.
+This amount of time is defined in the KVNProgressConfiguration object (explained [below](#KVNProgressConfiguration)). Default value is `0.3` seconds.
 
 ### Success/Errors
 
@@ -150,6 +161,10 @@ To show a success HUD with a checkmark:
    
    // Or
    [KVNProgress showSuccessWithStatus:@"Success"];
+   
+   // Adds the HUD to a certain view instead of main window
+   [KVNProgress showSuccessWithStatus:@"Success"
+                               onView:view];
    ```
 
 To show an error HUD with a cross:
@@ -159,6 +174,10 @@ To show an error HUD with a cross:
    
    // Or
    [KVNProgress showErrorWithStatus:@"Error"];
+   
+   // Adds the HUD to a certain view instead of main window
+   [KVNProgress showErrorWithStatus:@"Error"
+                             onView:view];
    ```
 
 Dismiss is automatic for successes and errors.
@@ -168,91 +187,55 @@ Dismiss is automatic for successes and errors.
 The appearance of KVNProgress is very customizable. 
 If something is missing or could be added, don't hesitate to ask for it!
 
-### UIAppearance
+### <a name="KVNProgressConfiguration"></a>KVNProgressConfiguration
 
-You can setup your HUD UI in your UI setups for your app using:
+You can setup your HUD UI in your UI setups for your app using the `KVNProgressConfiguration`.
+Here is an example on how to simply set the default configuration for you HUD:
+
+   ```objc
+   [KVNProgress setConfiguration:[KVNProgressConfiguration defaultConfiguration]];
+   ```
+
+Note that if you just want the default configuration, the above code is not needed. 
+If you do not set a configuration, the default one is taken ;)
+
+Here is an example of a complete custom configuration:
 
   ```objc
-   // The color of the status
-   [KVNProgress appearance].statusColor = [UIColor darkGrayColor];
-   
-   // The font of the status
-   [KVNProgress appearance].statusFont = [UIFont systemFontOfSize:17.0f];
-   
-   // The stroke color of the circle that will be animated (for a (in)determinate progress)
-   [KVNProgress appearance].circleStrokeForegroundColor = [UIColor darkGrayColor];
-   
-   // The stroke color of the circle background when (and only when) animating a determinate progress
-   [KVNProgress appearance].circleStrokeBackgroundColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.3f];
-   
-   // The inner background of the circle
-   [KVNProgress appearance].circleFillBackgroundColor = [UIColor clearColor];
-   
-   // The background color of the HUD (only when using solid color background)
-   [KVNProgress appearance].backgroundFillColor = [UIColor colorWithWhite:0.9f alpha:0.9f];
-   
-   // The background color of the HUD (only when using blurred background)
-   [KVNProgress appearance].backgroundTintColor = [UIColor whiteColor];
-   
-   // The color of the success checkmark and its circle
-   [KVNProgress appearance].successColor = [UIColor darkGrayColor];
-   
-   // The color of the error cross and its circle
-   [KVNProgress appearance].errorColor = [UIColor darkGrayColor];
-   
-   // The size of the circle
-   [KVNProgress appearance].circleSize = 75.0f;
-   
-   // The line width of the circle's stroke, checkmark and cross
-   [KVNProgress appearance].lineWidth = 2.0f;
+   KVNProgressConfiguration *configuration = [[KVNProgressConfiguration alloc] init];
+	
+	configuration.statusColor = [UIColor whiteColor];
+	configuration.statusFont = [UIFont fontWithName:@"HelveticaNeue-Thin" size:15.0f];
+	configuration.circleStrokeForegroundColor = [UIColor whiteColor];
+	configuration.circleStrokeBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.3f];
+	configuration.circleFillBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.1f];
+	configuration.backgroundFillColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:0.9f];
+	configuration.backgroundTintColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:1.0f];
+	configuration.successColor = [UIColor whiteColor];
+	configuration.errorColor = [UIColor whiteColor];
+	configuration.circleSize = 110.0f;
+	configuration.lineWidth = 1.0f;
+	configuration.fullScreen = NO;
+	
+	[KVNProgress setConfiguration:configuration];
    ```
 
-### Parameters
+If you do not specify certain properties for a configuration, they will automatically be the default's one.
 
-You can pass more parameters to the `show`, `showProgress:`, `showSuccess` and `showError` methods by calling these methods:
-
-   ```objc
-   + (void)showWithParameters:(NSDictionary *)parameters;
-   + (void)showProgress:(CGFloat)progress
-             parameters:(NSDictionary *)parameters;
-   + (void)showSuccessWithParameters:(NSDictionary *)parameters;
-   + (void)showErrorWithParameters:(NSDictionary *)parameters;
-   ```
-
-Here are the parameter keys constants you can use:
-
-| Constant | Value | Description |
-|------------------------------------------|------------------------------------------------------------------------------------|------------------------------------------|
-| `KVNProgressViewParameterFullScreen` | BOOL wrapped in a `NSNumber`. Default: `NO`. | Precise full screen or not HUD. |
-| `KVNProgressViewParameterBackgroundType` | `KVNProgressBackgroundType` enumeration wrapped in a `NSNumber`. Default: blurred. | Precise blurred or solid HUD background. |
-| `KVNProgressViewParameterStatus` | `NSString`. Default: `nil` (no status). | Precise the HUD status. |
-| `KVNProgressViewParameterSuperview` | `UIView`. Default: `nil` (current window). | Precise the superview of the HUD. |
-
-Example:
-   ```objc
-   [KVNProgress showWithParameters:
-    @{KVNProgressViewParameterFullScreen: @(YES),
-      KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-      KVNProgressViewParameterStatus: @"Loading",
-      KVNProgressViewParameterSuperview: self.view
-   }];
-   ```
 
 ### Display times
 
 To avoid the user to see a blinking HUD or even don't see it at all if you are dismissing it too quickly, the HUD will stay display for a minimum (short) period of time.
 
-There are 3 static variables you can change that do that:
+There are 3 properties you can change that do that in `KVNProgressConfiguration` to do that:
 
-* `KVNMinimumDisplayTime` that has a default value of `0.3` seconds. It handles all HUD's except for success and error ones.
-* `KVNMinimumSuccessDisplayTime` that has a default value of `2.0` seconds. It handles all success HUD's.
-* `KVNMinimumErrorDisplayTime` that has a default value of `1.3` seconds. It handles all error HUD's.
+* `minimumDisplayTime` that has a default value of `0.3` seconds. It handles all HUD's except for success and error ones.
+* `minimumSuccessDisplayTime` that has a default value of `2.0` seconds. It handles all success HUD's.
+* `minimumErrorDisplayTime` that has a default value of `1.3` seconds. It handles all error HUD's.
 
 ## Remains to do
 
 - [ ] Use real-time blur
-- [ ] iPad support
-- [ ] Dynamically changed minimum display times
 - [ ] Show success/error with completion
 
 ## License
