@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A53757B1A45784200A7743C /* KVNProgressConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A53757A1A45784200A7743C /* KVNProgressConfiguration.m */; };
 		0A85E76F1932753300B16419 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85E76E1932753300B16419 /* main.m */; };
 		0A85E7761932755300B16419 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A85E7711932755300B16419 /* Images.xcassets */; };
 		0A85E7771932755300B16419 /* KVNAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85E7731932755300B16419 /* KVNAppDelegate.m */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0A5375791A45784200A7743C /* KVNProgressConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVNProgressConfiguration.h; sourceTree = "<group>"; };
+		0A53757A1A45784200A7743C /* KVNProgressConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVNProgressConfiguration.m; sourceTree = "<group>"; };
 		0A85E76D1932588700B16419 /* KVNProgress-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KVNProgress-Prefix.pch"; sourceTree = "<group>"; };
 		0A85E76E1932753300B16419 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0A85E7711932755300B16419 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -179,6 +182,8 @@
 			children = (
 				0AA0DD221930E0C000FDD29F /* KVNProgress.h */,
 				0AA0DD231930E0C000FDD29F /* KVNProgress.m */,
+				0A5375791A45784200A7743C /* KVNProgressConfiguration.h */,
+				0A53757A1A45784200A7743C /* KVNProgressConfiguration.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -339,6 +344,7 @@
 			files = (
 				0A85E7771932755300B16419 /* KVNAppDelegate.m in Sources */,
 				0AA0DD241930E0C000FDD29F /* KVNProgress.m in Sources */,
+				0A53757B1A45784200A7743C /* KVNProgressConfiguration.m in Sources */,
 				0AA0DD281930E62A00FDD29F /* UIImage+KVNImageEffects.m in Sources */,
 				0A85E76F1932753300B16419 /* main.m in Sources */,
 				0A85E7781932755300B16419 /* KVNViewController.m in Sources */,
