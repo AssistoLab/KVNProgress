@@ -14,6 +14,9 @@
 
 @property (weak, nonatomic) IBOutlet UISwitch *fullscreenSwitch;
 
+@property (nonatomic) KVNProgressConfiguration *basicConfiguration;
+@property (nonatomic) KVNProgressConfiguration *customConfiguration;
+
 @end
 
 @implementation KVNViewController
@@ -25,58 +28,45 @@
 	[super viewDidLoad];
 	
 	[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+	
+	self.basicConfiguration = [KVNProgressConfiguration defaultConfiguration];
+	self.customConfiguration = [self customKVNProgressUIConfiguration];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
 	
-	[self setupBaseKVNProgressUI];
+	[KVNProgress setConfiguration:self.basicConfiguration];
 }
 
 #pragma mark - UI
 
-- (void)setupBaseKVNProgressUI
+- (KVNProgressConfiguration *)customKVNProgressUIConfiguration
 {
-	// See the documentation of all appearance propoerties
-	[KVNProgress appearance].statusColor = [UIColor darkGrayColor];
-	[KVNProgress appearance].statusFont = [UIFont systemFontOfSize:17.0f];
-	[KVNProgress appearance].circleStrokeForegroundColor = [UIColor darkGrayColor];
-	[KVNProgress appearance].circleStrokeBackgroundColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.3f];
-	[KVNProgress appearance].circleFillBackgroundColor = [UIColor clearColor];
-	[KVNProgress appearance].backgroundFillColor = [UIColor colorWithWhite:0.9f alpha:0.9f];
-	[KVNProgress appearance].backgroundTintColor = [UIColor whiteColor];
-	[KVNProgress appearance].successColor = [UIColor darkGrayColor];
-	[KVNProgress appearance].errorColor = [UIColor darkGrayColor];
-	[KVNProgress appearance].circleSize = 75.0f;
-	[KVNProgress appearance].lineWidth = 2.0f;
-}
-
-- (void)setupCustomKVNProgressUI
-{
-	// See the documentation of all appearance propoerties
-	[KVNProgress appearance].statusColor = [UIColor whiteColor];
-	[KVNProgress appearance].statusFont = [UIFont fontWithName:@"HelveticaNeue-Thin" size:15.0f];
-	[KVNProgress appearance].circleStrokeForegroundColor = [UIColor whiteColor];
-	[KVNProgress appearance].circleStrokeBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.3f];
-	[KVNProgress appearance].circleFillBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.1f];
-	[KVNProgress appearance].backgroundFillColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:0.9f];
-	[KVNProgress appearance].backgroundTintColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:1.0f];
-	[KVNProgress appearance].successColor = [UIColor whiteColor];
-	[KVNProgress appearance].errorColor = [UIColor whiteColor];
-	[KVNProgress appearance].circleSize = 110.0f;
-	[KVNProgress appearance].lineWidth = 1.0f;
+	KVNProgressConfiguration *configuration = [[KVNProgressConfiguration alloc] init];
+	
+	// See the documentation of KVNProgressConfiguration
+	configuration.statusColor = [UIColor whiteColor];
+	configuration.statusFont = [UIFont fontWithName:@"HelveticaNeue-Thin" size:15.0f];
+	configuration.circleStrokeForegroundColor = [UIColor whiteColor];
+	configuration.circleStrokeBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.3f];
+	configuration.circleFillBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.1f];
+	configuration.backgroundFillColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:0.9f];
+	configuration.backgroundTintColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:1.0f];
+	configuration.successColor = [UIColor whiteColor];
+	configuration.errorColor = [UIColor whiteColor];
+	configuration.circleSize = 110.0f;
+	configuration.lineWidth = 1.0f;
+	
+	return configuration;
 }
 
 #pragma mark - Predefined HUD's
 
 - (IBAction)show
 {
-	if ([self isFullScreen]) {
-		[KVNProgress showWithParameters:@{KVNProgressViewParameterFullScreen: @(YES)}];
-	} else {
-		[KVNProgress show];
-	}
+	[KVNProgress show];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 		[KVNProgress dismiss];
@@ -85,23 +75,20 @@
 
 - (IBAction)showWithSolidBackground
 {
-	[KVNProgress showWithParameters:@{KVNProgressViewParameterStatus: @"Loading...",
-									  KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-									  KVNProgressViewParameterFullScreen: @([self isFullScreen])}];
+	self.basicConfiguration.backgroundType = KVNProgressBackgroundTypeSolid;
+	
+	[KVNProgress showWithStatus:@"Loading..."];
 	
 	dispatch_main_after(3.0f, ^{
 		[KVNProgress dismiss];
+		
+		self.basicConfiguration.backgroundType = KVNProgressBackgroundTypeBlurred;
 	});
 }
 
 - (IBAction)showWithStatus
 {
-	if ([self isFullScreen]) {
-		[KVNProgress showWithParameters:@{KVNProgressViewParameterStatus: @"Loading...",
-										  KVNProgressViewParameterFullScreen: @(YES)}];
-	} else {
-		[KVNProgress showWithStatus:@"Loading..."];
-	}
+	[KVNProgress showWithStatus:@"Loading..."];
 	
 	dispatch_main_after(3.0f, ^{
 		[KVNProgress dismiss];
@@ -110,14 +97,8 @@
 
 - (IBAction)showProgress
 {
-	if ([self isFullScreen]) {
-		[KVNProgress showProgress:0.0f
-					   parameters:@{KVNProgressViewParameterStatus: @"Loading with progress...",
-									KVNProgressViewParameterFullScreen: @(YES)}];
-	} else {
-		[KVNProgress showProgress:0.0f
-						   status:@"Loading with progress..."];
-	}
+	[KVNProgress showProgress:0.0f
+					   status:@"Loading with progress..."];
 	
 	[self updateProgress];
 	
@@ -131,46 +112,38 @@
 
 - (IBAction)showSuccess
 {
-	if ([self isFullScreen]) {
-		[KVNProgress showSuccessWithParameters:@{KVNProgressViewParameterStatus: @"Success",
-												 KVNProgressViewParameterFullScreen: @(YES)}];
-	} else {
-		[KVNProgress showSuccessWithStatus:@"Success"];
-	}
+	[KVNProgress showSuccessWithStatus:@"Success"];
 }
 
 - (IBAction)showError
 {
-	if ([self isFullScreen]) {
-		[KVNProgress showErrorWithParameters:@{KVNProgressViewParameterStatus: @"Error",
-											   KVNProgressViewParameterFullScreen: @(YES)}];
-	} else {
-		[KVNProgress showErrorWithStatus:@"Error"];
-	}
+	[KVNProgress showErrorWithStatus:@"Error"];
 }
 
 - (IBAction)showCustom
 {
-	[self setupCustomKVNProgressUI];
+	[KVNProgress setConfiguration:self.customConfiguration];
 	
-	if ([self isFullScreen]) {
-		[KVNProgress showProgress:0.0f
-					   parameters:@{KVNProgressViewParameterStatus: @"You can custom several things like colors, fonts, circle size, and more!",
-									KVNProgressViewParameterFullScreen: @(YES)}];
-	} else {
-		[KVNProgress showProgress:0.0f
-						   status:@"You can custom several things like colors, fonts, circle size, and more!"];
-	}
+	[KVNProgress showProgress:0.0f
+					   status:@"You can custom several things like colors, fonts, circle size, and more!"];
 	
 	[self updateProgress];
 	
 	dispatch_main_after(5.5f, ^{
 		[self showSuccess];
-		[self setupBaseKVNProgressUI];
+		[KVNProgress setConfiguration:self.basicConfiguration];
 	});
 }
 
-#pragma mark - Helper
+#pragma mark - Actions
+
+- (IBAction)fullScreenSwitchDidChange
+{
+	self.basicConfiguration.fullScreen = [self.fullscreenSwitch isOn];
+	self.customConfiguration.fullScreen = [self.fullscreenSwitch isOn];
+}
+
+#pragma mark - Helpers
 
 - (void)updateProgress
 {
@@ -194,11 +167,6 @@
 		[KVNProgress updateProgress:1.0f
 						   animated:YES];
 	});
-}
-
-- (BOOL)isFullScreen
-{
-	return [self.fullscreenSwitch isOn];
 }
 
 static void dispatch_main_after(NSTimeInterval delay, void (^block)(void))

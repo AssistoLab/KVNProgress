@@ -27,11 +27,6 @@ typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	KVNProgressStyleError
 };
 
-NSString * const KVNProgressViewParameterFullScreen = @"KVNProgressViewParameterFullScreen";
-NSString * const KVNProgressViewParameterBackgroundType = @"KVNProgressViewParameterBackgroundType";
-NSString * const KVNProgressViewParameterStatus = @"KVNProgressViewParameterStatus";
-NSString * const KVNProgressViewParameterSuperview = @"KVNProgressViewParameterSuperview";
-
 static CGFloat const KVNFadeAnimationDuration = 0.3f;
 static CGFloat const KVNLayoutAnimationDuration = 0.3f;
 static CGFloat const KVNTextUpdateAnimationDuration = 0.5f;
@@ -49,14 +44,17 @@ static CGFloat const KVNContentViewWithoutStatusCornerRadius = 15.0f;
 static CGFloat const KVNAlertViewWidth = 270.0f;
 static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
+static KVNProgressConfiguration *configuration;
+
 @interface KVNProgress ()
 
 @property (nonatomic) CGFloat progress;
 @property (nonatomic) KVNProgressBackgroundType backgroundType;
 @property (nonatomic) NSString *status;
-@property (nonatomic, getter = isFullScreen) BOOL fullScreen;
 @property (nonatomic) KVNProgressStyle style;
+@property (nonatomic) KVNProgressConfiguration *configuration;
 @property (nonatomic) NSDate *showActionTrigerredDate;
+@property (nonatomic, getter = isFullScreen) BOOL fullScreen;
 @property (nonatomic, getter = isWaitingToChangeHUD) BOOL waitingToChangeHUD;
 @property (nonatomic, getter = isDismissing) BOOL dismissing;
 
@@ -74,11 +72,11 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 // Constraints
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewWidthConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewHeightConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewToStatusLabelVerticalSpaceConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelHeightConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *circleProgressViewTopToSuperViewConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *statusLabelBottomToSuperViewConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewWidthConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewToStatusLabelVerticalSpaceConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *statusLabelHeightConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewTopToSuperViewConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *statusLabelBottomToSuperViewConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *contentViewWidthConstraint;
 
 @property (nonatomic) NSArray *constraintsToSuperview;
 
@@ -110,21 +108,11 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
 	if (self = [super initWithCoder:aDecoder]) {
-		// Appearance
-		_backgroundFillColor = [UIColor colorWithWhite:1.0f alpha:0.85f];
-		_backgroundTintColor = [UIColor whiteColor];
+		if (!configuration) {
+			configuration = [KVNProgressConfiguration defaultConfiguration];
+		}
 		
-		_circleStrokeForegroundColor = [UIColor darkGrayColor];
-		_circleStrokeBackgroundColor = [_circleStrokeForegroundColor colorWithAlphaComponent:0.3f];
-		_circleFillBackgroundColor = [UIColor clearColor];
-		
-		_successColor = [UIColor darkGrayColor];
-		_errorColor = [UIColor darkGrayColor];
-		
-		_statusColor = [UIColor darkGrayColor];
-		_statusFont = [UIFont systemFontOfSize:17.0f];
-		
-		_lineWidth = 2.0f;
+		_configuration = configuration;
 		
 		[self registerForNotifications];
 	}
@@ -171,14 +159,17 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 + (void)showWithStatus:(NSString *)status
 {
-	[self showWithParameters:[self baseHUDParametersWithStatus:status]];
+	[self showWithStatus:status
+				  onView:nil];
 }
 
-+ (void)showWithParameters:(NSDictionary *)parameters
++ (void)showWithStatus:(NSString *)status
+				onView:(UIView *)superview
 {
 	[self showHUDWithProgress:KVNProgressIndeterminate
 						style:KVNProgressStyleProgress
-				   parameters:parameters];
+					   status:status
+					superview:superview];
 }
 
 #pragma mark - Progress
@@ -193,15 +184,18 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 			  status:(NSString*)status
 {
 	[self showProgress:progress
-			parameters:[self baseHUDParametersWithStatus:status]];
+				status:status
+				onView:nil];
 }
 
 + (void)showProgress:(CGFloat)progress
-		  parameters:(NSDictionary *)parameters
+			  status:(NSString *)status
+			  onView:(UIView *)superview
 {
 	[self showHUDWithProgress:progress
 						style:KVNProgressStyleProgress
-				   parameters:parameters];
+					   status:status
+					superview:superview];
 }
 
 #pragma mark - Success
@@ -213,14 +207,17 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 + (void)showSuccessWithStatus:(NSString *)status
 {
-	[self showSuccessWithParameters:[self baseHUDParametersWithStatus:status]];
+	[self showSuccessWithStatus:status
+						 onView:nil];
 }
 
-+ (void)showSuccessWithParameters:(NSDictionary *)parameters
++ (void)showSuccessWithStatus:(NSString *)status
+					   onView:(UIView *)superview
 {
 	[self showHUDWithProgress:KVNProgressIndeterminate
 						style:KVNProgressStyleSuccess
-				   parameters:parameters];
+					   status:status
+					superview:superview];
 }
 
 #pragma mark - Error
@@ -232,28 +229,32 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 + (void)showErrorWithStatus:(NSString *)status
 {
-	[self showErrorWithParameters:[self baseHUDParametersWithStatus:status]];
+	[self showErrorWithStatus:status
+					   onView:nil];
 }
 
-+ (void)showErrorWithParameters:(NSDictionary *)parameters
++ (void)showErrorWithStatus:(NSString *)status
+					 onView:(UIView *)superview
 {
 	[self showHUDWithProgress:KVNProgressIndeterminate
 						style:KVNProgressStyleError
-				   parameters:parameters];
+					   status:status
+					superview:superview];
 }
 
 #pragma mark - Show
 
 + (void)showHUDWithProgress:(CGFloat)progress
 					  style:(KVNProgressStyle)style
-				 parameters:(NSDictionary *)parameters
+					 status:(NSString *)status
+				  superview:(UIView *)superview
 {
 	[[self sharedView] showProgress:progress
-							 status:parameters[KVNProgressViewParameterStatus]
+							 status:status
 							  style:style
-					 backgroundType:(KVNProgressBackgroundType)[parameters[KVNProgressViewParameterBackgroundType] unsignedIntegerValue]
-						 fullScreen:[parameters[KVNProgressViewParameterFullScreen] boolValue]
-							   view:parameters[KVNProgressViewParameterSuperview]];
+					 backgroundType:configuration.backgroundType
+						 fullScreen:configuration.fullScreen
+							   view:superview];
 }
 
 - (void)showProgress:(CGFloat)progress
@@ -278,10 +279,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		NSTimeInterval delay = 0;
 		
-		if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
+		if (timeIntervalSinceShow < self.configuration.minimumDisplayTime) {
 			// The hud hasn't showed enough time
 			timeIntervalSinceShow = (timeIntervalSinceShow < 0) ? 0 : timeIntervalSinceShow;
-			delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
+			delay = self.configuration.minimumDisplayTime - timeIntervalSinceShow;
 		}
 		
 		if (delay > 0) {
@@ -347,10 +348,10 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 				// should never happen
 				return;
 			case KVNProgressStyleSuccess:
-				delay = KVNMinimumSuccessDisplayTime;
+				delay = self.configuration.minimumSuccessDisplayTime;
 				break;
 			case KVNProgressStyleError:
-				delay = KVNMinimumErrorDisplayTime;
+				delay = self.configuration.minimumErrorDisplayTime;
 				break;
 			case KVNProgressStyleHidden:
 				// should never happen
@@ -396,9 +397,9 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	NSTimeInterval timeIntervalSinceShow = fabs([progressView.showActionTrigerredDate timeIntervalSinceNow]);
 	NSTimeInterval delay = 0;
 	
-	if (timeIntervalSinceShow < KVNMinimumDisplayTime) {
+	if (timeIntervalSinceShow < progressView.configuration.minimumDisplayTime) {
 		// The hud hasn't showed enough time
-		delay = KVNMinimumDisplayTime - timeIntervalSinceShow;
+		delay = progressView.configuration.minimumDisplayTime - timeIntervalSinceShow;
 	}
 
 	[UIView animateWithDuration:KVNFadeAnimationDuration
@@ -484,13 +485,13 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 - (void)setupCircleProgressView
 {
 	// Constraints
-	self.circleProgressViewWidthConstraint.constant = self.circleSize;
-	self.circleProgressViewHeightConstraint.constant = self.circleSize;
+	self.circleProgressViewWidthConstraint.constant = self.configuration.circleSize;
+	self.circleProgressViewHeightConstraint.constant = self.configuration.circleSize;
 	
 	[self layoutIfNeeded];
 	
 	// Circle shape
-	self.circleProgressView.layer.cornerRadius = (_circleSize / 2.0f);
+	self.circleProgressView.layer.cornerRadius = (self.configuration.circleSize / 2.0f);
 	self.circleProgressView.layer.masksToBounds = YES;
 	self.circleProgressView.backgroundColor = [UIColor clearColor];
 	
@@ -500,20 +501,20 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)setupInfiniteCircle
 {
-	CGFloat radius = (self.circleSize / 2.0f);
+	CGFloat radius = (self.configuration.circleSize / 2.0f);
 	CGPoint center = CGPointMake(radius, radius);
 	
 	UIBezierPath *circlePath = [UIBezierPath bezierPathWithArcCenter:center
-															  radius:(radius - self.lineWidth)
+															  radius:(radius - self.configuration.lineWidth)
 														  startAngle:GLKMathDegreesToRadians(-45.0f)
 															endAngle:GLKMathDegreesToRadians(275.0f)
 														   clockwise:YES];
 	
 	self.circleProgressLineLayer = [CAShapeLayer layer];
 	self.circleProgressLineLayer.path = circlePath.CGPath;
-	self.circleProgressLineLayer.strokeColor = self.circleStrokeForegroundColor.CGColor;
-	self.circleProgressLineLayer.fillColor = self.circleFillBackgroundColor.CGColor;
-	self.circleProgressLineLayer.lineWidth = self.lineWidth;
+	self.circleProgressLineLayer.strokeColor = self.configuration.circleStrokeForegroundColor.CGColor;
+	self.circleProgressLineLayer.fillColor = self.configuration.circleFillBackgroundColor.CGColor;
+	self.circleProgressLineLayer.lineWidth = self.configuration.lineWidth;
 	
 	[self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
 	
@@ -524,11 +525,11 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)setupProgressCircle
 {
-	CGFloat radius = (self.circleSize / 2.0f);
+	CGFloat radius = (self.configuration.circleSize / 2.0f);
 	CGPoint center = CGPointMake(radius, radius);
 	
 	UIBezierPath *circlePath = [UIBezierPath bezierPathWithArcCenter:center
-															  radius:(radius - self.lineWidth)
+															  radius:(radius - self.configuration.lineWidth)
 														  startAngle:GLKMathDegreesToRadians(-90.0f)
 															endAngle:GLKMathDegreesToRadians(275.0f)
 														   clockwise:YES];
@@ -537,15 +538,15 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	
 	self.circleProgressLineLayer = [CAShapeLayer layer];
 	self.circleProgressLineLayer.path = circlePath.CGPath;
-	self.circleProgressLineLayer.strokeColor = self.circleStrokeForegroundColor.CGColor;
+	self.circleProgressLineLayer.strokeColor = self.configuration.circleStrokeForegroundColor.CGColor;
 	self.circleProgressLineLayer.fillColor = [UIColor clearColor].CGColor;
-	self.circleProgressLineLayer.lineWidth = self.lineWidth;
+	self.circleProgressLineLayer.lineWidth = self.configuration.lineWidth;
 	
 	self.circleBackgroundLineLayer = [CAShapeLayer layer];
 	self.circleBackgroundLineLayer.path = circlePath.CGPath;
-	self.circleBackgroundLineLayer.strokeColor = self.circleStrokeBackgroundColor.CGColor;
-	self.circleBackgroundLineLayer.fillColor = self.circleFillBackgroundColor.CGColor;
-	self.circleBackgroundLineLayer.lineWidth = self.lineWidth;
+	self.circleBackgroundLineLayer.strokeColor = self.configuration.circleStrokeBackgroundColor.CGColor;
+	self.circleBackgroundLineLayer.fillColor = self.configuration.circleFillBackgroundColor.CGColor;
+	self.circleBackgroundLineLayer.lineWidth = self.configuration.lineWidth;
 	
 	[self.circleProgressView.layer addSublayer:self.circleBackgroundLineLayer];
 	[self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
@@ -559,7 +560,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)setupSuccessUI
 {
-	[self setupFullRoundCircleWithColor:self.successColor];
+	[self setupFullRoundCircleWithColor:self.configuration.successColor];
 	
 	UIBezierPath* checkmarkPath = [UIBezierPath bezierPath];
 	[checkmarkPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.28f, CGRectGetHeight(self.circleProgressView.bounds) * 0.53f)];
@@ -570,8 +571,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	self.checkmarkLayer = [CAShapeLayer layer];
 	self.checkmarkLayer.path = checkmarkPath.CGPath;
 	self.checkmarkLayer.fillColor = nil;
-	self.checkmarkLayer.strokeColor = self.successColor.CGColor;
-	self.checkmarkLayer.lineWidth = self.lineWidth;
+	self.checkmarkLayer.strokeColor = self.configuration.successColor.CGColor;
+	self.checkmarkLayer.lineWidth = self.configuration.lineWidth;
 	
 	[self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
 	[self.circleProgressView.layer addSublayer:self.checkmarkLayer];
@@ -584,7 +585,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)setupErrorUI
 {
-	[self setupFullRoundCircleWithColor:self.errorColor];
+	[self setupFullRoundCircleWithColor:self.configuration.errorColor];
 	
 	UIBezierPath* crossPath = [UIBezierPath bezierPath];
 	[crossPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.72f, CGRectGetHeight(self.circleProgressView.bounds) * 0.27f)];
@@ -596,8 +597,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	self.crossLayer = [CAShapeLayer layer];
 	self.crossLayer.path = crossPath.CGPath;
 	self.crossLayer.fillColor = nil;
-	self.crossLayer.strokeColor = self.errorColor.CGColor;
-	self.crossLayer.lineWidth = self.lineWidth;
+	self.crossLayer.strokeColor = self.configuration.errorColor.CGColor;
+	self.crossLayer.lineWidth = self.configuration.lineWidth;
 	
 	[self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
 	[self.circleProgressView.layer addSublayer:self.crossLayer];
@@ -610,12 +611,12 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)setupFullRoundCircleWithColor:(UIColor *)color
 {
-	CGFloat radius = (self.circleSize / 2.0f);
+	CGFloat radius = (self.configuration.circleSize / 2.0f);
 	CGPoint center = CGPointMake(radius, radius);
 	
 	// Circle
 	UIBezierPath *circlePath = [UIBezierPath bezierPathWithArcCenter:center
-															  radius:(radius - self.lineWidth)
+															  radius:(radius - self.configuration.lineWidth)
 														  startAngle:GLKMathDegreesToRadians(-90.0f)
 															endAngle:GLKMathDegreesToRadians(275.0f)
 														   clockwise:YES];
@@ -623,8 +624,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	self.circleProgressLineLayer = [CAShapeLayer layer];
 	self.circleProgressLineLayer.path = circlePath.CGPath;
 	self.circleProgressLineLayer.strokeColor = color.CGColor;
-	self.circleProgressLineLayer.fillColor = self.circleFillBackgroundColor.CGColor;
-	self.circleProgressLineLayer.lineWidth = self.lineWidth;
+	self.circleProgressLineLayer.fillColor = self.configuration.circleFillBackgroundColor.CGColor;
+	self.circleProgressLineLayer.lineWidth = self.configuration.lineWidth;
 }
 
 - (void)setupStatus:(NSString *)status
@@ -640,8 +641,8 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	[self.statusLabel.layer addAnimation:animation forKey:@"kCATransitionFade"];
 	
 	self.statusLabel.text = self.status;
-	self.statusLabel.textColor = self.statusColor;
-	self.statusLabel.font = self.statusFont;
+	self.statusLabel.textColor = self.configuration.statusColor;
+	self.statusLabel.font = self.configuration.statusFont;
 	self.statusLabel.hidden = !showStatus;
 	
 	[self updateStatusConstraints];
@@ -739,7 +740,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	switch (self.backgroundType) {
 		case KVNProgressBackgroundTypeSolid:
 			backgroundImage = [UIImage emptyImage];
-			backgroundColor = self.backgroundFillColor;
+			backgroundColor = self.configuration.backgroundFillColor;
 			break;
 		case KVNProgressBackgroundTypeBlurred:
 			backgroundImage = [self blurredScreenShot];
@@ -781,7 +782,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 		self.contentView.layer.cornerRadius = (self.status) ? KVNContentViewCornerRadius : KVNContentViewWithoutStatusCornerRadius;
 		self.contentView.layer.masksToBounds = YES;
 		self.contentView.contentMode = UIViewContentModeCenter;
-		self.contentView.backgroundColor = self.backgroundFillColor;
+		self.contentView.backgroundColor = self.configuration.backgroundFillColor;
 		
 		self.contentView.image = backgroundImage;
 	}
@@ -972,7 +973,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)animateSuccess
 {
-	[self animateFullCircleWithColor:self.successColor];
+	[self animateFullCircleWithColor:self.configuration.successColor];
 	
 	CABasicAnimation *checkmarkAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
 	checkmarkAnimation.duration = KVNCheckmarkAnimationDuration;
@@ -988,7 +989,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 
 - (void)animateError
 {
-	[self animateFullCircleWithColor:self.errorColor];
+	[self animateFullCircleWithColor:self.configuration.errorColor];
 }
 
 - (void)animateFullCircleWithColor:(UIColor *)color
@@ -1014,19 +1015,6 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 }
 
 #pragma mark - Helpers
-
-+ (NSDictionary *)baseHUDParametersWithStatus:(NSString *)status
-{
-	NSDictionary *fixedParameters = @{KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeBlurred),
-									  KVNProgressViewParameterFullScreen: @(NO)};
-	NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:fixedParameters];
-	
-	if (status) {
-		parameters[KVNProgressViewParameterStatus] = status;
-	}
-	
-	return parameters;
-}
 
 - (void)removeAllSubLayersOfLayer:(CALayer *)layer
 {
@@ -1054,7 +1042,7 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	
 	UIGraphicsEndImageContext();
 	
-	blurredScreenShot = [self applyTintEffectWithColor:self.backgroundTintColor
+	blurredScreenShot = [self applyTintEffectWithColor:self.configuration.backgroundTintColor
 												 image:blurredScreenShot];
 	
 	return blurredScreenShot;
@@ -1156,6 +1144,19 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 	return bounds;
 }
 
+#pragma mark - Configuration
+
++ (KVNProgressConfiguration *)configuration
+{
+	return configuration;
+}
+
++ (void)setConfiguration:(KVNProgressConfiguration *)newConfiguration
+{
+	configuration = newConfiguration;
+	[self sharedView].configuration = configuration;
+}
+
 #pragma mark - Information
 
 - (BOOL)isIndeterminate
@@ -1166,133 +1167,6 @@ static CGFloat const KVNMotionEffectRelativeValue = 10.0f;
 + (BOOL)isVisible
 {
 	return ([self sharedView].superview != nil && [self sharedView].alpha > 0.0f);
-}
-
-#pragma mark - Appearance
-
-- (UIColor *)backgroundFillColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] backgroundFillColor];
-	
-	if (appearanceColor) {
-		_backgroundFillColor = appearanceColor;
-	}
-	
-	return _backgroundFillColor;
-}
-
-- (UIColor *)backgroundTintColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] backgroundTintColor];
-	
-	if (appearanceColor) {
-		_backgroundTintColor = appearanceColor;
-	}
-	
-	return _backgroundTintColor;
-}
-
-- (UIColor *)circleStrokeForegroundColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] circleStrokeForegroundColor];
-	
-	if (appearanceColor) {
-		_circleStrokeForegroundColor = appearanceColor;
-	}
-	
-	return _circleStrokeForegroundColor;
-}
-
-- (UIColor *)circleStrokeBackgroundColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] circleStrokeBackgroundColor];
-	
-	if (appearanceColor) {
-		_circleStrokeBackgroundColor = appearanceColor;
-	}
-	
-	return _circleStrokeBackgroundColor;
-}
-
-- (UIColor *)circleFillBackgroundColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] circleFillBackgroundColor];
-	
-	if (appearanceColor) {
-		_circleFillBackgroundColor = appearanceColor;
-	}
-	
-	return _circleFillBackgroundColor;
-}
-
-- (UIColor *)successColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] successColor];
-	
-	if (appearanceColor) {
-		_successColor = appearanceColor;
-	}
-	
-	return _successColor;
-}
-
-- (UIColor *)errorColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] errorColor];
-	
-	if (appearanceColor) {
-		_errorColor = appearanceColor;
-	}
-	
-	return _errorColor;
-}
-
-- (UIColor *)statusColor
-{
-	UIColor *appearanceColor = [[[self class] appearance] statusColor];
-	
-	if (appearanceColor) {
-		_statusColor = appearanceColor;
-	}
-	
-	return _statusColor;
-}
-
-- (UIFont *)statusFont
-{
-	UIFont *appearanceFont = [[[self class] appearance] statusFont];
-	
-	if (appearanceFont) {
-		_statusFont = appearanceFont;
-	}
-	
-	return _statusFont;
-}
-
-- (CGFloat)circleSize
-{
-	CGFloat appearanceCircleSize = [[[self class] appearance] circleSize];
-	
-	if (appearanceCircleSize != 0) {
-		_circleSize = appearanceCircleSize;
-	}
-	
-	if (_circleSize == 0) {
-		_circleSize = ([self isFullScreen]) ? 90.0f : 75.0f;
-	}
-	
-	return _circleSize;
-}
-
-- (CGFloat)lineWidth
-{
-	CGFloat appearanceLineWidth = [[[self class] appearance] lineWidth];
-	
-	if (appearanceLineWidth != 0) {
-		_lineWidth = appearanceLineWidth;
-	}
-	
-	return _lineWidth;
 }
 
 #pragma mark - HitTest
