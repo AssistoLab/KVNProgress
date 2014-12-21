@@ -10,6 +10,8 @@
 
 #import "KVNProgressConfiguration.h"
 
+typedef void (^KVNCompletionBlock)(void);
+
 @interface KVNProgress : UIView
 
 #pragma mark - Configuration
@@ -121,7 +123,7 @@
  <br/><br/><b>Remark:</b> This method can be usefull if the <code>KVNMinimumDisplayTime</code> constant is greater than zero to ensure the view is correctly dismissed.
  @param completion The completion handler called after the view is completely dismissed
  */
-+ (void)dismissWithCompletion:(void (^)(void))completion;
++ (void)dismissWithCompletion:(KVNCompletionBlock)completion;
 
 #pragma mark - Update
 

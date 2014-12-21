@@ -371,7 +371,7 @@ static KVNProgressConfiguration *configuration;
 	[self dismissWithCompletion:nil];
 }
 
-+ (void)dismissWithCompletion:(void (^)(void))completion
++ (void)dismissWithCompletion:(KVNCompletionBlock)completion
 {
 	if (![self isVisible]) {
 		return;
@@ -390,7 +390,7 @@ static KVNProgressConfiguration *configuration;
 	});
 }
 
-+ (void)dismissAnimatedWithCompletion:(void (^)(void))completion
++ (void)dismissAnimatedWithCompletion:(KVNCompletionBlock)completion
 {
 	KVNProgress *progressView = [self sharedView];
 	
