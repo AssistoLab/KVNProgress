@@ -42,7 +42,7 @@ typedef void (^KVNCompletionBlock)(void);
 /**
  Shows an indeterminate progress view added to <code>superview</code> with <code>status</code>.
  @param status The status to show.
- @param onView The superview on which to add the progress view.
+ @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
  */
 + (void)showWithStatus:(NSString *)status
 				onView:(UIView *)superview;
@@ -65,7 +65,7 @@ typedef void (^KVNCompletionBlock)(void);
 /**
  Shows a progress view added to <code>superview</code> with a specified <code>progress</code> and <code>status</code>.
  @param status The status to show.
- @param onView The superview on which to add the progress view.
+ @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
  */
 + (void)showProgress:(CGFloat)progress
 			  status:(NSString*)status
@@ -85,7 +85,7 @@ typedef void (^KVNCompletionBlock)(void);
 /**
  Show a success view added to <code>superview</code> with <code>status</code>.
  @param status The status to show.
- @param onView The superview on which to add the progress view.
+ @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
  */
 + (void)showSuccessWithStatus:(NSString *)status
 					   onView:(UIView *)superview;
@@ -104,7 +104,7 @@ typedef void (^KVNCompletionBlock)(void);
 /**
  Show an error view added to <code>superview</code> with <code>status</code>.
  @param status The status to show.
- @param onView The superview on which to add the progress view.
+ @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
  */
 + (void)showErrorWithStatus:(NSString *)status
 					 onView:(UIView *)superview;
