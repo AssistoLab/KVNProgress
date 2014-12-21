@@ -73,17 +73,17 @@ typedef void (^KVNCompletionBlock)(void);
 
 #pragma mark - Success
 
-/** Show a success view without status. */
+/** Shows a success view without status. */
 + (void)showSuccess;
 
 /**
- Show a success view with <code>status</code>.
+ Shows a success view with <code>status</code>.
  @param status The status to show.
  */
 + (void)showSuccessWithStatus:(NSString *)status;
 
 /**
- Show a success view added to <code>superview</code> with <code>status</code>.
+ Shows a success view added to <code>superview</code> with <code>status</code>.
  @param status The status to show.
  @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
  */
@@ -92,17 +92,17 @@ typedef void (^KVNCompletionBlock)(void);
 
 #pragma mark - Error
 
-/** Show an error view without status. */
+/** Shows an error view without status. */
 + (void)showError;
 
 /**
- Show an error view with <code>status</code>.
+ Shows an error view with <code>status</code>.
  @param status The status to show.
  */
 + (void)showErrorWithStatus:(NSString *)status;
 
 /**
- Show an error view added to <code>superview</code> with <code>status</code>.
+ Shows an error view added to <code>superview</code> with <code>status</code>.
  @param status The status to show.
  @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
  */
@@ -121,22 +121,22 @@ typedef void (^KVNCompletionBlock)(void);
 /**
  Dismiss progress view with a fade animation and call a completion handler when the dismiss process is finished. Does nothing if the progress view is not on screen.
  <br/><br/><b>Remark:</b> This method can be usefull if the <code>KVNMinimumDisplayTime</code> constant is greater than zero to ensure the view is correctly dismissed.
- @param completion The completion handler called after the view is completely dismissed
+ @param completion The completion handler called after the view is completely dismissed.
  */
 + (void)dismissWithCompletion:(KVNCompletionBlock)completion;
 
 #pragma mark - Update
 
 /**
- Change the loading status while it's showing.
- Nothing happens when progress view isn't showing.
+ Changes the loading status while HUD is displayed.
+ Nothing happens when progress view is not displayed.
  @param status The status to show
  */
 + (void)updateStatus:(NSString*)status;
 
 /**
- Update the progress loader while it's showing
- Nothing happens when progress view isn't showing.
+ Update the progress loader while HUD is displayed
+ Nothing happens when progress view is not displayed.
  @param progress The progress value between 0 and 1
  @param animated Wether or not the change has to be animated
  */
