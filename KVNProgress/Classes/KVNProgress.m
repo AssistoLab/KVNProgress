@@ -169,7 +169,8 @@ static KVNProgressConfiguration *configuration;
 	[self showHUDWithProgress:KVNProgressIndeterminate
 						style:KVNProgressStyleProgress
 					   status:status
-					superview:superview];
+					superview:superview
+				   completion:nil];
 }
 
 #pragma mark - Progress
@@ -195,7 +196,8 @@ static KVNProgressConfiguration *configuration;
 	[self showHUDWithProgress:progress
 						style:KVNProgressStyleProgress
 					   status:status
-					superview:superview];
+					superview:superview
+				   completion:nil];
 }
 
 #pragma mark - Success
@@ -205,6 +207,12 @@ static KVNProgressConfiguration *configuration;
 	[self showSuccessWithStatus:nil];
 }
 
++ (void)showSuccessWithCompletion:(KVNCompletionBlock)completion
+{
+	[self showSuccessWithStatus:nil
+					 completion:completion];
+}
+
 + (void)showSuccessWithStatus:(NSString *)status
 {
 	[self showSuccessWithStatus:status
@@ -212,12 +220,30 @@ static KVNProgressConfiguration *configuration;
 }
 
 + (void)showSuccessWithStatus:(NSString *)status
+				   completion:(KVNCompletionBlock)completion
+{
+	[self showSuccessWithStatus:status
+						 onView:nil
+					 completion:completion];
+}
+
++ (void)showSuccessWithStatus:(NSString *)status
 					   onView:(UIView *)superview
+{
+	[self showSuccessWithStatus:status
+						 onView:superview
+					 completion:nil];
+}
+
++ (void)showSuccessWithStatus:(NSString *)status
+					   onView:(UIView *)superview
+				   completion:(KVNCompletionBlock)completion
 {
 	[self showHUDWithProgress:KVNProgressIndeterminate
 						style:KVNProgressStyleSuccess
 					   status:status
-					superview:superview];
+					superview:superview
+				   completion:completion];
 }
 
 #pragma mark - Error
@@ -227,6 +253,12 @@ static KVNProgressConfiguration *configuration;
 	[self showErrorWithStatus:nil];
 }
 
++ (void)showErrorWithCompletion:(KVNCompletionBlock)completion
+{
+	[self showErrorWithStatus:nil
+				   completion:completion];
+}
+
 + (void)showErrorWithStatus:(NSString *)status
 {
 	[self showErrorWithStatus:status
@@ -234,12 +266,30 @@ static KVNProgressConfiguration *configuration;
 }
 
 + (void)showErrorWithStatus:(NSString *)status
+				 completion:(KVNCompletionBlock)completion
+{
+	[self showErrorWithStatus:status
+					   onView:nil
+				   completion:completion];
+}
+
++ (void)showErrorWithStatus:(NSString *)status
 					 onView:(UIView *)superview
+{
+	[self showErrorWithStatus:status
+					   onView:superview
+				   completion:nil];
+}
+
++ (void)showErrorWithStatus:(NSString *)status
+					 onView:(UIView *)superview
+				 completion:(KVNCompletionBlock)completion
 {
 	[self showHUDWithProgress:KVNProgressIndeterminate
 						style:KVNProgressStyleError
 					   status:status
-					superview:superview];
+					superview:superview
+				   completion:completion];
 }
 
 #pragma mark - Show
@@ -248,13 +298,15 @@ static KVNProgressConfiguration *configuration;
 					  style:(KVNProgressStyle)style
 					 status:(NSString *)status
 				  superview:(UIView *)superview
+				 completion:(KVNCompletionBlock)completion
 {
 	[[self sharedView] showProgress:progress
 							 status:status
 							  style:style
 					 backgroundType:configuration.backgroundType
 						 fullScreen:configuration.fullScreen
-							   view:superview];
+							   view:superview
+						 completion:completion];
 }
 
 - (void)showProgress:(CGFloat)progress
@@ -263,6 +315,7 @@ static KVNProgressConfiguration *configuration;
 	  backgroundType:(KVNProgressBackgroundType)backgroundType
 		  fullScreen:(BOOL)fullScreen
 				view:(UIView *)superview
+		  completion:(KVNCompletionBlock)completion
 {
 	KVNPrepareBlockSelf();
 	
@@ -299,7 +352,8 @@ static KVNProgressConfiguration *configuration;
 									 style:style
 							backgroundType:backgroundType
 								fullScreen:fullScreen
-									  view:superview];
+									  view:superview
+								completion:completion];
 			});
 			
 			return;
@@ -359,7 +413,7 @@ static KVNProgressConfiguration *configuration;
 		}
 		
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			[KVNBlockSelf.class dismiss];
+			[KVNBlockSelf.class dismissWithCompletion:completion];
 		});
 	}
 }
@@ -851,7 +905,8 @@ static KVNProgressConfiguration *configuration;
 					 style:self.style
 			backgroundType:self.backgroundType
 				fullScreen:self.fullScreen
-					  view:self.superview];
+					  view:self.superview
+				completion:nil];
 		
 		return;
 	}

@@ -76,11 +76,25 @@ typedef void (^KVNCompletionBlock)(void);
 /** Shows a success view without status. */
 + (void)showSuccess;
 
+/** 
+ Shows a success view without status.
+ @param completion The completion handler called after the view is completely dismissed.
+ */
++ (void)showSuccessWithCompletion:(KVNCompletionBlock)completion;
+
 /**
  Shows a success view with <code>status</code>.
  @param status The status to show.
  */
 + (void)showSuccessWithStatus:(NSString *)status;
+
+/**
+ Shows a success view with <code>status</code>.
+ @param status The status to show.
+ @param completion The completion handler called after the view is completely dismissed.
+ */
++ (void)showSuccessWithStatus:(NSString *)status
+				   completion:(KVNCompletionBlock)completion;
 
 /**
  Shows a success view added to <code>superview</code> with <code>status</code>.
@@ -90,10 +104,26 @@ typedef void (^KVNCompletionBlock)(void);
 + (void)showSuccessWithStatus:(NSString *)status
 					   onView:(UIView *)superview;
 
+/**
+ Shows a success view added to <code>superview</code> with <code>status</code>.
+ @param status The status to show.
+ @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
+ @param completion The completion handler called after the view is completely dismissed.
+ */
++ (void)showSuccessWithStatus:(NSString *)status
+					   onView:(UIView *)superview
+				   completion:(KVNCompletionBlock)completion;
+
 #pragma mark - Error
 
 /** Shows an error view without status. */
 + (void)showError;
+
+/**
+ Shows an error view without status.
+ @param completion The completion handler called after the view is completely dismissed.
+ */
++ (void)showErrorWithCompletion:(KVNCompletionBlock)completion;
 
 /**
  Shows an error view with <code>status</code>.
@@ -102,12 +132,30 @@ typedef void (^KVNCompletionBlock)(void);
 + (void)showErrorWithStatus:(NSString *)status;
 
 /**
+ Shows an error view with <code>status</code>.
+ @param status The status to show.
+ @param completion The completion handler called after the view is completely dismissed.
+ */
++ (void)showErrorWithStatus:(NSString *)status
+				 completion:(KVNCompletionBlock)completion;
+
+/**
  Shows an error view added to <code>superview</code> with <code>status</code>.
  @param status The status to show.
  @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
  */
 + (void)showErrorWithStatus:(NSString *)status
 					 onView:(UIView *)superview;
+
+/**
+ Shows an error view added to <code>superview</code> with <code>status</code>.
+ @param status The status to show.
+ @param onView The superview on which to add the progress view. Pass <code>nil</code> to add to main window.
+ @param completion The completion handler called after the view is completely dismissed.
+ */
++ (void)showErrorWithStatus:(NSString *)status
+					 onView:(UIView *)superview
+				 completion:(KVNCompletionBlock)completion;
 
 #pragma mark - Dimiss
 
