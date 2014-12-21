@@ -153,7 +153,7 @@ Because KVNProgress remains visible for a certain time even if you call `dismiss
 The completion block in `dismissWithCompletion` is called (on the main thread) after the HUD is completely dismissed.
 This amount of time is defined in the KVNProgressConfiguration object (explained [below](#KVNProgressConfiguration)). Default value is `0.3` seconds.
 
-### Success/Errors
+### Success/Error
 
 To show a success HUD with a checkmark:
 
@@ -181,7 +181,7 @@ To show an error HUD with a cross:
                              onView:view];
    ```
 
-Dismiss is automatic for successes and errors.
+Dismiss is automatic for successes and errors. If you want to do something after the dismissal, you can use the above methods with the final parameter `completion`: `showSuccessWithCompletion:`, `showSuccessWithStatus:completion:`, `showSuccessWithStatus:onView:completion:`, `showErrorWithCompletion:`, `showErrorWithStatus:completion:`, `showErrorWithStatus:onView:completion:`.
 
 ## Customization
 
