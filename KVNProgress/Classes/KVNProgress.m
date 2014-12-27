@@ -428,6 +428,10 @@ static KVNProgressConfiguration *configuration;
 + (void)dismissWithCompletion:(KVNCompletionBlock)completion
 {
 	if (![self isVisible]) {
+        if ([self sharedView].superview) {
+            [[self sharedView] cancelCircleAnimation];
+            [[self sharedView] removeFromSuperview];
+        }
 		return;
 	}
 	
