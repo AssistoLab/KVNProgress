@@ -428,6 +428,10 @@ static KVNProgressConfiguration *configuration;
 + (void)dismissWithCompletion:(KVNCompletionBlock)completion
 {
 	if (![self isVisible]) {
+        if ([self sharedView].superview) {
+            [[self sharedView] cancelCircleAnimation];
+            [[self sharedView] removeFromSuperview];
+        }
 		return;
 	}
 	
@@ -1221,7 +1225,7 @@ static KVNProgressConfiguration *configuration;
 
 + (BOOL)isVisible
 {
-	return ([self sharedView].superview != nil && [self sharedView].alpha > 0.0f);
+	return [self sharedView].alpha > 0.0f;
 }
 
 #pragma mark - HitTest
