@@ -27,6 +27,13 @@ typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	KVNProgressStyleError
 };
 
+typedef NS_ENUM(NSUInteger, KVNProgressState) {
+	KVNProgressStateHidden,
+	KVNProgressStateAppearing,
+	KVNProgressStateShowed,
+	KVNProgressStateDismissing
+};
+
 static CGFloat const KVNFadeAnimationDuration = 0.3f;
 static CGFloat const KVNLayoutAnimationDuration = 0.3f;
 static CGFloat const KVNTextUpdateAnimationDuration = 0.5f;
@@ -56,7 +63,7 @@ static KVNProgressConfiguration *configuration;
 @property (nonatomic) NSDate *showActionTrigerredDate;
 @property (nonatomic, getter = isFullScreen) BOOL fullScreen;
 @property (nonatomic, getter = isWaitingToChangeHUD) BOOL waitingToChangeHUD;
-@property (nonatomic, getter = isDismissing) BOOL dismissing;
+@property (nonatomic) KVNProgressState state;
 
 // UI
 @property (nonatomic, weak) IBOutlet UIImageView *contentView;
@@ -327,7 +334,7 @@ static KVNProgressConfiguration *configuration;
 		&& !(self.style == KVNProgressStyleProgress && self.progress == KVNProgressIndeterminate && progress != KVNProgressIndeterminate)
 		&& !(self.style == KVNProgressStyleProgress && self.progress != KVNProgressIndeterminate)) {
 		self.waitingToChangeHUD = YES;
-		self.dismissing = NO;
+		self.state = KVNProgressStateShowed;
 
 		NSTimeInterval timeIntervalSinceShow = [self.showActionTrigerredDate timeIntervalSinceNow];
 		NSTimeInterval delay = 0;
@@ -340,7 +347,7 @@ static KVNProgressConfiguration *configuration;
 		
 		if (delay > 0) {
 			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-				if ([KVNBlockSelf isDismissing] || ![KVNBlockSelf.class isVisible]) {
+				if (KVNBlockSelf.state == KVNProgressStateDismissing || ![KVNBlockSelf.class isVisible]) {
 					// While waiting for displaying previous HUD enough time before showing the new one,
 					// the dismiss method on this new HUD has already been called
 					// So logically, we do not display the new HUD that is already dismissed (before even being displayed)
@@ -370,6 +377,8 @@ static KVNProgressConfiguration *configuration;
 
 	// If HUD is already added to the view we just update the UI
 	if ([self.class isVisible]) {
+		self.state = KVNProgressStateShowed;
+		
 		[UIView animateWithDuration:KVNLayoutAnimationDuration
 						 animations:^{
 							 [KVNBlockSelf setupUI];
@@ -378,6 +387,8 @@ static KVNProgressConfiguration *configuration;
 		KVNBlockSelf.showActionTrigerredDate = [NSDate date];
 		[KVNBlockSelf animateUI];
 	} else {
+		self.state = KVNProgressStateAppearing;
+		
 		if (superview) {
 			[self addToView:superview];
 		} else {
@@ -427,18 +438,21 @@ static KVNProgressConfiguration *configuration;
 
 + (void)dismissWithCompletion:(KVNCompletionBlock)completion
 {
-	if (![self isVisible]) {
+	if ([self sharedView].state == KVNProgressStateHidden) {
 		return;
+	} else if ([self sharedView].state == KVNProgressStateAppearing) {
+		[self sharedView].state = KVNProgressStateDismissing;
+		[self endDismissWithCompletion:completion];
 	}
 	
-	[self sharedView].dismissing = YES;
+	[self sharedView].state = KVNProgressStateDismissing;
 
 	// FIXME: find a way to wait for the views to be added to the window before launching the animations
 	// (Fix to make the dismiss work fine)
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		// If the view has changed or will change, the dismissing property is set back to NO so we don't dismiss
+		// If the view has changed or will change, the state property is set back to showed so we don't dismiss
 		// the (scheduled) new one
-		if ([[self sharedView] isDismissing]) {
+		if ([self sharedView].state == KVNProgressStateDismissing) {
 			[self dismissAnimatedWithCompletion:completion];
 		}
 	});
@@ -462,35 +476,42 @@ static KVNProgressConfiguration *configuration;
 								 | UIViewAnimationOptionAllowUserInteraction
 								 | UIViewAnimationOptionBeginFromCurrentState)
 					 animations:^{
-						 if ([[self sharedView] isDismissing]) {
+						 if ([self sharedView].state == KVNProgressStateDismissing) {
 							 progressView.alpha = 0.0f;
 						 }
 					 } completion:^(BOOL finished) {
 						 if(progressView.alpha == 0 || progressView.contentView.alpha == 0) {
-							 if ([progressView isDismissing]) {
-								 progressView.dismissing = NO;
-								 
-								 [progressView cancelCircleAnimation];
-								 [progressView removeFromSuperview];
-								 
-								 progressView.style = KVNProgressStyleHidden;
-								 
-								 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-								 
-								 // Tell the rootViewController to update the StatusBar appearance
-								 UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
-								 if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
-									 [rootController setNeedsStatusBarAppearanceUpdate];
-								 }
-							 }
-							 
-							 if (completion) {
-								 dispatch_async(dispatch_get_main_queue(), ^{
-									 completion();
-								 });
-							 }
+							 [self endDismissWithCompletion:completion];
 						 }
 					 }];
+}
+
++ (void)endDismissWithCompletion:(KVNCompletionBlock)completion
+{
+	KVNProgress *progressView = [self sharedView];
+	
+	if (progressView.state == KVNProgressStateDismissing) {
+		[self sharedView].state = KVNProgressStateHidden;
+		
+		[progressView cancelCircleAnimation];
+		[progressView removeFromSuperview];
+		
+		progressView.style = KVNProgressStyleHidden;
+		
+		UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+		
+		// Tell the rootViewController to update the StatusBar appearance
+		UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
+		if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+			[rootController setNeedsStatusBarAppearanceUpdate];
+		}
+	}
+	
+	if (completion) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			completion();
+		});
+	}
 }
 
 #pragma mark - UI
@@ -976,15 +997,18 @@ static KVNProgressConfiguration *configuration;
 	
 	self.showActionTrigerredDate = [NSDate date];
 	
+	KVNPrepareBlockSelf();
 	[UIView animateWithDuration:KVNFadeAnimationDuration
 						  delay:0.0f
 						options:UIViewAnimationOptionCurveEaseOut
 					 animations:^{
-						 self.alpha = 1.0f;
-						 self.contentView.transform = CGAffineTransformIdentity;
+						 KVNBlockSelf.alpha = 1.0f;
+						 KVNBlockSelf.contentView.transform = CGAffineTransformIdentity;
 					 } completion:^(BOOL finished) {
 						 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
 						 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
+						 
+						 KVNBlockSelf.state = KVNProgressStateShowed;
 					 }];
 }
 
