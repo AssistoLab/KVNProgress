@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 	/** Don't allow user interactions and show a blurred background. Default value. */
