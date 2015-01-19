@@ -100,7 +100,7 @@ static KVNProgressConfiguration *configuration;
 	
 	dispatch_once(&onceToken, ^{
 		UINib *nib = [UINib nibWithNibName:@"KVNProgressView"
-									bundle:nil];
+                                    bundle:[NSBundle bundleForClass:[self class]]];
 		NSArray *nibViews = [nib instantiateWithOwner:self
 											  options:0];
 		
