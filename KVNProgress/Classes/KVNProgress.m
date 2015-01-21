@@ -518,10 +518,23 @@ static KVNProgressConfiguration *configuration;
 
 - (void)setupUI
 {
+	[self setupGestures];
 	[self setupConstraints];
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
 	[self setupBackground];
+}
+
+- (void)setupGestures
+{
+	for (UIGestureRecognizer *gestureRecognizer in self.gestureRecognizers) {
+		[self removeGestureRecognizer:gestureRecognizer];
+	}
+	
+	if (self.configuration.tapBlock) {
+		UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(performTapBlock)];
+		[self addGestureRecognizer:tapGestureRecognizer];
+	}
 }
 
 - (void)setupConstraints
@@ -1246,6 +1259,15 @@ static KVNProgressConfiguration *configuration;
 + (BOOL)isVisible
 {
 	return ([self sharedView].superview != nil && [self sharedView].alpha > 0.0f);
+}
+
+#pragma mark - Tap Block
+
+- (void)performTapBlock {
+	if (self.configuration.tapBlock) {
+		KVNPrepareBlockSelf();
+		self.configuration.tapBlock(KVNBlockSelf);
+	}
 }
 
 #pragma mark - HitTest

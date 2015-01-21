@@ -30,6 +30,9 @@
 	[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
 	
 	self.basicConfiguration = [KVNProgressConfiguration defaultConfiguration];
+	self.basicConfiguration.tapBlock = ^(KVNProgress *progressView) {
+		[KVNProgress dismiss];
+	};
 	self.customConfiguration = [self customKVNProgressUIConfiguration];
 }
 

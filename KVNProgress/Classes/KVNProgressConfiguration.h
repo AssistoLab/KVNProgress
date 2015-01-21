@@ -9,6 +9,10 @@
 @import Foundation;
 @import UIKit;
 
+@class KVNProgress;
+
+typedef void (^KVNTapBlock)(KVNProgress *);
+
 typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 	/** Don't allow user interactions and show a blurred background. Default value. */
 	KVNProgressBackgroundTypeBlurred,
@@ -65,6 +69,11 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 @property (nonatomic) NSTimeInterval minimumSuccessDisplayTime;
 /** The minimum time (in seconds) the error will be displayed. */
 @property (nonatomic) NSTimeInterval minimumErrorDisplayTime;
+
+#pragma mark - Tap on HUD
+
+/** The block called when the HUD is tapped. Use <code>nil</code> for no tap interaction with the HUD. */
+@property (nonatomic, copy) KVNTapBlock tapBlock;
 
 #pragma mark - Helper
 
