@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Pinch. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
+@import UIKit;
 
 typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 	/** Don't allow user interactions and show a blurred background. Default value. */
