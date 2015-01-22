@@ -30,9 +30,6 @@
 	[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
 	
 	self.basicConfiguration = [KVNProgressConfiguration defaultConfiguration];
-	self.basicConfiguration.tapBlock = ^(KVNProgress *progressView) {
-		[KVNProgress dismiss];
-	};
 	self.customConfiguration = [self customKVNProgressUIConfiguration];
 }
 
@@ -69,9 +66,16 @@
 
 - (IBAction)show
 {
+	__weak KVNViewController *blockSelf = self;
+	self.basicConfiguration.tapBlock = ^(KVNProgress *progressView) {
+		blockSelf.basicConfiguration.tapBlock = nil;
+		[KVNProgress dismiss];
+	};
+	
 	[KVNProgress show];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		self.basicConfiguration.tapBlock = nil;
 		[KVNProgress dismiss];
 	});
 }
