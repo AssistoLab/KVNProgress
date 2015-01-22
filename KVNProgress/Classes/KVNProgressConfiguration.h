@@ -70,10 +70,20 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 /** The minimum time (in seconds) the error will be displayed. */
 @property (nonatomic) NSTimeInterval minimumErrorDisplayTime;
 
-#pragma mark - Tap on HUD
+#pragma mark - Interaction
 
-/** The block called when the HUD is tapped. Use <code>nil</code> for no tap interaction with the HUD. */
+/**
+ * The block called when the HUD is tapped.
+ * Use <code>nil</code> for no tap interaction with the HUD.
+ * Works only when <code>allowUserInteraction</code> is set to <code>NO</code>.
+ */
 @property (nonatomic, copy) KVNTapBlock tapBlock;
+/** 
+ * Enable user interaction with views behind the HUD. Does not work in fullscreen mode. 
+ * Is not compatible with the <code>tapBlock</code> property.
+ * @see tapBlock
+ */
+@property (nonatomic, getter = doesAllowUserInteraction) BOOL allowUserInteraction;
 
 #pragma mark - Helper
 

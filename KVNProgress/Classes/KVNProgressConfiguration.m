@@ -37,6 +37,7 @@
 		_minimumErrorDisplayTime = 1.3f;
 		
 		_tapBlock = nil;
+		_allowUserInteraction = NO;
 	}
 	
 	return self;
@@ -70,6 +71,7 @@
 	copy.minimumErrorDisplayTime = self.minimumErrorDisplayTime;
 	
 	copy.tapBlock = self.tapBlock;
+	copy.allowUserInteraction = self.allowUserInteraction;
 	
 	return copy;
 }

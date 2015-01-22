@@ -1275,7 +1275,11 @@ static KVNProgressConfiguration *configuration;
 // Used to block interaction for all views behind
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-	return (CGRectContainsPoint(self.frame, point)) ? self : nil;
+	if (self.configuration.allowUserInteraction && ![self isFullScreen]) {
+		return nil;
+	} else {
+		return (CGRectContainsPoint(self.frame, point)) ? self : nil;
+	}
 }
 
 @end
