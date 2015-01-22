@@ -42,6 +42,7 @@ Example of customized interface:<br/>
 ## Demo
 
 Here is a video of the demo app that you can find in this project.
+If you want to try it yourself, just download/checkout this repository and launch the project in Xcode.
 
 [![Demo video](Images/screenshot_video.jpg)](https://www.youtube.com/watch?v=aerOmPYG_NI)
 
@@ -217,6 +218,16 @@ Here is an example of a complete custom configuration:
 	configuration.circleSize = 110.0f;
 	configuration.lineWidth = 1.0f;
 	configuration.fullScreen = NO;
+
+  configuration.tapBlock = ^(KVNProgress *progressView) {
+    // Do something you want to do when the user tap on the HUD
+    // Does nothing by default
+  };
+  
+  // You can allow user interaction for behind views but you will losse the tapBlock functionnality just above
+  // Does not work with fullscreen mode
+  // Default is NO
+  configuration.allowUserInteraction = NO;
 	
 	[KVNProgress setConfiguration:configuration];
    ```
