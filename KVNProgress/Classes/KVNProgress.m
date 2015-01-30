@@ -337,6 +337,8 @@ static KVNProgressConfiguration *configuration;
     
     dispatch_async(self.queue, ^{
         
+        BOOL styleDidChange = self.style != style;
+        
         // We're going to create a new HUD
         self.progress = progress;
         self.status = [status copy];
@@ -393,42 +395,43 @@ static KVNProgressConfiguration *configuration;
                 break;
         }
         
-        
-        NSTimeInterval delay;
-        switch (self.style) {
-            case KVNProgressStyleProgress:
-                delay = self.configuration.minimumDisplayTime;
-                return;
-            case KVNProgressStyleSuccess:
-                delay = self.configuration.minimumSuccessDisplayTime;
-                break;
-            case KVNProgressStyleError:
-                delay = self.configuration.minimumErrorDisplayTime;
-                break;
-            case KVNProgressStyleHidden:
-                // Should not happen
-                delay = 0;
-                break;
-        }
-        
-        // Ok, now wait for our minimum time
-        [NSThread sleepForTimeInterval:delay];
-        
-        // If it's an auto-dismissable HUD
-        switch (self.style) {
-            case KVNProgressStyleProgress:
-                // Do nothing.
-                break;
-                
-            case KVNProgressStyleSuccess:
-            case KVNProgressStyleError: {
-                [KVNBlockSelf.class synchronousDismissWithCompletion:completion];
+        if (styleDidChange) {
+            NSTimeInterval delay;
+            switch (self.style) {
+                case KVNProgressStyleProgress:
+                    delay = self.configuration.minimumDisplayTime;
+                    break;
+                case KVNProgressStyleSuccess:
+                    delay = self.configuration.minimumSuccessDisplayTime;
+                    break;
+                case KVNProgressStyleError:
+                    delay = self.configuration.minimumErrorDisplayTime;
+                    break;
+                case KVNProgressStyleHidden:
+                    // Should not happen
+                    delay = 0;
+                    break;
             }
-                break;
-                
-            case KVNProgressStyleHidden:
-                // should never happen
-                break;
+            
+            // Ok, now wait for our minimum time
+            [NSThread sleepForTimeInterval:delay];
+            
+            // If it's an auto-dismissable HUD
+            switch (self.style) {
+                case KVNProgressStyleProgress:
+                    // Do nothing.
+                    break;
+                    
+                case KVNProgressStyleSuccess:
+                case KVNProgressStyleError: {
+                    [KVNBlockSelf.class synchronousDismissWithCompletion:completion];
+                }
+                    break;
+                    
+                case KVNProgressStyleHidden:
+                    // should never happen
+                    break;
+            }
         }
     });
 }
@@ -919,7 +922,11 @@ static KVNProgressConfiguration *configuration;
 
 + (void)updateStatus:(NSString*)status
 {
-    [[self sharedView] updateStatus:status];
+    dispatch_async([self sharedView].queue, ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [[self sharedView] updateStatus:status];
+        });
+    });
 }
 
 - (void)updateStatus:(NSString *)status
@@ -950,8 +957,12 @@ static KVNProgressConfiguration *configuration;
 + (void)updateProgress:(CGFloat)progress
               animated:(BOOL)animated
 {
-    [[self sharedView] updateProgress:progress
-                             animated:animated];
+    dispatch_async([self sharedView].queue, ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [[self sharedView] updateProgress:progress
+                                     animated:animated];
+        });
+    });
 }
 
 - (void)updateProgress:(CGFloat)progress
