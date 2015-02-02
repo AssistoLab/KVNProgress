@@ -103,8 +103,12 @@ static KVNProgressConfiguration *configuration;
                                     bundle:[NSBundle bundleForClass:[self class]]];
 		NSArray *nibViews = [nib instantiateWithOwner:self
 											  options:0];
+
 		
 		sharedView = nibViews[0];
+        [[NSNotificationCenter defaultCenter] addObserver:sharedView
+                                                 selector:@selector(applicationDidBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification object:nil];
 	});
 	
 	return sharedView;
@@ -1280,6 +1284,15 @@ static KVNProgressConfiguration *configuration;
 	} else {
 		return (CGRectContainsPoint(self.frame, point)) ? self : nil;
 	}
+}
+
+//Application did become active notification handler
+
+- (void)applicationDidBecomeActive
+{
+    if(self.state == KVNProgressStateShowed && self.progress == KVNProgressIndeterminate){
+        [self animateCircleWithInfiniteLoop];
+    }
 }
 
 @end
