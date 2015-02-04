@@ -106,9 +106,6 @@ static KVNProgressConfiguration *configuration;
 
 		
 		sharedView = nibViews[0];
-        [[NSNotificationCenter defaultCenter] addObserver:sharedView
-                                                 selector:@selector(applicationDidBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification object:nil];
 	});
 	
 	return sharedView;
@@ -140,9 +137,23 @@ static KVNProgressConfiguration *configuration;
 
 - (void)registerForNotifications {
 	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(applicationDidBecomeActive)
+												 name:UIApplicationDidBecomeActiveNotification
+											   object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(orientationDidChange:)
 												 name:UIDeviceOrientationDidChangeNotification
 											   object:nil];
+}
+
+- (void)applicationDidBecomeActive
+{
+	if (self.state == KVNProgressStateShowed
+		&& self.progress == KVNProgressIndeterminate) {
+		// Re-starts the infinite animation
+		[self animateCircleWithInfiniteLoop];
+	}
 }
 
 - (void)orientationDidChange:(NSNotification *)notification {
@@ -1284,15 +1295,6 @@ static KVNProgressConfiguration *configuration;
 	} else {
 		return (CGRectContainsPoint(self.frame, point)) ? self : nil;
 	}
-}
-
-//Application did become active notification handler
-
-- (void)applicationDidBecomeActive
-{
-    if(self.state == KVNProgressStateShowed && self.progress == KVNProgressIndeterminate){
-        [self animateCircleWithInfiniteLoop];
-    }
 }
 
 @end
