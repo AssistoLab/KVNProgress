@@ -48,7 +48,7 @@ If you want to try it yourself, just download/checkout this repository and launc
 
 ## Requirements
 
-* Xcode 5
+* Xcode 6
 * iOS 7
 * ARC
 * Frameworks:
