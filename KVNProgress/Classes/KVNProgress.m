@@ -458,6 +458,8 @@ static KVNProgressConfiguration *configuration;
 	} else if ([self sharedView].state == KVNProgressStateAppearing) {
 		[self sharedView].state = KVNProgressStateDismissing;
 		[self endDismissWithCompletion:completion];
+		
+		return;
 	}
 	
 	[self sharedView].state = KVNProgressStateDismissing;
