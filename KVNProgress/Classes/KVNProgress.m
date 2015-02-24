@@ -1152,43 +1152,18 @@ static KVNProgressConfiguration *configuration;
 	UIGraphicsEndImageContext();
 	
 	blurredScreenShot = [self applyTintEffectWithColor:self.configuration.backgroundTintColor
-                                                 alpha:self.configuration.backgroundTintColorAlpha
 												 image:blurredScreenShot];
 	
 	return blurredScreenShot;
 }
 
 - (UIImage *)applyTintEffectWithColor:(UIColor *)tintColor
-                                alpha:(CGFloat)effectColorAlpha
 								image:(UIImage *)image
 {
-	//const CGFloat EffectColorAlpha = 0.6;
-	UIColor *effectColor = tintColor;
-	int componentCount = (int)CGColorGetNumberOfComponents(tintColor.CGColor);
 	CGFloat tintAlpha = CGColorGetAlpha(tintColor.CGColor);
 	
-	if (tintAlpha == 0.0f) {
-		return [image applyBlurWithRadius:10.0f
-								tintColor:nil
-					saturationDeltaFactor:1.0f
-								maskImage:nil];
-	}
-	
-	if (componentCount == 2) {
-		CGFloat b;
-		if ([tintColor getWhite:&b alpha:NULL]) {
-			effectColor = [UIColor colorWithWhite:b alpha:effectColorAlpha];
-		}
-	}
-	else {
-		CGFloat r, g, b;
-		if ([tintColor getRed:&r green:&g blue:&b alpha:NULL]) {
-			effectColor = [UIColor colorWithRed:r green:g blue:b alpha:effectColorAlpha];
-		}
-	}
-	
 	return [image applyBlurWithRadius:10.0f
-							tintColor:effectColor
+							tintColor:(tintAlpha > 0.0f)? tintColor : nil
 				saturationDeltaFactor:1.0f
 							maskImage:nil];
 }

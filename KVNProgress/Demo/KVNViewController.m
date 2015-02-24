@@ -53,8 +53,7 @@
 	configuration.circleStrokeBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.3f];
 	configuration.circleFillBackgroundColor = [UIColor colorWithWhite:1.0f alpha:0.1f];
 	configuration.backgroundFillColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:0.9f];
-	configuration.backgroundTintColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:1.0f];
-	configuration.backgroundTintColorAlpha = 1.0f;
+	configuration.backgroundTintColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:0.4f];
 	configuration.successColor = [UIColor whiteColor];
 	configuration.errorColor = [UIColor whiteColor];
 	configuration.circleSize = 110.0f;

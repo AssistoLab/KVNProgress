@@ -29,8 +29,6 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 @property (nonatomic) UIColor *backgroundFillColor;
 /** Tint color of the background view. Used to tint blurred background only when backgroundType is KVNProgressBackgroundTypeBlurred. */
 @property (nonatomic) UIColor *backgroundTintColor;
-/** Alpha value of tint color of the background view */
-@property (nonatomic) CGFloat backgroundTintColorAlpha;
 /** Tells which background type the HUD will use. */
 @property (nonatomic) KVNProgressBackgroundType backgroundType;
 /** Tells wether the HUD is full screen or not. */
