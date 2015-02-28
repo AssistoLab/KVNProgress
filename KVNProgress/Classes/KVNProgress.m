@@ -826,6 +826,7 @@ static KVNProgressConfiguration *configuration;
 - (void)addToView:(UIView *)superview
 {
 	NSLog(@"===== ADDING TO SUPERVIEW: %@", superview);
+	NSLog(@"= superview bounds: %@", NSStringFromCGRect(superview.bounds));
 	
 	if (self.superview) {
 		NSLog(@"= Removing constraints from previous HUD superview");
@@ -855,6 +856,9 @@ static KVNProgressConfiguration *configuration;
 	[self layoutIfNeeded];
 	
 	self.alpha = 0.0f;
+	
+	// Fix for non autolayout project
+	self.frame = superview.bounds;
 	
 	NSLog(@"===== FINISH ADDING TO SUPERVIEW: %@", superview);
 }
