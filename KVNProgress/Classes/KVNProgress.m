@@ -807,14 +807,16 @@ static KVNProgressConfiguration *configuration;
 
 - (void)addToCurrentWindow
 {
-	UIWindow *currentWindow = nil;
+	UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
 	
-	NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
-	
-	for (UIWindow *window in frontToBackWindows) {
-		if (window.windowLevel == UIWindowLevelNormal) {
-			currentWindow = window;
-			break;
+	if (!currentWindow) {
+		NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
+		
+		for (UIWindow *window in frontToBackWindows) {
+			if (window.windowLevel == UIWindowLevelNormal) {
+				currentWindow = window;
+				break;
+			}
 		}
 	}
 	
