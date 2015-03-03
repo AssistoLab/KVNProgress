@@ -800,10 +800,16 @@ static KVNProgressConfiguration *configuration;
 
 - (void)addToView:(UIView *)superview
 {
+	superview = [UIApplication sharedApplication].keyWindow;
+	if (!superview) {
+		superview = [[UIApplication sharedApplication].windows objectAtIndex:0];
+	}
+	
 	if (self.superview) {
 		[self.superview removeConstraints:self.constraintsToSuperview];
 		[self removeFromSuperview];
 	}
+	
 	
 	[superview addSubview:self];
 	[superview bringSubviewToFront:self];
