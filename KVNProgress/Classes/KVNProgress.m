@@ -782,14 +782,16 @@ static KVNProgressConfiguration *configuration;
 
 - (void)addToCurrentWindow
 {
-	UIWindow *currentWindow = nil;
+	UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
 	
-	NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
-	
-	for (UIWindow *window in frontToBackWindows) {
-		if (window.windowLevel == UIWindowLevelNormal) {
-			currentWindow = window;
-			break;
+	if (!currentWindow) {
+		NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
+		
+		for (UIWindow *window in frontToBackWindows) {
+			if (window.windowLevel == UIWindowLevelNormal) {
+				currentWindow = window;
+				break;
+			}
 		}
 	}
 	
@@ -826,6 +828,9 @@ static KVNProgressConfiguration *configuration;
 	[self layoutIfNeeded];
 	
 	self.alpha = 0.0f;
+	
+	// Fix for non autolayout project
+	self.frame = superview.bounds;
 }
 
 #pragma mark - Update
