@@ -341,8 +341,6 @@ static KVNProgressConfiguration *configuration;
 {
 	KVNPrepareBlockSelf();
 	
-	NSLog(@"===== SHOWING HUD");
-	
 	// We check if a previous HUD is displaying
 	// If so, we wait its minimum display time before switching to the new one
 	// But, if we are changing from an indeterminate progress HUD to a determinate one,
@@ -444,8 +442,6 @@ static KVNProgressConfiguration *configuration;
 			[KVNBlockSelf.class dismissWithCompletion:completion];
 		});
 	}
-	
-	NSLog(@"===== FINISH SHOWING HUD");
 }
 
 #pragma mark - Dimiss
@@ -457,17 +453,11 @@ static KVNProgressConfiguration *configuration;
 
 + (void)dismissWithCompletion:(KVNCompletionBlock)completion
 {
-	NSLog(@"==== DISMISSING HUD");
 	if ([self sharedView].state == KVNProgressStateHidden) {
-		NSLog(@"= HUD is already hidden");
-		
 		return;
 	} else if ([self sharedView].state == KVNProgressStateAppearing) {
 		[self sharedView].state = KVNProgressStateDismissing;
 		[self endDismissWithCompletion:completion];
-		
-		NSLog(@"= HUD was appearing");
-		NSLog(@"==== FINISH DISMISSING HUD");
 		
 		return;
 	}
@@ -509,7 +499,6 @@ static KVNProgressConfiguration *configuration;
 					 } completion:^(BOOL finished) {
 						 if(progressView.alpha == 0 || progressView.contentView.alpha == 0) {
 							 [self endDismissWithCompletion:completion];
-							 NSLog(@"==== FINISH DISMISSING HUD");
 						 }
 					 }];
 }
@@ -546,15 +535,11 @@ static KVNProgressConfiguration *configuration;
 
 - (void)setupUI
 {
-	NSLog(@"==== SETTING UI");
-	
 	[self setupGestures];
 	[self setupConstraints];
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
 	[self setupBackground];
-	
-	NSLog(@"==== FINISH SETTING UI");
 }
 
 - (void)setupGestures
@@ -571,15 +556,9 @@ static KVNProgressConfiguration *configuration;
 
 - (void)setupConstraints
 {
-	NSLog(@"===== SETTING BASE CONSTRAINTS");
-	
 	CGRect bounds = [self correctedBounds];
 	CGFloat statusInset = (self.status.length > 0) ? KVNContentViewWithStatusInset : KVNContentViewWithoutStatusInset;
 	CGFloat contentWidth;
-	
-	NSLog(@"= bounds: %@", NSStringFromCGRect(bounds));
-	NSLog(@"= statusInset: %f", statusInset);
-	NSLog(@"= fullScreen: %d", [self isFullScreen]);
 	
 	if (!KVNSystemVersionGreaterOrEqual_iOS_8 && [self.superview isKindOfClass:UIWindow.class]) {
 		self.transform = CGAffineTransformMakeRotation([self rotationForStatusBarOrientation]);
@@ -601,15 +580,11 @@ static KVNProgressConfiguration *configuration;
 		}
 	}
 	
-	NSLog(@"= contentWidth: %f", contentWidth);
-	
 	self.circleProgressViewTopToSuperViewConstraint.constant = statusInset;
 	self.statusLabelBottomToSuperViewConstraint.constant = statusInset;
 	self.contentViewWidthConstraint.constant = contentWidth;
 	
 	[self layoutIfNeeded];
-	
-	NSLog(@"===== FINISH SETTING BASE CONSTRAINTS");
 }
 
 - (void)setupCircleProgressView
@@ -827,12 +802,7 @@ static KVNProgressConfiguration *configuration;
 
 - (void)addToView:(UIView *)superview
 {
-	NSLog(@"===== ADDING TO SUPERVIEW: %@", superview);
-	NSLog(@"= superview bounds: %@", NSStringFromCGRect(superview.bounds));
-	
 	if (self.superview) {
-		NSLog(@"= Removing constraints from previous HUD superview");
-		NSLog(@"= Removing HUD from previous superview");
 		[self.superview removeConstraints:self.constraintsToSuperview];
 		[self removeFromSuperview];
 	}
@@ -861,21 +831,15 @@ static KVNProgressConfiguration *configuration;
 	
 	// Fix for non autolayout project
 	self.frame = superview.bounds;
-	
-	NSLog(@"===== FINISH ADDING TO SUPERVIEW: %@", superview);
 }
 
 #pragma mark - Update
 
 - (void)updateUIForOrientation
 {
-	NSLog(@"===== UPDATING UI FOR ORIENTATION: %ld", [UIApplication sharedApplication].statusBarOrientation);
-	
 	[self setupConstraints];
 	[self updateStatusConstraints];
 	[self updateBackgroundConstraints];
-	
-	NSLog(@"===== FINISH UPDATING UI FOR ORIENTATION: %ld", [UIApplication sharedApplication].statusBarOrientation);
 }
 
 - (void)updateBackground
@@ -936,8 +900,6 @@ static KVNProgressConfiguration *configuration;
 
 - (void)updateBackgroundConstraints
 {
-	NSLog(@"===== UPDATING BACKGROUND CONSTRAINTS");
-	
 	if (![self isFullScreen] && self.status.length == 0) {
 		self.circleProgressViewTopToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
 		self.statusLabelBottomToSuperViewConstraint.constant = KVNContentViewWithoutStatusInset;
@@ -946,12 +908,6 @@ static KVNProgressConfiguration *configuration;
 		CGSize fittingSize = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
 		self.contentViewWidthConstraint.constant = fittingSize.height;
 	}
-	
-	NSLog(@"= fullScreen: %d", [self isFullScreen]);
-	NSLog(@"= status: %@", self.status);
-	NSLog(@"= contentViewWidth: %f", self.contentViewWidthConstraint.constant);
-	
-	NSLog(@"===== FINISH UPDATING BACKGROUND CONSTRAINTS");
 }
 
 + (void)updateStatus:(NSString*)status
