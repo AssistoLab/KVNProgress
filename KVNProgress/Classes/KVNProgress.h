@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Pinch. All rights reserved.
 //
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 #import "KVNProgressConfiguration.h"
 
