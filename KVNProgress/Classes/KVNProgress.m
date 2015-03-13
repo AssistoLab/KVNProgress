@@ -13,6 +13,7 @@
 
 #import "UIImage+KVNImageEffects.h"
 #import "UIImage+KVNEmpty.h"
+#import "UIColor+KVNContrast.h"
 
 #define KVNBlockSelf __blockSelf
 #define KVNPrepareBlockSelf() __weak typeof(self) KVNBlockSelf = self
@@ -75,6 +76,8 @@ static KVNProgressConfiguration *configuration;
 @property (nonatomic, strong) CAShapeLayer *crossLayer;
 @property (nonatomic, strong) CAShapeLayer *circleProgressLineLayer;
 @property (nonatomic, strong) CAShapeLayer *circleBackgroundLineLayer;
+
+@property (nonatomic) UIStatusBarStyle rootControllerStatusBarStyle;
 
 // Constraints
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewWidthConstraint;
@@ -517,11 +520,7 @@ static KVNProgressConfiguration *configuration;
 		
 		UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
 		
-		// Tell the rootViewController to update the StatusBar appearance
-		UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
-		if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
-			[rootController setNeedsStatusBarAppearanceUpdate];
-		}
+		[UIApplication sharedApplication].statusBarStyle = [self sharedView].rootControllerStatusBarStyle;
 	}
 	
 	if (completion) {
@@ -535,11 +534,35 @@ static KVNProgressConfiguration *configuration;
 
 - (void)setupUI
 {
+	[self setupStatusBar];
 	[self setupGestures];
 	[self setupConstraints];
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
 	[self setupBackground];
+}
+
+- (void)setupStatusBar
+{
+	self.rootControllerStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+	
+	if (![self isFullScreen]) {
+		return;
+	}
+	
+	UIColor *backgroundColor;
+	switch (self.backgroundType) {
+		case KVNProgressBackgroundTypeBlurred: {
+			backgroundColor = self.configuration.backgroundTintColor;
+			break;
+		}
+		case KVNProgressBackgroundTypeSolid: {
+			backgroundColor = self.configuration.backgroundFillColor;
+			break;
+		}
+	}
+	
+	[UIApplication sharedApplication].statusBarStyle = [backgroundColor statusBarStyleConstrastStyle];
 }
 
 - (void)setupGestures
