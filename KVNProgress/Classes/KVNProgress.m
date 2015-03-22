@@ -779,6 +779,9 @@ static KVNProgressConfiguration *configuration;
 - (void)setupBackground
 {
 	if ([self.class isVisible]) {
+		[self updateBackgroundConstraints];
+		[self layoutIfNeeded];
+		
 		return; // No reload of background when view is showing
 	}
 	
