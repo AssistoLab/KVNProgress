@@ -7,6 +7,32 @@
 
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
 ***
+
+## Table of contents
+
+ * [Preview](#preview)
+ * [Advantages](#advantages)
+ * [Demo](#demo)
+ * [Installation](#installation)
+    * [Cocoapods](#cocoapods)
+    * [Source files](#source-files)
+ * [Usage](#usage)
+    * [Basics](#basics)
+    * [Indeterminate progress](#indeterminate-progress)
+    * [Determinate progress](#determinate-progress)
+    * [Dismiss](#dismiss)
+    * [Success/Error](#successerror)
+ * [Customization](#customization)
+    * [KVNProgressConfiguration](#KVNProgressConfiguration)
+    * [Display times](#display-times)
+ * [Remains to do](#remains-to-do)
+ * [License](#license)
+ * [Credits](#credits)
+
+***
+
+## Preview
+
 Base interface:<br/>
 [![Indeterminate progress](Images/screenshot_002.jpg)](Images/screenshot_002.jpg)
 [![Determinate progress](Images/screenshot_003.jpg)](Images/screenshot_003.jpg)
@@ -45,15 +71,6 @@ Here is a video of the demo app that you can find in this project.
 If you want to try it yourself, just download/checkout this repository and launch the project in Xcode.
 
 [![Demo video](Images/screenshot_video.jpg)](https://www.youtube.com/watch?v=aerOmPYG_NI)
-
-## Requirements
-
-* Xcode 6
-* iOS 7
-* ARC
-* Frameworks:
-    * QuartzCore
-    * GLKit
 
 ## Installation
 
@@ -248,6 +265,15 @@ There are 3 properties you can change that do that in `KVNProgressConfiguration`
 ## Remains to do
 
 - [ ] Use real-time blur
+
+## Requirements
+
+* Xcode 6
+* iOS 7
+* ARC
+* Frameworks:
+    * QuartzCore
+    * GLKit
 
 ## License
 
