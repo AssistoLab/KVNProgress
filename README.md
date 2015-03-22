@@ -1,4 +1,4 @@
-##KVNProgress
+![KVNProgress](Images/logo.png)
 
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
@@ -53,17 +53,18 @@ Example of customized interface:<br/>
 
 ## Advantages
 
- * Can be full screen
- * Uses `UIMotionEffect`
- * Supports all orientations
- * Supports iPad
- * Animates text update
- * Animates success checkmark
- * Is well documented
- * Is fully customizable
+ * [x] Can be full screen
+ * [x] Uses `UIMotionEffect`
+ * [x] Supports all orientations
+ * [x] Supports iPad
+ * [x] Animates text update
+ * [x] Animates success checkmark
+ * [x] Is well documented
+ * [x] Is fully customizable
     * Colors
     * Fonts
     * Circle size and thickness
+    * Blur or solid color background
 
 ## Demo
 
@@ -167,9 +168,9 @@ To dismiss after your task is done:
 
 **Why?**
 
-Because KVNProgress remains visible for a certain time even if you call `dismiss`. This is done to ensure the user has enough time to see the HUD if the load is too quick.
+Because KVNProgress remains visible for a certain time even if you call `dismiss`. This is done to ensure the user has enough time to see the HUD if the `dismiss` is called too quick after a `show`.
 The completion block in `dismissWithCompletion` is called (on the main thread) after the HUD is completely dismissed.
-This amount of time is defined in the KVNProgressConfiguration object (explained [below](#KVNProgressConfiguration)). Default value is `0.3` seconds.
+This minimum amount of display time is defined in the KVNProgressConfiguration object (explained [below](#display-times)). Default value is `0.3` seconds.
 
 ### Success/Error
 
