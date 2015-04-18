@@ -24,14 +24,14 @@ describe(@"defaultConfiguration", ^{
 
 });
 
-describe(@"default properties for non-fullscreen HUD", ^{
+describe(@"default properties should not be nil", ^{
     
     __block KVNProgressConfiguration *testConfiguration;
     beforeAll(^{
         testConfiguration = [KVNProgressConfiguration defaultConfiguration];
     });
     
-    it(@"Should have it's default properties set", ^{
+    it(@"Should have it's default color and size properties set", ^{
         
         expect(testConfiguration.backgroundFillColor).to.equal ([UIColor colorWithWhite:1.0f alpha:0.85f]);
         
