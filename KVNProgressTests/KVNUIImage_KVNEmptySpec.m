@@ -1,5 +1,5 @@
 //
-//  UIImage_KVNEmptySpec.m
+//  KVNUIImage_KVNEmptySpec.m
 //  KVNProgress
 //
 //  Created by Louis Tur on 4/18/15.
@@ -16,6 +16,7 @@ SpecBegin(UIImage_KVNEmpty)
 describe(@"emptyImage should return an allocated UIImage", ^{
 
     it(@"Should return a UIImage without content", ^{
+        
         
         UIImage * blankImage = [UIImage emptyImage];
         
