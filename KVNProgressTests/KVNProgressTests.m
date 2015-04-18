@@ -6,29 +6,49 @@
 //  Copyright (c) 2014 Kevin Hirsch. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
+#import <Specta/Specta.h>
+#import <Expecta/Expecta.h>
 
-@interface KVNProgressTests : XCTestCase
+#import "KVNProgress.h"
 
-@end
+SpecBegin(KVNProgress)
 
-@implementation KVNProgressTests
+describe(@"showing and hiding", ^{
 
-- (void)setUp
-{
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
+    it(@"shows the basic progress view", ^{
+        [KVNProgress show];
+        expect([KVNProgress isVisible]).after(1).to.beTruthy();
+    });
 
-- (void)tearDown
-{
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
+    it(@"hides the basic progress view", ^{
+        [KVNProgress show];
+        expect([KVNProgress isVisible]).after(1).to.beTruthy();
+        [KVNProgress dismiss];
+        expect([KVNProgress isVisible]).after(1).to.beFalsy();
+    });
 
-- (void)testExample
-{
-    //XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
-}
+    it(@"looks right by default", ^{
+        // TODO
+    });
+});
 
-@end
+describe(@"notifications", ^{
+    it(@"rearranges when UIDeviceOrientationDidChangeNotification is called", ^{
+        [KVNProgress show];
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIDeviceOrientationDidChangeNotification object:nil];
+        // TODO
+    });
+
+    it(@"calls the tap handler when the KVNProgress is tapped", ^{
+
+        [KVNProgress setConfiguration:[KVNProgressConfiguration defaultConfiguration]];
+        KVNProgressConfiguration *configuration = [KVNProgressConfiguration defaultConfiguration];
+        configuration.tapBlock = ^(KVNProgress *progressView) {
+            // TODO
+        };
+                    
+        [KVNProgress show];
+    });
+});
+
+SpecEnd
