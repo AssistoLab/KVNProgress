@@ -8,36 +8,50 @@
 
 #import <Specta/Specta.h>
 #import <Expecta/Expecta.h>
+#import <FBSnapshotTestCase/FBSnapshotTestCase.h>
+#import <Expecta+Snapshots/EXPMatchers+FBSnapshotTest.h>
 
 #import "KVNProgress.h"
 
 SpecBegin(KVNProgress)
 
-describe(@"showing and hiding", ^{
+describe(@"appearance", ^{
+
+    beforeEach(^{
+        waitUntil(^(DoneCallback done) {
+            if ([KVNProgress isVisible]) {
+                [KVNProgress dismissWithCompletion:^{
+                    done();
+                }];
+            } else {
+                done();
+            }
+        });
+    });
 
     it(@"shows the basic progress view", ^{
         [KVNProgress show];
         expect([KVNProgress isVisible]).after(1).to.beTruthy();
     });
 
-    it(@"hides the basic progress view", ^{
+    it(@"shows then hides the basic progress view", ^{
         [KVNProgress show];
         expect([KVNProgress isVisible]).after(1).to.beTruthy();
         [KVNProgress dismiss];
         expect([KVNProgress isVisible]).after(1).to.beFalsy();
     });
 
-    it(@"looks right by default", ^{
+    it(@"shows progress and status", ^{
         // TODO
+//        [KVNProgress showProgress:0.50 status:@"Testing"];
+//        UIView *v = [[UIApplication sharedApplication] keyWindow];
+//        expect(v).after(3).to.recordSnapshot();
+//        expect(v).after(3).to.haveValidSnapshot();
     });
 });
 
+
 describe(@"notifications", ^{
-    it(@"rearranges when UIDeviceOrientationDidChangeNotification is called", ^{
-        [KVNProgress show];
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIDeviceOrientationDidChangeNotification object:nil];
-        // TODO
-    });
 
     it(@"calls the tap handler when the KVNProgress is tapped", ^{
 
@@ -46,9 +60,14 @@ describe(@"notifications", ^{
         configuration.tapBlock = ^(KVNProgress *progressView) {
             // TODO
         };
-                    
+
         [KVNProgress show];
     });
 });
+
+describe(@"can be customised via KVNProgressConfiguration", ^{
+    // TODO
+});
+
 
 SpecEnd
