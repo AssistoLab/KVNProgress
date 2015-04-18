@@ -1,0 +1,4 @@
+language: objective-c
+xcode_sdk: iphonesimulator8.1
+xcode_scheme: KVNProgress
+xcode_workspace: KVNProgress.xcworkspace
