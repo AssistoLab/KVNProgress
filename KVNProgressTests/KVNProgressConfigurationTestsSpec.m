@@ -44,8 +44,42 @@ describe(@"default properties should not be nil", ^{
         expect(testConfiguration.circleFillBackgroundColor).to.equal([UIColor clearColor]);
         
         expect(testConfiguration.circleSize).to.beGreaterThan(0.0);
-        
     });
+    
+    it(@"Should have minimum values for HUD display times", ^{
+        expect(testConfiguration.minimumDisplayTime).to.beGreaterThan(0.0);
+        expect(testConfiguration.minimumErrorDisplayTime).to.beGreaterThan(0.0);
+        expect(testConfiguration.minimumSuccessDisplayTime).to.beGreaterThan(0.0);
+    });
+    
+    it(@"Should not be fullscreen", ^{
+        expect(testConfiguration.fullScreen).to.beFalsy;
+    });
+    
+    it(@"Should not allow user interaction", ^{
+        expect(testConfiguration.allowUserInteraction).to.beFalsy;
+    });
+});
+
+describe(@"Should have a different address than its copy", ^{
+    
+    __block KVNProgressConfiguration *testConfiguration;
+    __block KVNProgressConfiguration *testConfigurationCopy;
+    beforeAll(^{
+        testConfiguration = [KVNProgressConfiguration defaultConfiguration];
+        testConfigurationCopy = testConfiguration.copy;
+    });
+    
+    it(@"Should not have the same memory address", ^{
+        expect(testConfiguration).toNot.beIdenticalTo(testConfigurationCopy);
+    });
+    
+    it(@"Should have the same values for its properties", ^{
+        
+        expect(testConfiguration.backgroundFillColor).to.equal(testConfigurationCopy.backgroundFillColor);
+        expect(testConfigurationCopy.backgroundTintColor).to.equal(testConfigurationCopy.backgroundTintColor);
+    });
+    
 });
 
 SpecEnd
