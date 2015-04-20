@@ -31,6 +31,7 @@
 		
 		_successColor = [_statusColor copy];
 		_errorColor = [_statusColor copy];
+        _stopColor = [_statusColor copy];
 		
 		_minimumDisplayTime = 0.3f;
 		_minimumSuccessDisplayTime = 2.0f;
@@ -65,6 +66,7 @@
 	
 	copy.successColor = [self.successColor copy];
 	copy.errorColor = [self.errorColor copy];
+    copy.stopColor = [self.stopColor copy];
 	
 	copy.minimumDisplayTime = self.minimumDisplayTime;
 	copy.minimumSuccessDisplayTime = self.minimumSuccessDisplayTime;

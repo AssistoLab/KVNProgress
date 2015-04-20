@@ -76,6 +76,7 @@ static KVNProgressConfiguration *configuration;
 @property (nonatomic, strong) CAShapeLayer *crossLayer;
 @property (nonatomic, strong) CAShapeLayer *circleProgressLineLayer;
 @property (nonatomic, strong) CAShapeLayer *circleBackgroundLineLayer;
+@property (nonatomic, strong) CAShapeLayer *stopLayer;
 
 @property (nonatomic) UIStatusBarStyle rootControllerStatusBarStyle;
 
@@ -690,6 +691,8 @@ static KVNProgressConfiguration *configuration;
 {
 	[self setupFullRoundCircleWithColor:self.configuration.successColor];
 	
+    self.stopLayer.opacity = 0.0f;
+
 	UIBezierPath* checkmarkPath = [UIBezierPath bezierPath];
 	[checkmarkPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.28f, CGRectGetHeight(self.circleProgressView.bounds) * 0.53f)];
 	[checkmarkPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.42f, CGRectGetHeight(self.circleProgressView.bounds) * 0.66f)];
@@ -715,6 +718,8 @@ static KVNProgressConfiguration *configuration;
 {
 	[self setupFullRoundCircleWithColor:self.configuration.errorColor];
 	
+    self.stopLayer.opacity = 0.0f;
+
 	UIBezierPath* crossPath = [UIBezierPath bezierPath];
 	[crossPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.72f, CGRectGetHeight(self.circleProgressView.bounds) * 0.27f)];
 	[crossPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.27f, CGRectGetHeight(self.circleProgressView.bounds) * 0.72f)];
@@ -735,6 +740,40 @@ static KVNProgressConfiguration *configuration;
 	[self.circleProgressView.layer removeAllAnimations];
 	[self.crossLayer removeAllAnimations];
 	[self animateError];
+}
+
+- (void)setupStopUI
+{
+    if (!self.configuration.tapBlock) {
+        return;
+    }
+    
+    self.stopLayer.opacity = 1.0f;
+    
+    UIBezierPath* stopPath = [UIBezierPath bezierPath];
+    [stopPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.67f, CGRectGetHeight(self.circleProgressView.bounds) * 0.67f)];
+    
+    [stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.32f, CGRectGetHeight(self.circleProgressView.bounds) * 0.67f)];
+    [stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.32f, CGRectGetHeight(self.circleProgressView.bounds) * 0.32f)];
+    [stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.67f, CGRectGetHeight(self.circleProgressView.bounds) * 0.32f)];
+    
+    [stopPath closePath];
+    
+    stopPath.lineCapStyle = kCGLineCapSquare;
+    
+    self.stopLayer = [CAShapeLayer layer];
+    self.stopLayer.path = stopPath.CGPath;
+    self.stopLayer.fillColor = self.configuration.successColor.CGColor;
+    self.stopLayer.strokeColor = self.configuration.successColor.CGColor;
+    self.stopLayer.lineWidth = self.configuration.lineWidth;
+    
+    [self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
+    [self.circleProgressView.layer addSublayer:self.stopLayer];
+    
+    [self.circleProgressLineLayer removeAllAnimations];
+    [self.circleProgressView.layer removeAllAnimations];
+    [self.stopLayer removeAllAnimations];
+    [self animateStop];
 }
 
 - (void)setupFullRoundCircleWithColor:(UIColor *)color
@@ -1026,8 +1065,9 @@ static KVNProgressConfiguration *configuration;
 				[self setupInfiniteCircle];
 			} else {
 				[self setupProgressCircle];
+                [self setupStopUI];
 			}
-			
+            
 			break;
 		}
 		case KVNProgressStyleSuccess: {
@@ -1084,6 +1124,7 @@ static KVNProgressConfiguration *configuration;
 	
 	[self.circleProgressView.layer addAnimation:rotationAnimation
 										 forKey:@"rotationAnimation"];
+
 }
 
 - (void)cancelCircleAnimation
@@ -1130,6 +1171,11 @@ static KVNProgressConfiguration *configuration;
 - (void)animateError
 {
 	[self animateFullCircleWithColor:self.configuration.errorColor];
+}
+
+- (void)animateStop
+{
+    [self animateFullCircleWithColor:self.configuration.stopColor];
 }
 
 - (void)animateFullCircleWithColor:(UIColor *)color
