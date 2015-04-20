@@ -106,7 +106,6 @@
 {
     __weak KVNViewController *blockSelf = self;
     self.basicConfiguration.tapBlock = ^(KVNProgress *progressView) {
-        blockSelf.basicConfiguration.tapBlock = nil;
     };
 
 	[KVNProgress showProgress:0.0f
