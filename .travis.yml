@@ -1,0 +1,11 @@
+language: objective-c
+xcode_sdk: iphonesimulator8.1
+xcode_scheme: KVNProgress
+xcode_workspace: KVNProgress.xcworkspace
+before_install:
+  - brew update
+  - brew reinstall xctool
+  - gem update cocoapods
+  - gem install slather
+after_success:
+  - slather

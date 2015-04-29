@@ -1,5 +1,7 @@
 ![KVNProgress](Images/logo.png)
 
+[![Coverage Status](https://coveralls.io/repos/spacedrabbit/KVNProgress/badge.svg?branch=test-jam-test-coverage)](https://coveralls.io/r/spacedrabbit/KVNProgress?branch=test-jam-test-coverage)
+[![Build Status](https://travis-ci.org/spacedrabbit/KVNProgress.svg?branch=test-jam-test-coverage)](https://travis-ci.org/spacedrabbit/KVNProgress)
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
 [![Version](http://img.shields.io/badge/version-2.2.1-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)

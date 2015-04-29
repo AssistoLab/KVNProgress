@@ -6,29 +6,68 @@
 //  Copyright (c) 2014 Kevin Hirsch. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
+#import <Specta/Specta.h>
+#import <Expecta/Expecta.h>
+#import <FBSnapshotTestCase/FBSnapshotTestCase.h>
+#import <Expecta+Snapshots/EXPMatchers+FBSnapshotTest.h>
 
-@interface KVNProgressTests : XCTestCase
+#import "KVNProgress.h"
 
-@end
+SpecBegin(KVNProgress)
 
-@implementation KVNProgressTests
+describe(@"appearance", ^{
 
-- (void)setUp
-{
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
+    beforeEach(^{
+        waitUntil(^(DoneCallback done) {
+            if ([KVNProgress isVisible]) {
+                [KVNProgress dismissWithCompletion:^{
+                    done();
+                }];
+            } else {
+                done();
+            }
+        });
+    });
 
-- (void)tearDown
-{
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
+    it(@"shows the basic progress view", ^{
+        [KVNProgress show];
+        expect([KVNProgress isVisible]).after(1).to.beTruthy();
+    });
 
-- (void)testExample
-{
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
-}
+    it(@"shows then hides the basic progress view", ^{
+        [KVNProgress show];
+        expect([KVNProgress isVisible]).after(1).to.beTruthy();
+        [KVNProgress dismiss];
+        expect([KVNProgress isVisible]).after(1).to.beFalsy();
+    });
 
-@end
+    it(@"shows progress and status", ^{
+        // TODO
+//        [KVNProgress showProgress:0.50 status:@"Testing"];
+//        UIView *v = [[UIApplication sharedApplication] keyWindow];
+//        expect(v).after(3).to.recordSnapshot();
+//        expect(v).after(3).to.haveValidSnapshot();
+    });
+});
+
+
+describe(@"notifications", ^{
+
+    it(@"calls the tap handler when the KVNProgress is tapped", ^{
+
+        [KVNProgress setConfiguration:[KVNProgressConfiguration defaultConfiguration]];
+        KVNProgressConfiguration *configuration = [KVNProgressConfiguration defaultConfiguration];
+        configuration.tapBlock = ^(KVNProgress *progressView) {
+            // TODO
+        };
+
+        [KVNProgress show];
+    });
+});
+
+describe(@"can be customised via KVNProgressConfiguration", ^{
+    // TODO
+});
+
+
+SpecEnd
