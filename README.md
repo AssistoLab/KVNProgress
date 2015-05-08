@@ -156,7 +156,7 @@ To show a determinate progress and change its value along time:
 
 #### Stop button
 
-You can add a stop button to a progress HUD. For this you will need to use the `KVNProgressConfiguration`(see [below](#KVNProgressConfiguration). You simply have to put:
+You can add a stop button to a progress HUD. For this you will need to use the `KVNProgressConfiguration`(see [below](#KVNProgressConfiguration)). You simply have to put:
 
 ```objc
 KVNProgressConfiguration *configuration = [KVNProgressConfiguration defaultConfiguration];
