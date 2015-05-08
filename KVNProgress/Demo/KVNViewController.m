@@ -56,8 +56,15 @@
 	configuration.backgroundTintColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:0.4f];
 	configuration.successColor = [UIColor whiteColor];
 	configuration.errorColor = [UIColor whiteColor];
+	configuration.stopColor = [UIColor whiteColor];
 	configuration.circleSize = 110.0f;
 	configuration.lineWidth = 1.0f;
+	configuration.showStop = YES;
+	configuration.stopRelativeHeight = 0.3f;
+	
+	configuration.tapBlock = ^(KVNProgress *progressView) {
+		[KVNProgress dismiss];
+	};
 	
 	return configuration;
 }
@@ -104,10 +111,6 @@
 
 - (IBAction)showProgress
 {
-    __weak KVNViewController *blockSelf = self;
-    self.basicConfiguration.tapBlock = ^(KVNProgress *progressView) {
-    };
-
 	[KVNProgress showProgress:0.0f
 					   status:@"Loading with progress..."];
 	
@@ -117,7 +120,6 @@
 		[KVNProgress updateStatus:@"You can change to a multiline status text dynamically!"];
 	});
 	dispatch_main_after(5.5f, ^{
-        blockSelf.basicConfiguration.tapBlock = nil;
 		[self showSuccess];
 	});
 }

@@ -19,11 +19,13 @@
 		_backgroundTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6f];
 		_backgroundType = KVNProgressBackgroundTypeBlurred;
 		_fullScreen = NO;
+		_showStop = NO;
 		
 		_circleStrokeForegroundColor = [UIColor darkGrayColor];
 		_circleStrokeBackgroundColor = [_circleStrokeForegroundColor colorWithAlphaComponent:0.3f];
 		_circleFillBackgroundColor = [UIColor clearColor];
 		_circleSize = (_fullScreen) ? 90.0f : 75.0f;
+		_stopRelativeHeight = 0.3;
 		_lineWidth = 2.0f;
 		
 		_statusColor = [UIColor darkGrayColor];
@@ -53,12 +55,14 @@
 	copy.backgroundFillColor = [self.backgroundFillColor copy];
 	copy.backgroundTintColor = [self.backgroundTintColor copy];
 	copy.backgroundType = self.backgroundType;
-	copy.fullScreen = self.fullScreen;
+	copy.fullScreen = [self isFullScreen];
+	copy.showStop = [self doesShowStop];
 	
 	copy.circleStrokeForegroundColor = [self.circleStrokeForegroundColor copy];
 	copy.circleStrokeBackgroundColor = [self.circleStrokeBackgroundColor copy];
 	copy.circleFillBackgroundColor = [self.circleFillBackgroundColor copy];
 	copy.circleSize = self.circleSize;
+	copy.stopRelativeHeight = self.stopRelativeHeight;
 	copy.lineWidth = self.lineWidth;
 	
 	copy.statusColor = [self.statusColor copy];

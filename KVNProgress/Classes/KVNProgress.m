@@ -744,36 +744,37 @@ static KVNProgressConfiguration *configuration;
 
 - (void)setupStopUI
 {
-    if (!self.configuration.tapBlock) {
-        return;
-    }
-    
-    self.stopLayer.opacity = 1.0f;
-    
-    UIBezierPath* stopPath = [UIBezierPath bezierPath];
-    [stopPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.67f, CGRectGetHeight(self.circleProgressView.bounds) * 0.67f)];
-    
-    [stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.32f, CGRectGetHeight(self.circleProgressView.bounds) * 0.67f)];
-    [stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.32f, CGRectGetHeight(self.circleProgressView.bounds) * 0.32f)];
-    [stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * 0.67f, CGRectGetHeight(self.circleProgressView.bounds) * 0.32f)];
-    
-    [stopPath closePath];
-    
-    stopPath.lineCapStyle = kCGLineCapSquare;
-    
-    self.stopLayer = [CAShapeLayer layer];
-    self.stopLayer.path = stopPath.CGPath;
-    self.stopLayer.fillColor = self.configuration.successColor.CGColor;
-    self.stopLayer.strokeColor = self.configuration.successColor.CGColor;
-    self.stopLayer.lineWidth = self.configuration.lineWidth;
-    
-    [self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
-    [self.circleProgressView.layer addSublayer:self.stopLayer];
-    
-    [self.circleProgressLineLayer removeAllAnimations];
-    [self.circleProgressView.layer removeAllAnimations];
-    [self.stopLayer removeAllAnimations];
-    [self animateStop];
+	if (![self.configuration doesShowStop]
+		|| !self.configuration.tapBlock
+		|| [configuration doesAllowUserInteraction])
+	{
+		return;
+	}
+	
+	self.stopLayer.opacity = 1.0f;
+	
+	CGFloat squareBegin = 0.5f - (self.configuration.stopRelativeHeight / 2.0f);
+	CGFloat squareEnd = squareBegin + self.configuration.stopRelativeHeight;
+	UIBezierPath* stopPath = [UIBezierPath bezierPath];
+	[stopPath moveToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * squareEnd, CGRectGetHeight(self.circleProgressView.bounds) * squareEnd)];
+	
+	[stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * squareBegin, CGRectGetHeight(self.circleProgressView.bounds) * squareEnd)];
+	[stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * squareBegin, CGRectGetHeight(self.circleProgressView.bounds) * squareBegin)];
+	[stopPath addLineToPoint:CGPointMake(CGRectGetWidth(self.circleProgressView.bounds) * squareEnd, CGRectGetHeight(self.circleProgressView.bounds) * squareBegin)];
+	
+	[stopPath closePath];
+	
+	stopPath.lineCapStyle = kCGLineCapSquare;
+	
+	self.stopLayer = [CAShapeLayer layer];
+	self.stopLayer.path = stopPath.CGPath;
+	self.stopLayer.fillColor = self.configuration.stopColor.CGColor;
+	
+	[self.circleProgressView.layer addSublayer:self.circleProgressLineLayer];
+	[self.circleProgressView.layer addSublayer:self.stopLayer];
+	
+	[self.circleProgressLineLayer removeAllAnimations];
+	[self.circleProgressView.layer removeAllAnimations];
 }
 
 - (void)setupFullRoundCircleWithColor:(UIColor *)color
@@ -1171,11 +1172,6 @@ static KVNProgressConfiguration *configuration;
 - (void)animateError
 {
 	[self animateFullCircleWithColor:self.configuration.errorColor];
-}
-
-- (void)animateStop
-{
-    [self animateFullCircleWithColor:self.configuration.stopColor];
 }
 
 - (void)animateFullCircleWithColor:(UIColor *)color

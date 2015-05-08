@@ -33,6 +33,13 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 @property (nonatomic) KVNProgressBackgroundType backgroundType;
 /** Tells wether the HUD is full screen or not. */
 @property (nonatomic, getter = isFullScreen) BOOL fullScreen;
+/**
+ * Tells wether the stop squared button will be shown in the middle of a progress circle or not.
+ * @remark If no <code>tapBlock</code> is configured, <code>showStop</code> will have no effect.
+ * <code>tapBlock</code> is executed when the stop button is pressed.
+ * @see <code>tapBlock</code>
+ */
+@property (nonatomic, getter = doesShowStop) BOOL showStop;
 
 #pragma mark - Circle
 
@@ -44,6 +51,8 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 @property (nonatomic) UIColor *circleFillBackgroundColor;
 /** Size of the circle. */
 @property (nonatomic) CGFloat circleSize;
+/** Relative height of the stop squared button. Between 0 and 1. For example: 0.3 will display a square that has 30% de size of the circle. */
+@property (nonatomic) CGFloat stopRelativeHeight;
 /** Width of the circle stroke line. */
 @property (nonatomic) CGFloat lineWidth;
 
