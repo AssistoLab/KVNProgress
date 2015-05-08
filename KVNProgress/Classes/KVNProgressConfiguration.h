@@ -60,6 +60,8 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 @property (nonatomic) UIColor *successColor;
 /** color of the circle and checkmark when showing error. */
 @property (nonatomic) UIColor *errorColor;
+/** color of the square when showing stop button. */
+@property (nonatomic) UIColor *stopColor;
 
 #pragma mark - Display times
 

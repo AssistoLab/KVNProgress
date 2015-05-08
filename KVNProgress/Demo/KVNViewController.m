@@ -104,6 +104,10 @@
 
 - (IBAction)showProgress
 {
+    __weak KVNViewController *blockSelf = self;
+    self.basicConfiguration.tapBlock = ^(KVNProgress *progressView) {
+    };
+
 	[KVNProgress showProgress:0.0f
 					   status:@"Loading with progress..."];
 	
@@ -113,6 +117,7 @@
 		[KVNProgress updateStatus:@"You can change to a multiline status text dynamically!"];
 	});
 	dispatch_main_after(5.5f, ^{
+        blockSelf.basicConfiguration.tapBlock = nil;
 		[self showSuccess];
 	});
 }
