@@ -82,6 +82,19 @@
 	return copy;
 }
 
+#pragma mark - Setters
+
+- (void)setStopRelativeHeight:(CGFloat)stopRelativeHeight
+{
+	if (stopRelativeHeight > 1) {
+		_stopRelativeHeight = 1;
+	} else if (stopRelativeHeight < 0) {
+		_stopRelativeHeight = 0;
+	} else {
+		_stopRelativeHeight = stopRelativeHeight;
+	}
+}
+
 #pragma mark - Helpers
 
 + (instancetype)defaultConfiguration
