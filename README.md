@@ -29,6 +29,7 @@ KVNProgress is a fully customizable progress HUD that can be full screen or not.
  * [Customization](#customization)
     * [KVNProgressConfiguration](#KVNProgressConfiguration)
     * [Display times](#display-times)
+ * [Known bugs] (#known-bugs)
  * [Remains to do](#remains-to-do)
  * [License](#license)
  * [Credits](#credits)
@@ -295,6 +296,10 @@ There are 3 properties you can change that do that in `KVNProgressConfiguration`
 * `minimumDisplayTime` that has a default value of `0.3` seconds. It handles all HUD's except for success and error ones.
 * `minimumSuccessDisplayTime` that has a default value of `2.0` seconds. It handles all success HUD's.
 * `minimumErrorDisplayTime` that has a default value of `1.3` seconds. It handles all error HUD's.
+
+## Known bugs
+
+ * Showing an HUD on `alertView:clickedButtonAtIndex:` will give an undefined behavior that can sometimes make the HUD not appear ([#29](https://github.com/kevin-hirsch/KVNProgress/issues/29) - [resolution comment](https://github.com/kevin-hirsch/KVNProgress/issues/29#issuecomment-77602300)). Instead, call the HUD on `alertView:didDismissWithButtonIndex:` to be sure the `UIAlertView` is completely dismissed before showing an HUD.
 
 ## Remains to do
 
