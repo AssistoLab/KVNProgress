@@ -20,8 +20,10 @@ KVNProgress is a fully customizable progress HUD that can be full screen or not.
     * [Source files](#source-files)
  * [Usage](#usage)
     * [Basics](#basics)
-    * [Indeterminate progress](#indeterminate-progress)
-    * [Determinate progress](#determinate-progress)
+    * [Progress] (#progress)
+        * [Indeterminate progress](#indeterminate-progress)
+        * [Determinate progress](#determinate-progress)
+        * [Stop button] (#stop-button)
     * [Dismiss](#dismiss)
     * [Success/Error](#successerror)
  * [Customization](#customization)
@@ -107,7 +109,9 @@ Add the following import to the top of the file or to your Prefix header:
    #import <KVNProgress/KVNProgress.h>
    ```
 
-### Indeterminate progress
+### Progress
+
+#### Indeterminate progress
 
 To show an indeterminate progress:
 
@@ -128,7 +132,7 @@ To change the status on the fly (animated):
    [KVNProgress updateStatus:@"New status"];
    ```
 
-### Determinate progress
+#### Determinate progress
 
 To show a determinate progress and change its value along time:
 
@@ -149,6 +153,30 @@ To show a determinate progress and change its value along time:
    [KVNProgress updateProgress:0.75f
                       animated:YES];
    ```
+
+#### Stop button
+
+You can add a stop button to a progress HUD. For this you will need to use the `KVNProgressConfiguration`(see [below](#KVNProgressConfiguration). You simply have to put:
+
+```objc
+KVNProgressConfiguration *configuration = [KVNProgressConfiguration defaultConfiguration];
+configuration.showStop = YES;
+configuration.tapBlock = ^(KVNProgress *progressView) {
+	// Do what you want
+	[KVNProgress dismiss];
+};
+
+[KVNProgress setConfiguration:configuration];
+```
+
+`tapBlock` will be executed when HUD is tapped. If no `tapBlock` is specified, `showStop` will **not** be activated!
+
+You can customize stop button size. Defaults to 30% of the circle size.
+
+```objc
+configuration.stopRelativeHeight = 0.3f;
+configuration.stopColor = [UIColor whiteColor];
+```
 
 ### Dismiss
 
@@ -235,9 +263,12 @@ Here is an example of a complete custom configuration:
 	configuration.backgroundTintColor = [UIColor colorWithRed:0.173f green:0.263f blue:0.856f alpha:1.0f];
 	configuration.successColor = [UIColor whiteColor];
 	configuration.errorColor = [UIColor whiteColor];
+	configuration.stopColor = [UIColor whiteColor];
 	configuration.circleSize = 110.0f;
 	configuration.lineWidth = 1.0f;
 	configuration.fullScreen = NO;
+	configuration.showStop = YES;
+	configuration.stopRelativeHeight = 0.4f;
 
   configuration.tapBlock = ^(KVNProgress *progressView) {
     // Do something you want to do when the user tap on the HUD
