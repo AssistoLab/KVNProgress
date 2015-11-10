@@ -154,6 +154,7 @@ static KVNProgressConfiguration *configuration;
 - (void)applicationDidBecomeActive
 {
 	if (self.state == KVNProgressStateShowed
+		&& self.style == KVNProgressStyleProgress
 		&& self.progress == KVNProgressIndeterminate) {
 		// Re-starts the infinite animation
 		[self animateCircleWithInfiniteLoop];
