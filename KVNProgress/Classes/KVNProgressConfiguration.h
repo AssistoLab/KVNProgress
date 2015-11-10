@@ -26,11 +26,11 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 #pragma mark - Background
 
 /** Color of the background view. Is not used when backgroundType is KVNProgressBackgroundTypeBlurred. */
-@property (nonatomic) UIColor *backgroundFillColor;
+@property (nonatomic, strong) UIColor *backgroundFillColor;
 /** Tint color of the background view. Used to tint blurred background only when backgroundType is KVNProgressBackgroundTypeBlurred. */
-@property (nonatomic) UIColor *backgroundTintColor;
+@property (nonatomic, strong) UIColor *backgroundTintColor;
 /** Tells which background type the HUD will use. */
-@property (nonatomic) KVNProgressBackgroundType backgroundType;
+@property (nonatomic, assign) KVNProgressBackgroundType backgroundType;
 /** Tells wether the HUD is full screen or not. */
 @property (nonatomic, getter = isFullScreen) BOOL fullScreen;
 /**
@@ -44,42 +44,42 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
 #pragma mark - Circle
 
 /** Color of the circle stroke. */
-@property (nonatomic) UIColor *circleStrokeForegroundColor;
+@property (nonatomic, strong) UIColor *circleStrokeForegroundColor;
 /** Background color of the circle stroke. Used only when view is showing with a progress circle. */
-@property (nonatomic) UIColor *circleStrokeBackgroundColor;
+@property (nonatomic, strong) UIColor *circleStrokeBackgroundColor;
 /** background color of the circle. */
-@property (nonatomic) UIColor *circleFillBackgroundColor;
+@property (nonatomic, strong) UIColor *circleFillBackgroundColor;
 /** Size of the circle. */
-@property (nonatomic) CGFloat circleSize;
+@property (nonatomic, assign) CGFloat circleSize;
 /** Relative height of the stop squared button. Between 0 and 1. For example: 0.3 will display a square that has 30% de size of the circle. */
-@property (nonatomic) CGFloat stopRelativeHeight;
+@property (nonatomic, assign) CGFloat stopRelativeHeight;
 /** Width of the circle stroke line. */
-@property (nonatomic) CGFloat lineWidth;
+@property (nonatomic, assign) CGFloat lineWidth;
 
 #pragma mark - Status
 
 /** Color of the status label. */
-@property (nonatomic) UIColor *statusColor;
+@property (nonatomic, strong) UIColor *statusColor;
 /** Font of the status label. */
-@property (nonatomic) UIFont *statusFont;
+@property (nonatomic, strong) UIFont *statusFont;
 
 #pragma mark - Success/Error
 
 /** color of the circle and checkmark when showing success. */
-@property (nonatomic) UIColor *successColor;
+@property (nonatomic, strong) UIColor *successColor;
 /** color of the circle and checkmark when showing error. */
-@property (nonatomic) UIColor *errorColor;
+@property (nonatomic, strong) UIColor *errorColor;
 /** color of the square when showing stop button. */
-@property (nonatomic) UIColor *stopColor;
+@property (nonatomic, strong) UIColor *stopColor;
 
 #pragma mark - Display times
 
 /** The minimum time (in seconds) the hud will be displayed. No matter if <code>dismiss</code> is called. */
-@property (nonatomic) NSTimeInterval minimumDisplayTime;
+@property (nonatomic, assign) NSTimeInterval minimumDisplayTime;
 /** The minimum time (in seconds) the success will be displayed. */
-@property (nonatomic) NSTimeInterval minimumSuccessDisplayTime;
+@property (nonatomic, assign) NSTimeInterval minimumSuccessDisplayTime;
 /** The minimum time (in seconds) the error will be displayed. */
-@property (nonatomic) NSTimeInterval minimumErrorDisplayTime;
+@property (nonatomic, assign) NSTimeInterval minimumErrorDisplayTime;
 
 #pragma mark - Interaction
 
