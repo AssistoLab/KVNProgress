@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/spacedrabbit/KVNProgress.svg?branch=test-jam-test-coverage)](https://travis-ci.org/spacedrabbit/KVNProgress)
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
-[![Version](http://img.shields.io/badge/version-2.2.1-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
+[![Version](http://img.shields.io/badge/version-2.2.2-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
 [![Cocoapods](http://img.shields.io/badge/Cocoapods-available-green.svg?style=flat)](http://cocoadocs.org/docsets/KVNProgress/)
 
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
@@ -118,10 +118,10 @@ To show an indeterminate progress:
 
    ```objc
    [KVNProgress show];
-   
+
    // Adds a status below the circle
    [KVNProgress showWithStatus:@"Loading"];
-   
+
    // Adds the HUD to a certain view instead of main window
    [KVNProgress showWithStatus:@"Loading"
                         onView:view];
@@ -140,16 +140,16 @@ To show a determinate progress and change its value along time:
    ```objc
    // Progress has to be between 0 and 1
    [KVNProgress showProgress:0.5f];
-   
+
    // Adds a status below the progress
    [KVNProgress showProgress:0.5f
                       status:@"Loading"];
-   
+
    // Adds the HUD to a certain view instead of main window
    [KVNProgress showProgress:0.5f
                       status:@"Loading"
                       onView:view];
-   
+
    // Updates the progress
    [KVNProgress updateProgress:0.75f
                       animated:YES];
@@ -209,10 +209,10 @@ To show a success HUD with a checkmark:
 
    ```objc
    [KVNProgress showSuccess];
-   
+
    // Or
    [KVNProgress showSuccessWithStatus:@"Success"];
-   
+
    // Adds the HUD to a certain view instead of main window
    [KVNProgress showSuccessWithStatus:@"Success"
                                onView:view];
@@ -222,10 +222,10 @@ To show an error HUD with a cross:
 
    ```objc
    [KVNProgress showError];
-   
+
    // Or
    [KVNProgress showErrorWithStatus:@"Error"];
-   
+
    // Adds the HUD to a certain view instead of main window
    [KVNProgress showErrorWithStatus:@"Error"
                              onView:view];
@@ -235,7 +235,7 @@ Dismiss is automatic for successes and errors. If you want to do something after
 
 ## Customization
 
-The appearance of KVNProgress is very customizable. 
+The appearance of KVNProgress is very customizable.
 If something is missing or could be added, don't hesitate to ask for it!
 
 ### <a name="KVNProgressConfiguration"></a>KVNProgressConfiguration
@@ -247,14 +247,14 @@ Here is an example on how to simply set the default configuration for you HUD:
    [KVNProgress setConfiguration:[KVNProgressConfiguration defaultConfiguration]];
    ```
 
-Note that if you just want the default configuration, the above code is not needed. 
+Note that if you just want the default configuration, the above code is not needed.
 If you do not set a configuration, the default one is taken ;)
 
 Here is an example of a complete custom configuration:
 
   ```objc
    KVNProgressConfiguration *configuration = [[KVNProgressConfiguration alloc] init];
-	
+
 	configuration.statusColor = [UIColor whiteColor];
 	configuration.statusFont = [UIFont fontWithName:@"HelveticaNeue-Thin" size:15.0f];
 	configuration.circleStrokeForegroundColor = [UIColor whiteColor];
@@ -275,12 +275,12 @@ Here is an example of a complete custom configuration:
     // Do something you want to do when the user tap on the HUD
     // Does nothing by default
   };
-  
+
   // You can allow user interaction for behind views but you will losse the tapBlock functionnality just above
   // Does not work with fullscreen mode
   // Default is NO
   configuration.allowUserInteraction = NO;
-	
+
 	[KVNProgress setConfiguration:configuration];
    ```
 
