@@ -394,6 +394,8 @@ static KVNProgressConfiguration *configuration;
 	self.style = style;
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
+	
+	self.accessibilityValue = @"displayed";
 
 	// If HUD is already added to the view we just update the UI
 	if ([self.class isVisible]) {
@@ -518,6 +520,7 @@ static KVNProgressConfiguration *configuration;
 		[progressView cancelCircleAnimation];
 		[progressView removeFromSuperview];
 		
+		progressView.accessibilityValue = @"hidden";
 		progressView.style = KVNProgressStyleHidden;
 		
 		UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
