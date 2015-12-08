@@ -403,7 +403,7 @@ static KVNProgressConfiguration *configuration;
 		
 		[UIView animateWithDuration:KVNLayoutAnimationDuration
 						 animations:^{
-							 [KVNBlockSelf setupUI];
+							 [KVNBlockSelf setupUI:NO];
 						 }];
 		
 		KVNBlockSelf.showActionTrigerredDate = [NSDate date];
@@ -417,7 +417,7 @@ static KVNProgressConfiguration *configuration;
 			[self addToCurrentWindow];
 		}
 		
-		[self setupUI];
+		[self setupUI:YES];
 		
 		// FIXME: find a way to wait for the views to be added to the window before launching the animations
 		// (Fix to make the animations work fine)
@@ -537,9 +537,12 @@ static KVNProgressConfiguration *configuration;
 
 #pragma mark - UI
 
-- (void)setupUI
+- (void)setupUI:(BOOL)needSetupStatusBar
 {
-	[self setupStatusBar];
+	if (needSetupStatusBar) {
+		[self setupStatusBar];
+	}
+	
 	[self setupGestures];
 	[self setupConstraints];
 	[self setupCircleProgressView];
