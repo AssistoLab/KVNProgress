@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Kevin Hirsch. All rights reserved.
 //
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @interface UIImage (KVNEmpty)
 
