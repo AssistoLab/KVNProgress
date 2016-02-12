@@ -5,7 +5,7 @@
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
 [![Version](http://img.shields.io/badge/version-2.2.2-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
-[![Cocoapods](http://img.shields.io/badge/Cocoapods-available-green.svg?style=flat)](http://cocoadocs.org/docsets/KVNProgress/)
+[![CocoaPods](http://img.shields.io/badge/CocoaPods-available-green.svg?style=flat)](http://cocoadocs.org/docsets/KVNProgress/)
 
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
 ***
@@ -16,7 +16,7 @@ KVNProgress is a fully customizable progress HUD that can be full screen or not.
  * [Advantages](#advantages)
  * [Demo](#demo)
  * [Installation](#installation)
-    * [Cocoapods](#cocoapods)
+    * [CocoaPods](#cocoapods)
     * [Source files](#source-files)
  * [Usage](#usage)
     * [Basics](#basics)
@@ -80,7 +80,7 @@ If you want to try it yourself, just download/checkout this repository and launc
 
 ## Installation
 
-### Cocoapods
+### CocoaPods
 
 [CocoaPods](http://www.cocoapods.org) recommended to use KVNProgress.
 
