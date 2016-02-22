@@ -91,6 +91,9 @@ static KVNProgressConfiguration *configuration;
 
 @property (nonatomic) NSArray *constraintsToSuperview;
 
+@property (atomic) NSOperationQueue *queue;
+@property (atomic) NSBlockOperation *animateAppearanceOperation;
+
 @end
 
 @implementation KVNProgress
@@ -110,6 +113,9 @@ static KVNProgressConfiguration *configuration;
 
 		
 		sharedView = nibViews[0];
+		
+		sharedView.queue = [NSOperationQueue mainQueue];
+		sharedView.queue.maxConcurrentOperationCount = 1;
 	});
 	
 	return sharedView;
@@ -418,12 +424,17 @@ static KVNProgressConfiguration *configuration;
 		}
 		
 		[self setupUI:YES];
+		self.animateAppearanceOperation = [NSBlockOperation blockOperationWithBlock:^{
+			[KVNBlockSelf animateUI];
+			[KVNBlockSelf animateAppearance];
+		}];
 		
 		// FIXME: find a way to wait for the views to be added to the window before launching the animations
 		// (Fix to make the animations work fine)
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			[KVNBlockSelf animateUI];
-			[KVNBlockSelf animateAppearance];
+			if (![KVNBlockSelf.animateAppearanceOperation isFinished] && ![KVNBlockSelf.animateAppearanceOperation isExecuting]) {
+				[KVNBlockSelf.queue addOperation:KVNBlockSelf.animateAppearanceOperation];
+			}
 		});
 	}
 	
@@ -464,6 +475,7 @@ static KVNProgressConfiguration *configuration;
 		return;
 	} else if ([self sharedView].state == KVNProgressStateAppearing) {
 		[self sharedView].state = KVNProgressStateDismissing;
+		[[self sharedView].animateAppearanceOperation cancel];
 		[self endDismissWithCompletion:completion];
 		
 		return;
@@ -1114,6 +1126,11 @@ static KVNProgressConfiguration *configuration;
 						 KVNBlockSelf.alpha = 1.0f;
 						 KVNBlockSelf.contentView.transform = CGAffineTransformIdentity;
 					 } completion:^(BOOL finished) {
+						 if (KVNBlockSelf.state != KVNProgressStateAppearing) {
+							 NSLog(@"KVNProgress: animateAppearance — animation completion — stopped, state is not appearing");
+							 return;
+						 }
+						 
 						 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
 						 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
 						 
