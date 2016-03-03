@@ -432,7 +432,9 @@ static KVNProgressConfiguration *configuration;
 		// FIXME: find a way to wait for the views to be added to the window before launching the animations
 		// (Fix to make the animations work fine)
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			if (![KVNBlockSelf.animateAppearanceOperation isFinished] && ![KVNBlockSelf.animateAppearanceOperation isExecuting]) {
+			if (![KVNBlockSelf.queue.operations containsObject:KVNBlockSelf.animateAppearanceOperation] &&
+				![KVNBlockSelf.animateAppearanceOperation isFinished])
+			{
 				[KVNBlockSelf.queue addOperation:KVNBlockSelf.animateAppearanceOperation];
 			}
 		});
