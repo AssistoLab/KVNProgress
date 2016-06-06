@@ -93,6 +93,8 @@ static KVNProgressConfiguration *configuration;
 
 @property (atomic) NSOperationQueue *queue;
 @property (atomic) NSBlockOperation *animateAppearanceOperation;
+@property (nonatomic, strong) UIWindow *progressWindow;
+@property (nonatomic, strong) UIWindow *keyWindow;
 
 @end
 
@@ -420,7 +422,7 @@ static KVNProgressConfiguration *configuration;
 		if (superview) {
 			[self addToView:superview];
 		} else {
-			[self addToCurrentWindow];
+			[self addProgressWindow];
 		}
 		
 		[self setupUI:YES];
@@ -538,6 +540,11 @@ static KVNProgressConfiguration *configuration;
 		progressView.style = KVNProgressStyleHidden;
 		
 		UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+		
+		if (!progressView.progressWindow.hidden) {
+			progressView.progressWindow.hidden = YES;
+			[progressView.keyWindow makeKeyAndVisible];
+		}
 		
 		[UIApplication sharedApplication].statusBarStyle = [self sharedView].rootControllerStatusBarStyle;
 	}
@@ -867,24 +874,19 @@ static KVNProgressConfiguration *configuration;
 	[self.contentView addMotionEffect:group];
 }
 
-- (void)addToCurrentWindow
+- (void)addProgressWindow
 {
-	UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+	self.keyWindow = [UIApplication sharedApplication].keyWindow;
 	
-	if (!currentWindow) {
-		NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
-		
-		for (UIWindow *window in frontToBackWindows) {
-			if (window.windowLevel == UIWindowLevelNormal) {
-				currentWindow = window;
-				break;
-			}
-		}
-	}
+	self.progressWindow = [[UIWindow alloc] initWithFrame:self.keyWindow.frame];
 	
-	if (self.superview != currentWindow) {
-		[self addToView:currentWindow];
-	}
+	// Since iOS 9.0 set the windowsLevel to UIWindowLevelStatusBar is not working anymore.
+	// This trick, place the progressWindow on the top.
+	UIWindow *lastWindow = [[[UIApplication sharedApplication] windows] lastObject];
+	self.progressWindow.windowLevel = lastWindow.windowLevel + 1;
+	
+	[self.progressWindow makeKeyAndVisible];
+	[self addToView:self.progressWindow];
 }
 
 - (void)addToView:(UIView *)superview
