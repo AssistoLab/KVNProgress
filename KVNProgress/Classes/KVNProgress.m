@@ -21,13 +21,6 @@
 #define KVNSystemVersionGreaterOrEqual_iOS_8 ([[[UIDevice currentDevice] systemVersion] compare:@"8" options:NSNumericSearch] != NSOrderedAscending)
 #define KVNRadiansToDegress(radians) ((radians) * (180.0 / M_PI))
 
-typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
-	KVNProgressStyleHidden,
-	KVNProgressStyleProgress,
-	KVNProgressStyleSuccess,
-	KVNProgressStyleError
-};
-
 typedef NS_ENUM(NSUInteger, KVNProgressState) {
 	KVNProgressStateHidden,
 	KVNProgressStateAppearing,
@@ -59,7 +52,6 @@ static KVNProgressConfiguration *configuration;
 @property (nonatomic) CGFloat progress;
 @property (nonatomic) KVNProgressBackgroundType backgroundType;
 @property (nonatomic) NSString *status;
-@property (nonatomic) KVNProgressStyle style;
 @property (nonatomic) KVNProgressConfiguration *configuration;
 @property (nonatomic) NSDate *showActionTrigerredDate;
 @property (nonatomic, getter = isFullScreen) BOOL fullScreen;
