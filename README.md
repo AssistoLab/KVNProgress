@@ -10,6 +10,13 @@
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
 ***
 
+## Using KVNProgress in your app?
+
+If you're using KVNProgress in your app, I'd love to hear it! 😀<br/>
+Please, make sure to shout it proudly [here](https://github.com/AssistoLab/KVNProgress/issues/79) 👍<br/>
+[Assisto](https://itunes.apple.com/be/app/assisto-accident-statement/id875299372?mt=8) and 5,271* Apps currently using KVNProgress and counting...<br/>
+<sub>* stats via [CocoaPods](https://cocoapods.org/pods/KVNProgress)</sub>
+
 ## Table of contents
 
  * [Preview](#preview)
