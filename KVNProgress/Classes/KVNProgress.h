@@ -10,9 +10,20 @@
 
 #import "KVNProgressConfiguration.h"
 
+typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
+	KVNProgressStyleHidden,
+	KVNProgressStyleProgress,
+	KVNProgressStyleSuccess,
+	KVNProgressStyleError
+};
+
 typedef void (^KVNCompletionBlock)(void);
 
 @interface KVNProgress : UIView
+
+#pragma mark - Properties
+
+@property (nonatomic) KVNProgressStyle style;
 
 #pragma mark - Configuration
 

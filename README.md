@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/spacedrabbit/KVNProgress.svg?branch=test-jam-test-coverage)](https://travis-ci.org/spacedrabbit/KVNProgress)
 [![Twitter: @kevinh6113](http://img.shields.io/badge/contact-%40kevinh6113-70a1fb.svg?style=flat)](https://twitter.com/kevinh6113)
 [![License: MIT](http://img.shields.io/badge/license-MIT-70a1fb.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress/blob/master/README.md)
-[![Version](http://img.shields.io/badge/version-2.2.4-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
+[![Version](http://img.shields.io/badge/version-2.3-green.svg?style=flat)](https://github.com/kevin-hirsch/KVNProgress)
 [![Cocoapods](http://img.shields.io/badge/Cocoapods-available-green.svg?style=flat)](http://cocoadocs.org/docsets/KVNProgress/)
 
 KVNProgress is a fully customizable progress HUD that can be full screen or not.
