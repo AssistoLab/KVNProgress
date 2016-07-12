@@ -891,22 +891,25 @@ static KVNProgressConfiguration *configuration;
 	[superview addSubview:self];
 	[superview bringSubviewToFront:self];
 	
-	NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
-																		   options:0
-																		   metrics:nil
-																			 views:@{@"self" : self}];
-	NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
-																			 options:0
-																			 metrics:nil
-																			   views:@{@"self" : self}];
-	
-	self.constraintsToSuperview = [verticalConstraints arrayByAddingObjectsFromArray:horizontalConstraints];
-	
-	self.translatesAutoresizingMaskIntoConstraints = NO;
-	[superview addConstraints:verticalConstraints];
-	[superview addConstraints:horizontalConstraints];
-	
-	[self layoutIfNeeded];
+	if (![superview isKindOfClass:[UITableView class]]) {
+		// Autolayout messes when superview is a UITableView
+		NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
+																			   options:0
+																			   metrics:nil
+																				 views:@{@"self" : self}];
+		NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
+																				 options:0
+																				 metrics:nil
+																				   views:@{@"self" : self}];
+		
+		self.constraintsToSuperview = [verticalConstraints arrayByAddingObjectsFromArray:horizontalConstraints];
+		
+		self.translatesAutoresizingMaskIntoConstraints = NO;
+		[superview addConstraints:verticalConstraints];
+		[superview addConstraints:horizontalConstraints];
+		
+		[self layoutIfNeeded];
+	}
 	
 	self.alpha = 0.0f;
 	
