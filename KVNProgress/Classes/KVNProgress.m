@@ -501,7 +501,7 @@ static KVNProgressConfiguration *configuration;
 		// The hud hasn't showed enough time
 		delay = progressView.configuration.minimumDisplayTime - timeIntervalSinceShow;
 	}
-
+	
 	[UIView animateWithDuration:KVNFadeAnimationDuration
 						  delay:delay
 						options:(UIViewAnimationOptionCurveEaseIn
@@ -534,9 +534,10 @@ static KVNProgressConfiguration *configuration;
 		UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
 		
 		if (!progressView.progressWindow.hidden) {
-			progressView.progressWindow.hidden = YES;
-			[progressView.keyWindow makeKeyAndVisible];
+			[progressView removeProgressWindow];
 		}
+		
+		[progressView.keyWindow makeKeyAndVisible];
 		
 		[UIApplication sharedApplication].statusBarStyle = [self sharedView].rootControllerStatusBarStyle;
 	}
@@ -868,6 +869,8 @@ static KVNProgressConfiguration *configuration;
 
 - (void)addProgressWindow
 {
+	[self removeProgressWindow];
+	
 	self.keyWindow = [UIApplication sharedApplication].keyWindow;
 	
 	self.progressWindow = [[UIWindow alloc] initWithFrame:self.keyWindow.frame];
@@ -881,6 +884,14 @@ static KVNProgressConfiguration *configuration;
 	[self addToView:self.progressWindow];
 }
 
+- (void)removeProgressWindow
+{
+	if (self.progressWindow) {
+		self.progressWindow.hidden = YES;
+		self.progressWindow = nil;
+	}
+}
+
 - (void)addToView:(UIView *)superview
 {
 	if (self.superview) {
@@ -891,25 +902,22 @@ static KVNProgressConfiguration *configuration;
 	[superview addSubview:self];
 	[superview bringSubviewToFront:self];
 	
-	if (![superview isKindOfClass:[UITableView class]]) {
-		// Autolayout messes when superview is a UITableView
-		NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
-																			   options:0
-																			   metrics:nil
-																				 views:@{@"self" : self}];
-		NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
-																				 options:0
-																				 metrics:nil
-																				   views:@{@"self" : self}];
-		
-		self.constraintsToSuperview = [verticalConstraints arrayByAddingObjectsFromArray:horizontalConstraints];
-		
-		self.translatesAutoresizingMaskIntoConstraints = NO;
-		[superview addConstraints:verticalConstraints];
-		[superview addConstraints:horizontalConstraints];
-		
-		[self layoutIfNeeded];
-	}
+	NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[self]|"
+																		   options:0
+																		   metrics:nil
+																			 views:@{@"self" : self}];
+	NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[self]|"
+																			 options:0
+																			 metrics:nil
+																			   views:@{@"self" : self}];
+	
+	self.constraintsToSuperview = [verticalConstraints arrayByAddingObjectsFromArray:horizontalConstraints];
+	
+	self.translatesAutoresizingMaskIntoConstraints = NO;
+	[superview addConstraints:verticalConstraints];
+	[superview addConstraints:horizontalConstraints];
+	
+	[self layoutIfNeeded];
 	
 	self.alpha = 0.0f;
 	
