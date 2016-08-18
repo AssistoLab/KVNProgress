@@ -892,6 +892,10 @@ static KVNProgressConfiguration *configuration;
 
 - (void)addToView:(UIView *)superview
 {
+	if (self.superview == superview) {
+		return;
+	}
+	
 	if (self.superview) {
 		[self.superview removeConstraints:self.constraintsToSuperview];
 		[self removeFromSuperview];
