@@ -87,7 +87,7 @@ static KVNProgressConfiguration *configuration;
 @property (atomic) NSOperationQueue *queue;
 @property (atomic) NSBlockOperation *animateAppearanceOperation;
 @property (nonatomic, strong) UIWindow *progressWindow;
-@property (nonatomic, strong) UIWindow *keyWindow;
+@property (nonatomic, strong) UIWindow *originalKeyWindow;
 
 @end
 
@@ -536,7 +536,7 @@ static KVNProgressConfiguration *configuration;
 		
 		if (!progressView.progressWindow.hidden) {
 			progressView.progressWindow.hidden = YES;
-			[progressView.keyWindow makeKeyAndVisible];
+			[progressView.originalKeyWindow makeKeyAndVisible];
 		}
 		
 		[UIApplication sharedApplication].statusBarStyle = [self sharedView].rootControllerStatusBarStyle;
@@ -869,17 +869,17 @@ static KVNProgressConfiguration *configuration;
 
 - (void)addToWindow
 {
-	self.keyWindow = [UIApplication sharedApplication].keyWindow;
+	self.originalKeyWindow = [UIApplication sharedApplication].keyWindow;
 	
 	if (!self.progressWindow) {
-		self.progressWindow = [[UIWindow alloc] initWithFrame:self.keyWindow.frame];
+		self.progressWindow = [[UIWindow alloc] initWithFrame:self.originalKeyWindow.frame];
 		
 		// That code makes the custom UIWindow handle the orientation changes.
 		// http://stackoverflow.com/a/27091111/2571566
 		self.progressWindow.rootViewController = [[KVNRotationViewController alloc] init];
 	}
 	
-	self.progressWindow.frame = self.keyWindow.frame;
+	self.progressWindow.frame = self.originalKeyWindow.frame;
 	
 	// Since iOS 9.0 set the windowsLevel to UIWindowLevelStatusBar is not working anymore.
 	// This trick, place the progressWindow on the top.
@@ -1245,16 +1245,14 @@ static KVNProgressConfiguration *configuration;
 
 - (UIImage *)blurredScreenShot
 {
-	return [self blurredScreenShotWithRect:[UIApplication sharedApplication].keyWindow.frame];
+	return [self blurredScreenShotWithRect:self.originalKeyWindow.frame];
 }
 
 - (UIImage *)blurredScreenShotWithRect:(CGRect)rect
 {
-	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-	
 	UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0);
 	
-	[keyWindow drawViewHierarchyInRect:rect afterScreenUpdates:NO];
+	[self.originalKeyWindow drawViewHierarchyInRect:rect afterScreenUpdates:NO];
 	UIImage *blurredScreenShot = UIGraphicsGetImageFromCurrentImageContext();
 	
 	UIGraphicsEndImageContext();
