@@ -14,6 +14,7 @@
 #import "UIImage+KVNImageEffects.h"
 #import "UIImage+KVNEmpty.h"
 #import "UIColor+KVNContrast.h"
+#import "KVNRotationViewController.h"
 
 #define KVNBlockSelf __blockSelf
 #define KVNPrepareBlockSelf() __weak typeof(self) KVNBlockSelf = self
@@ -414,7 +415,7 @@ static KVNProgressConfiguration *configuration;
 		if (superview) {
 			[self addToView:superview];
 		} else {
-			[self addProgressWindow];
+			[self addToWindow];
 		}
 		
 		[self setupUI:YES];
@@ -866,11 +867,19 @@ static KVNProgressConfiguration *configuration;
 	[self.contentView addMotionEffect:group];
 }
 
-- (void)addProgressWindow
+- (void)addToWindow
 {
 	self.keyWindow = [UIApplication sharedApplication].keyWindow;
 	
-	self.progressWindow = [[UIWindow alloc] initWithFrame:self.keyWindow.frame];
+	if (!self.progressWindow) {
+		self.progressWindow = [[UIWindow alloc] initWithFrame:self.keyWindow.frame];
+		
+		// That code makes the custom UIWindow handle the orientation changes.
+		// http://stackoverflow.com/a/27091111/2571566
+		self.progressWindow.rootViewController = [[KVNRotationViewController alloc] init];
+	}
+	
+	self.progressWindow.frame = self.keyWindow.frame;
 	
 	// Since iOS 9.0 set the windowsLevel to UIWindowLevelStatusBar is not working anymore.
 	// This trick, place the progressWindow on the top.

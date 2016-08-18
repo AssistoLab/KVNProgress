@@ -27,6 +27,7 @@
 		0AA0DD281930E62A00FDD29F /* UIImage+KVNImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD271930E62A00FDD29F /* UIImage+KVNImageEffects.m */; };
 		0AA0DD2D1930F76A00FDD29F /* KVNProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */; };
 		0AA0DD301931EB3D00FDD29F /* UIImage+KVNEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AA0DD2F1931EB3D00FDD29F /* UIImage+KVNEmpty.m */; };
+		0ABBF99B1D65E560004FED77 /* KVNRotationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ABBF99A1D65E560004FED77 /* KVNRotationViewController.m */; };
 		140C0D7A1AE2DB8C0029C90A /* KVNUIImage_KVNEmptySpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 140C0D791AE2DB8C0029C90A /* KVNUIImage_KVNEmptySpec.m */; };
 		1482704A1AE2B4E500873272 /* KVNProgressConfigurationTestsSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 148270491AE2B4E500873272 /* KVNProgressConfigurationTestsSpec.m */; };
 		1482704E1AE2CBB100873272 /* KVNUIColor+KVNContrastSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 1482704D1AE2CBB100873272 /* KVNUIColor+KVNContrastSpec.m */; };
@@ -74,6 +75,8 @@
 		0AA0DD2C1930F76A00FDD29F /* KVNProgressView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KVNProgressView.xib; sourceTree = "<group>"; };
 		0AA0DD2E1931EB3D00FDD29F /* UIImage+KVNEmpty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+KVNEmpty.h"; sourceTree = "<group>"; };
 		0AA0DD2F1931EB3D00FDD29F /* UIImage+KVNEmpty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+KVNEmpty.m"; sourceTree = "<group>"; };
+		0ABBF9991D65E560004FED77 /* KVNRotationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVNRotationViewController.h; sourceTree = "<group>"; };
+		0ABBF99A1D65E560004FED77 /* KVNRotationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVNRotationViewController.m; sourceTree = "<group>"; };
 		10E934B976F6A716752C5786 /* Pods-KVNProgressTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KVNProgressTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KVNProgressTests/Pods-KVNProgressTests.debug.xcconfig"; sourceTree = "<group>"; };
 		140C0D791AE2DB8C0029C90A /* KVNUIImage_KVNEmptySpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVNUIImage_KVNEmptySpec.m; sourceTree = "<group>"; };
 		148270491AE2B4E500873272 /* KVNProgressConfigurationTestsSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVNProgressConfigurationTestsSpec.m; sourceTree = "<group>"; };
@@ -203,6 +206,8 @@
 				0AA0DD231930E0C000FDD29F /* KVNProgress.m */,
 				0A5375791A45784200A7743C /* KVNProgressConfiguration.h */,
 				0A53757A1A45784200A7743C /* KVNProgressConfiguration.m */,
+				0ABBF9991D65E560004FED77 /* KVNRotationViewController.h */,
+				0ABBF99A1D65E560004FED77 /* KVNRotationViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -405,6 +410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A85E7771932755300B16419 /* KVNAppDelegate.m in Sources */,
+				0ABBF99B1D65E560004FED77 /* KVNRotationViewController.m in Sources */,
 				0AA0DD241930E0C000FDD29F /* KVNProgress.m in Sources */,
 				0A53757B1A45784200A7743C /* KVNProgressConfiguration.m in Sources */,
 				0AA0DD281930E62A00FDD29F /* UIImage+KVNImageEffects.m in Sources */,
