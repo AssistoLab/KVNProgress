@@ -14,9 +14,20 @@
  */
 @implementation KVNRotationViewController
 
+- (instancetype)init
+{
+    self = [super init];
+    
+    if (self) {
+        self.supportedOrientations = UIInterfaceOrientationMaskAll;
+    }
+    
+    return self;
+}
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-	return UIInterfaceOrientationMaskAll;
+	return self.supportedOrientations;
 }
 
 - (BOOL)shouldAutorotate

@@ -41,6 +41,8 @@
 		
 		_tapBlock = nil;
 		_allowUserInteraction = NO;
+        
+        _supportedOrientations = UIInterfaceOrientationMaskAll;
 	}
 	
 	return self;
@@ -78,6 +80,8 @@
 	
 	copy.tapBlock = self.tapBlock;
 	copy.allowUserInteraction = self.allowUserInteraction;
+    
+    copy.supportedOrientations = self.supportedOrientations;
 	
 	return copy;
 }

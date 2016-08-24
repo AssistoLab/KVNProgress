@@ -14,4 +14,6 @@
  */
 @interface KVNRotationViewController : UIViewController
 
+@property (nonatomic, assign) UIInterfaceOrientationMask supportedOrientations;
+
 @end
