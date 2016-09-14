@@ -93,7 +93,7 @@
  5/3/2013
  */
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @interface UIImage (KVNImageEffects)
 
