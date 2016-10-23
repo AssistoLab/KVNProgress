@@ -879,6 +879,9 @@ static KVNProgressConfiguration *configuration;
 		self.progressWindow.rootViewController = [[KVNRotationViewController alloc] init];
 	}
 	
+    KVNRotationViewController *rotationVC = (KVNRotationViewController *)self.progressWindow.rootViewController;
+    rotationVC.supportedOrientations = self.configuration.supportedOrientations;
+    
 	self.progressWindow.frame = self.originalKeyWindow.frame;
 	
 	// Since iOS 9.0 set the windowsLevel to UIWindowLevelStatusBar is not working anymore.

@@ -96,6 +96,14 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
  */
 @property (nonatomic, getter = doesAllowUserInteraction) BOOL allowUserInteraction;
 
+#pragma mark - Interface Orientations
+
+/** 
+ * Specify supported orientations to be used by KVNRotationViewController.
+ * Default value is UIInterfaceOrientationMaskAll.
+ */
+@property (nonatomic, assign) UIInterfaceOrientationMask supportedOrientations;
+
 #pragma mark - Helper
 
 /** Create an instance of <code>KVNProgressConfiguration</code> with default configuration. */
