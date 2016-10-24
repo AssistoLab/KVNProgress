@@ -899,7 +899,10 @@ static KVNProgressConfiguration *configuration;
 		return;
 	}
 	
-    self.originalKeyWindow = [UIApplication sharedApplication].keyWindow;
+    // Set current window as original so we can use it in blurredScreenShot
+    if (self.originalKeyWindow == nil) {
+        self.originalKeyWindow = [UIApplication sharedApplication].keyWindow;
+    }
     
 	if (self.superview) {
 		[self.superview removeConstraints:self.constraintsToSuperview];
