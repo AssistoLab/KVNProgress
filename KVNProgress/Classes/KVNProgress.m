@@ -899,6 +899,8 @@ static KVNProgressConfiguration *configuration;
 		return;
 	}
 	
+    self.originalKeyWindow = [UIApplication sharedApplication].keyWindow;
+    
 	if (self.superview) {
 		[self.superview removeConstraints:self.constraintsToSuperview];
 		[self removeFromSuperview];
