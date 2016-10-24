@@ -12,8 +12,11 @@
 
 - (UIStatusBarStyle)statusBarStyleConstrastStyle
 {
-	const CGFloat *componentColors = CGColorGetComponents(self.CGColor);
-	CGFloat darknessScore = (((componentColors[0] * 255) * 299) + ((componentColors[1] * 255) * 587) + ((componentColors[2] * 255) * 114)) / 1000;
+    CGFloat red = 0, green = 0, blue = 0;
+    
+    [self getRed:&red green:&green blue:&blue alpha:nil];
+    
+	CGFloat darknessScore = (((red * 255) * 299) + ((green * 255) * 587) + ((blue * 255) * 114)) / 1000;
 	
 	if (darknessScore >= 125) {
 		return UIStatusBarStyleDefault;

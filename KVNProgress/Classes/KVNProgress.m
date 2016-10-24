@@ -879,6 +879,9 @@ static KVNProgressConfiguration *configuration;
 		self.progressWindow.rootViewController = [[KVNRotationViewController alloc] init];
 	}
 	
+    KVNRotationViewController *rotationVC = (KVNRotationViewController *)self.progressWindow.rootViewController;
+    rotationVC.supportedOrientations = self.configuration.supportedOrientations;
+    
 	self.progressWindow.frame = self.originalKeyWindow.frame;
 	
 	// Since iOS 9.0 set the windowsLevel to UIWindowLevelStatusBar is not working anymore.
@@ -896,6 +899,11 @@ static KVNProgressConfiguration *configuration;
 		return;
 	}
 	
+    // Set current window as original so we can use it in blurredScreenShot
+    if (self.originalKeyWindow == nil) {
+        self.originalKeyWindow = [UIApplication sharedApplication].keyWindow;
+    }
+    
 	if (self.superview) {
 		[self.superview removeConstraints:self.constraintsToSuperview];
 		[self removeFromSuperview];
