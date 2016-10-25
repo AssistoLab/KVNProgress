@@ -6,7 +6,7 @@
 //  Copyright 2015 Pinch. All rights reserved.
 //
 
-#import "Specta.h"
+#import <Specta/Specta.h>
 #import <Expecta/Expecta.h>
 #import "UIColor+KVNContrast.h"
 
