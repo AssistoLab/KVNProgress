@@ -294,6 +294,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0AA0DD191930DFAD00FDD29F /* Build configuration list for PBXNativeTarget "KVNProgressDemo" */;
 			buildPhases = (
+				D91CFFAF1DBFB32700A5FAF6 /* Check TODO, FIXME & XXX */,
 				D3ED46218517EE2EABDE27C8 /* [CP] Check Pods Manifest.lock */,
 				0AA0DCE31930DFAD00FDD29F /* Sources */,
 				0AA0DCE41930DFAD00FDD29F /* Frameworks */,
@@ -336,7 +337,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D91CFF941DBFA6D500A5FAF6 /* Build configuration list for PBXNativeTarget "KVNPogress-iOS" */;
 			buildPhases = (
-				D91CFFA71DBFA9F500A5FAF6 /* Check TODO, FIXME & XXX */,
 				D91CFFA81DBFAA0B00A5FAF6 /* Build Number as Number of Commits */,
 				D91CFF8A1DBFA6D500A5FAF6 /* Sources */,
 				D91CFF8B1DBFA6D500A5FAF6 /* Frameworks */,
@@ -498,21 +498,6 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		D91CFFA71DBFA9F500A5FAF6 /* Check TODO, FIXME & XXX */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check TODO, FIXME & XXX";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "KEYWORDS=\"TODO:|FIXME:|XXX:|\\?\\?\\?:|\\!\\!\\!:\"\nfind \"${SRCROOT}\" \\( -name \"*.h\" -or -name \"*.m\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($KEYWORDS).*\\$\" | perl -p -e \"s/($KEYWORDS)/ warning: \\$1/\"";
-			showEnvVarsInLog = 0;
-		};
 		D91CFFA81DBFAA0B00A5FAF6 /* Build Number as Number of Commits */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -526,6 +511,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "bundleVersion=$(git --git-dir=\"${PROJECT_DIR}/.git\" --work-tree=\"${PROJECT_DIR}\" rev-list HEAD | wc -l)\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $bundleVersion\" \"${PROJECT_DIR}/${PROJECT_NAME}/KVNProgress-Info.plist\"";
+		};
+		D91CFFAF1DBFB32700A5FAF6 /* Check TODO, FIXME & XXX */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check TODO, FIXME & XXX";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "KEYWORDS=\"TODO:|FIXME:|XXX:|\\?\\?\\?:|\\!\\!\\!:\"\nfind \"${SRCROOT}\" \\( -name \"*.h\" -or -name \"*.m\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($KEYWORDS).*\\$\" | perl -p -e \"s/($KEYWORDS)/ warning: \\$1/\"";
 		};
 		DC41A9A592169510FF8A06C2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
