@@ -8,7 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "KVNProgressConfiguration.h"
+#import <KVNProgress/KVNProgressConfiguration.h>
+#import <KVNProgress/KVNRotationViewController.h>
+#import <KVNProgress/UIImage+KVNImageEffects.h>
+#import <KVNProgress/UIImage+KVNEmpty.h>
+#import <KVNProgress/UIColor+KVNContrast.h>
 
 typedef NS_ENUM(NSUInteger, KVNProgressStyle) {
 	KVNProgressStyleHidden,
