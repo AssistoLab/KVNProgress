@@ -160,6 +160,12 @@ static KVNProgressConfiguration *configuration;
 		// Re-starts the infinite animation
 		[self animateCircleWithInfiniteLoop];
 	}
+
+	// set constraints again, because in iOS 10 the constraints get lost when the app is sent in background
+	if (self.superview && self.constraintsToSuperview) {
+		[self.superview removeConstraints:self.constraintsToSuperview];
+		[self.superview addConstraints:self.constraintsToSuperview];
+	}
 }
 
 - (void)orientationDidChange:(NSNotification *)notification {

@@ -1,14 +1,14 @@
 Pod::Spec.new do |s|
   s.name         = "KVNProgress"
-  s.version      = "2.3.1"
-  s.summary      = "A full screen progress view for iOS 7"
+  s.version      = "2.3.2"
+  s.summary      = "A full screen progress view for iOS 8"
 
   s.homepage     = "https://github.com/kevin-hirsch/KVNProgress"
   s.license      = { :type => "MIT", :file => "LICENSE" }
   s.author             = { "Kevin Hirsch" => "kevinh6113@hotmail.com" }
   s.social_media_url   = "http://twitter.com/kevinh6113"
 
-  s.platform     = :ios, '7.0'
+  s.platform     = :ios, '8.0'
   s.source = {
     :git => "https://github.com/kevin-hirsch/KVNProgress.git",
     :tag => s.version.to_s

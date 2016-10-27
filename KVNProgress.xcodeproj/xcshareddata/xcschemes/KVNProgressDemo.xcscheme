@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "811DD2EAD9760EB797B92FF1"
-               BuildableName = "libPods-KVNProgressTests.a"
+               BlueprintIdentifier = "C8F5D1B08CB228925F02D89C41DED6D0"
+               BuildableName = "Pods_KVNProgressTests.framework"
                BlueprintName = "Pods-KVNProgressTests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0AA0DCE61930DFAD00FDD29F"
-               BuildableName = "KVNProgress.app"
-               BlueprintName = "KVNProgress"
+               BuildableName = "KVNProgressDemo.app"
+               BlueprintName = "KVNProgressDemo"
                ReferencedContainer = "container:KVNProgress.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,10 +51,10 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -71,28 +71,31 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0AA0DCE61930DFAD00FDD29F"
-            BuildableName = "KVNProgress.app"
-            BlueprintName = "KVNProgress"
+            BuildableName = "KVNProgressDemo.app"
+            BlueprintName = "KVNProgressDemo"
             ReferencedContainer = "container:KVNProgress.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </TestAction>
    <LaunchAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0AA0DCE61930DFAD00FDD29F"
-            BuildableName = "KVNProgress.app"
-            BlueprintName = "KVNProgress"
+            BuildableName = "KVNProgressDemo.app"
+            BlueprintName = "KVNProgressDemo"
             ReferencedContainer = "container:KVNProgress.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -100,18 +103,18 @@
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0AA0DCE61930DFAD00FDD29F"
-            BuildableName = "KVNProgress.app"
-            BlueprintName = "KVNProgress"
+            BuildableName = "KVNProgressDemo.app"
+            BlueprintName = "KVNProgressDemo"
             ReferencedContainer = "container:KVNProgress.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
