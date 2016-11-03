@@ -12,14 +12,22 @@
 
 - (UIStatusBarStyle)statusBarStyleConstrastStyle
 {
-	const CGFloat *componentColors = CGColorGetComponents(self.CGColor);
-	CGFloat darknessScore = (((componentColors[0] * 255) * 299) + ((componentColors[1] * 255) * 587) + ((componentColors[2] * 255) * 114)) / 1000;
-	
-	if (darknessScore >= 125) {
-		return UIStatusBarStyleDefault;
-	}
-	
-	return UIStatusBarStyleLightContent;
+    CGColorRef cgColor = self.CGColor;
+    size_t count = CGColorGetNumberOfComponents(cgColor);
+    const CGFloat *componentColors = CGColorGetComponents(cgColor);
+    
+    CGFloat darknessScore = 0;
+    if (count == 2) {
+        darknessScore = (((componentColors[0]*255) * 299) + ((componentColors[0]*255) * 587) + ((componentColors[0]*255) * 114)) / 1000;
+    } else if (count == 4) {
+        darknessScore = (((componentColors[0]*255) * 299) + ((componentColors[1]*255) * 587) + ((componentColors[2]*255) * 114)) / 1000;
+    }
+    
+    if (darknessScore >= 125) {
+        return UIStatusBarStyleDefault;
+    }
+    
+    return UIStatusBarStyleLightContent;
 }
 
 @end
