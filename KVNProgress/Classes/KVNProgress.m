@@ -71,8 +71,6 @@ static KVNProgressConfiguration *configuration;
 @property (nonatomic, strong) CAShapeLayer *circleBackgroundLineLayer;
 @property (nonatomic, strong) CAShapeLayer *stopLayer;
 
-@property (nonatomic) UIStatusBarStyle rootControllerStatusBarStyle;
-
 // Constraints
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewWidthConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *circleProgressViewHeightConstraint;
@@ -538,8 +536,6 @@ static KVNProgressConfiguration *configuration;
 			progressView.progressWindow.hidden = YES;
 			[progressView.originalKeyWindow makeKeyAndVisible];
 		}
-		
-		[UIApplication sharedApplication].statusBarStyle = [self sharedView].rootControllerStatusBarStyle;
 	}
 	
 	if (completion) {
@@ -566,7 +562,6 @@ static KVNProgressConfiguration *configuration;
 
 - (void)setupStatusBar
 {
-	self.rootControllerStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
 	
 	if (![self isFullScreen]) {
 		return;
