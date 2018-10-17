@@ -395,8 +395,6 @@ static KVNProgressConfiguration *configuration;
 	self.style = style;
 	self.backgroundType = backgroundType;
 	self.fullScreen = fullScreen;
-	
-	self.accessibilityValue = @"displayed";
 
 	// If HUD is already added to the view we just update the UI
 	if ([self.class isVisible]) {
@@ -456,6 +454,17 @@ static KVNProgressConfiguration *configuration;
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			[KVNBlockSelf.class dismissWithCompletion:completion];
 		});
+	}
+}
+
+- (UIView *)accessibilityView
+{
+	if ([self.superview isKindOfClass:UIWindow.class]) {
+		return self;
+	} else if (self.superview) {
+		return self.superview;
+	} else {
+		return nil;
 	}
 }
 
@@ -525,21 +534,22 @@ static KVNProgressConfiguration *configuration;
 	
 	if (progressView.state == KVNProgressStateDismissing) {
 		[self sharedView].state = KVNProgressStateHidden;
-		
+
+		progressView.accessibilityView.isAccessibilityElement = NO;
+		progressView.accessibilityView.accessibilityLabel = nil;
+
 		[progressView cancelCircleAnimation];
 		[progressView removeFromSuperview];
-		
-		progressView.accessibilityValue = @"hidden";
+
 		progressView.style = KVNProgressStyleHidden;
-		
-		UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-		
+
 		if (!progressView.progressWindow.hidden) {
 			progressView.progressWindow.hidden = YES;
 			[progressView.originalKeyWindow makeKeyAndVisible];
 		}
 		
 		[UIApplication sharedApplication].statusBarStyle = [self sharedView].rootControllerStatusBarStyle;
+		UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
 	}
 	
 	if (completion) {
@@ -562,6 +572,13 @@ static KVNProgressConfiguration *configuration;
 	[self setupCircleProgressView];
 	[self setupStatus:self.status];
 	[self setupBackground];
+
+	self.accessibilityView.isAccessibilityElement = YES;
+	self.accessibilityView.accessibilityLabel = self.accessibilityStatus;
+	UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, self.accessibilityView);
+	UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.accessibilityView);
+	[self setNeedsFocusUpdate];
+	[self updateFocusIfNeeded];
 }
 
 - (void)setupStatusBar
@@ -1024,6 +1041,32 @@ static KVNProgressConfiguration *configuration;
 	}
 }
 
+- (NSString *)accessibilityStatus
+{
+	if (self.status) {
+		return self.status;
+	} else {
+		switch (self.style) {
+				case KVNProgressStyleError: {
+					return NSLocalizedString(@"error", @"");
+					break;
+				}
+				case KVNProgressStyleSuccess: {
+					return NSLocalizedString(@"success", @"");
+					break;
+				}
+				case KVNProgressStyleProgress: {
+					return NSLocalizedString(@"loading", @"");
+					break;
+				}
+				case KVNProgressStyleHidden: {
+					return @"";
+					break;
+				}
+		}
+	}
+}
+
 - (void)updateStatusConstraints
 {
 	BOOL showStatus = (self.status.length > 0);
@@ -1141,10 +1184,7 @@ static KVNProgressConfiguration *configuration;
 						 if (KVNBlockSelf.state != KVNProgressStateAppearing) {
 							 return;
 						 }
-						 
-						 UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-						 UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
-						 
+
 						 KVNBlockSelf.state = KVNProgressStateShowed;
 					 }];
 }
