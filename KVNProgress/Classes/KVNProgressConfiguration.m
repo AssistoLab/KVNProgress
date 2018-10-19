@@ -41,6 +41,7 @@
 		
 		_tapBlock = nil;
 		_allowUserInteraction = NO;
+		_enableUIFeedback = NO;
 	}
 	
 	return self;
@@ -78,6 +79,7 @@
 	
 	copy.tapBlock = self.tapBlock;
 	copy.allowUserInteraction = self.allowUserInteraction;
+	copy.enableUIFeedback = self.enableUIFeedback;
 	
 	return copy;
 }
