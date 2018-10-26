@@ -96,7 +96,7 @@ typedef NS_ENUM(NSUInteger, KVNProgressBackgroundType) {
  */
 @property (nonatomic, getter = doesAllowUserInteraction) BOOL allowUserInteraction;
 /** Enable the use of feedback usign UINotificationFeedbackGenerator. Default to false. */
-@property (nonatomic, getter = isUIFeedbackEnabled) BOOL enableUIFeedback;
+@property (nonatomic, getter = isUIFeedbackEnabled) BOOL enableUIFeedback API_AVAILABLE(ios(10));
 
 #pragma mark - Helper
 
