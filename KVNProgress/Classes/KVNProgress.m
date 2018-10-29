@@ -88,7 +88,7 @@ static KVNProgressConfiguration *configuration;
 @property (atomic) NSBlockOperation *animateAppearanceOperation;
 @property (nonatomic, strong) UIWindow *progressWindow;
 @property (nonatomic, strong) UIWindow *originalKeyWindow;
-@property (nonatomic, strong) UINotificationFeedbackGenerator *feedbackGenerator;
+@property (nonatomic, strong) UINotificationFeedbackGenerator *feedbackGenerator API_AVAILABLE(ios(10.0));
 
 @end
 
@@ -457,7 +457,9 @@ static KVNProgressConfiguration *configuration;
 		});
 	}
 
-	[self sendUIFeedbackIfNeededFor:self.style];
+	if (@available(iOS 10.0, *)) {
+		[self sendUIFeedbackIfNeededFor:self.style];
+	}
 }
 
 - (UIView *)accessibilityView
@@ -471,7 +473,7 @@ static KVNProgressConfiguration *configuration;
 	}
 }
 
-- (void)sendUIFeedbackIfNeededFor:(KVNProgressStyle)style
+- (void)sendUIFeedbackIfNeededFor:(KVNProgressStyle)style API_AVAILABLE(ios(10.0))
 {
 	if (!configuration.isUIFeedbackEnabled) {
 		return;
