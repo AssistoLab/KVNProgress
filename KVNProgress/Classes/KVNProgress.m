@@ -918,6 +918,8 @@ static KVNProgressConfiguration *configuration;
 {
     if([UIApplication sharedApplication].keyWindow != self.progressWindow){
         self.originalKeyWindow = [UIApplication sharedApplication].keyWindow;
+    } else if (self.originalKeyWindow == nil){
+        self.originalKeyWindow = [UIApplication sharedApplication].delegate.window;
     }
 	
 	if (!self.progressWindow) {
