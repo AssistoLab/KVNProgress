@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   }
 
   s.source_files  = "KVNProgress/Classes", "KVNProgress/Classes/**/*.{h,m}", "KVNProgress/Categories", "KVNProgress/Categories/**/*.{h,m}"
-  s.resources = "KVNProgress/Resources/*.{png,xib}"
+  s.resources = "KVNProgress/*.{png,xib}"
 
   s.frameworks = "QuartzCore", "GLKit"
   s.requires_arc = true
