@@ -99,7 +99,7 @@ If you want to try it yourself, just download/checkout this repository and launc
 ### Source files
 
 1. Download the [latest code version](http://github.com/kevin-hirsch/KVNProgress/archive/master.zip) or add the repository as a git submodule to your git-tracked project.
-2. Drag and drop the **Classes**, **Categories** and also the **Resources** directory from the archive in your project navigator. Make sure to select *Copy items* when asked if you extracted the code archive outside of your project.
+2. Drag and drop the **Classes**, **Categories** directory from the archive in your project navigator. Make sure to select *Copy items* when asked if you extracted the code archive outside of your project.
 3. Include KVNProgress wherever you need it with `#import <KVNProgress/KVNProgress.h>`.
 
 ## Usage

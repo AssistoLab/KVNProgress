@@ -101,9 +101,15 @@ static KVNProgressConfiguration *configuration;
 	static KVNProgress *sharedView = nil;
 	static dispatch_once_t onceToken;
 	
+#if SWIFT_PACKAGE
+    NSBundle *bundle = SWIFTPM_MODULE_BUNDLE;
+#else
+    NSBundle *bundle = [NSBundle bundleForClass:[KVNProgress class]];
+#endif
+    
 	dispatch_once(&onceToken, ^{
 		UINib *nib = [UINib nibWithNibName:@"KVNProgressView"
-                                    bundle:[NSBundle bundleForClass:[KVNProgress class]]];
+                                    bundle:bundle];
 		NSArray *nibViews = [nib instantiateWithOwner:self
 											  options:0];
 
